@@ -1,0 +1,32 @@
+{
+  "name": "bean-bot",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon ./src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NormalHuman420/Bean-Bot-DiscordJS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/NormalHuman420/Bean-Bot-DiscordJS/issues"
+  },
+  "homepage": "https://github.com/NormalHuman420/Bean-Bot-DiscordJS#readme",
+  "dependencies": {
+    "discord.js": "^13.2.0",
+    "dotenv": "^10.0.0",
+    "moment": "^2.29.1",
+    "nodemon": "^2.0.13"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.4",
+    "eslint": "^7.32.0",
+    "glob": "^7.2.0"
+  },
+  "description": ""
+}
