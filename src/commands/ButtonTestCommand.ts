@@ -3,20 +3,20 @@ import { Bot } from "../client/Client";
 import { RunFunction } from "../interfaces/Command";
 
 export const data: ApplicationCommandData = {
-    name: 'button-test',
-    description: 'Button Test.',
-    options:[],
+	name: 'button-test',
+	description: 'Button Test.',
+	options:[],
 }
-export const test: boolean = true;
+export const test = true;
 
 export const run: RunFunction = async(client: Bot, interaction: CommandInteraction) => {
-    const row = new MessageActionRow()
-        .addComponents(
-            new MessageButton()
-                .setCustomId('ButtonTest1')
-                .setLabel('lmao')
-                .setStyle('PRIMARY')
-        )
+	const row = new MessageActionRow()
+		.addComponents(
+			new MessageButton()
+				.setCustomId('ButtonTest1')
+				.setLabel('lmao')
+				.setStyle('PRIMARY')
+		)
 
-    interaction.reply({ content: '1', components: [row] });
+	interaction.reply({ content: '1', components: [row] });
 }

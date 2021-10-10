@@ -1,11 +1,11 @@
-import { ApplicationCommandData, CommandInteraction } from "discord.js";
+import { ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
 import { RunFunction } from "../interfaces/Command";
 import fs from 'fs';
 import { embed, errorEmbed } from "../utils/Utils";
 import { Bot } from "../client/Client";
 
 export const data: ApplicationCommandData = {
-    name: 'meme',
+	name: 'meme',
 	description: 'Sends a meme.',
 	options: [
 		{
@@ -33,47 +33,52 @@ export const data: ApplicationCommandData = {
 		},
 	],
 }
-export const test: boolean = true;
+export const test = true;
 
-export const run: RunFunction = async(client: Bot, interaction: CommandInteraction, args: Map<string, any>) => {
-    interaction.deferReply();
+export const run: RunFunction = async(client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver) => {
+	interaction.deferReply();
 
-    fs.readdir(`${__dirname}/../../memes/`, (err, memes) => {
-        if (err) {
-            interaction.followUp({ embeds: [errorEmbed(err.message)], ephemeral: true });
-            console.log(err);
-            return;
-        }
+	fs.readdir(`${__dirname}/../../memes/`, (err, memes) => {
+		if (err) {
+			interaction.followUp({ embeds: [errorEmbed(err.message)], ephemeral: true });
+			console.log(err);
+			return;
+		}
 
-        async function sendMeme(file: number) {
-            const extension = memes.find(m => m.startsWith(file.toString()))?.split('.')[1];
-        
-            if (extension == 'mp4' || extension == 'mp3') {
-                interaction.followUp({ files: [`${__dirname}/../../memes/${file}.${extension}`] });
-            }
-            else {
-                interaction.followUp({ content: `\`${file}.${extension}\``, files: [`${__dirname}/../../memes/${file}.${extension}`] });
-            }
-        }
+		async function sendMeme(file: number) {
+			const extension = memes.find(m => m.startsWith(file.toString()))?.split('.')[1];
 
-        if (args.get('number'))
-        {
-            sendMeme( args.get('number'));
-        }
-        else
-        {
-            switch(args.get('option'))
-            {
-                case 'count':
-                    interaction.followUp({ embeds: [embed(client, `Bean Bot currently has \`${memes.length}\` memes!`)] });
-                    break;
-                case 'random':
-                    let randomIndex = Math.floor(Math.random() * memes.length);
-                    if (randomIndex > memes.length) randomIndex = memes.length;
-                    if (randomIndex < 1) randomIndex = 1;
-                    sendMeme(randomIndex);
-                    break;
-            }
-        }
-    });
+			if (extension == 'mp4' || extension == 'mp3') {
+				interaction.followUp({ files: [`${__dirname}/../../memes/${file}.${extension}`] });
+			}
+			else {
+				interaction.followUp({ content: `\`${file}.${extension}\``, files: [`${__dirname}/../../memes/${file}.${extension}`] });
+			}
+		}
+
+		if (options.getInteger('number') != null)
+		{
+			if (options.getInteger('number')! > memes.length || options.getInteger('number')! < 1 )
+			{
+				interaction.followUp({ embeds: [errorEmbed(`Meme \`${options.getInteger('number')}\` does not exist.`)] });
+				return;
+			}
+			sendMeme(options.getInteger('number')!);
+		}
+		else
+		{
+			switch(options.getSubcommand())
+			{
+			case 'count':
+				interaction.followUp({ embeds: [embed(client, `Bean Bot currently has \`${memes.length}\` memes!`)] });
+				break;
+			case 'random':
+				let randomIndex = Math.floor(Math.random() * memes.length);
+				if (randomIndex > memes.length) randomIndex = memes.length;
+				if (randomIndex < 1) randomIndex = 1;
+				sendMeme(randomIndex);
+				break;
+			}
+		}
+	});
 }
