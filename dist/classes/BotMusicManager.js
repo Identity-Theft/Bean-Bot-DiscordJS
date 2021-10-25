@@ -121,7 +121,7 @@ class BotMusicManger {
                     const urlParts = url.split('/');
                     const id = urlParts[urlParts.length - 1];
                     const data = yield (0, got_1.default)(`https://newgrounds.com/audio/feed/${id}`).json();
-                    return new Song_1.default(data.title, url, addedBy, 'Newgrounds', data.icons.large, data.stream_url.split('?')[0]);
+                    return new Song_1.default(data.title, url, addedBy, 'Newgrounds', data.icons.small, data.stream_url.split('?')[0]);
                 }
             }
         });

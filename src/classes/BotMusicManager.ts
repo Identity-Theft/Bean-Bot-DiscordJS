@@ -155,7 +155,7 @@ class BotMusicManger
 					url,
 					addedBy,
 					'Newgrounds',
-					data.icons.large,
+					data.icons.small,
 					data.stream_url.split('?')[0],
 				);
 			}
