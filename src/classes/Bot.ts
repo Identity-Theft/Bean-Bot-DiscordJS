@@ -21,8 +21,10 @@ class Bot extends Client {
 	public async start(): Promise<void> {
 		this.login(process.env.TOKEN);
 
+		const ext = __filename.split(".")[1];
+
 		// Add commands to collection
-		const commandFiles: string[] = await globPromise(`${__dirname}/../commands/**/*.ts`);
+		const commandFiles: string[] = await globPromise(`${__dirname}/../commands/**/*.${ext}`);
 
 		commandFiles.map(async (value: string) => {
 			const file: Command = await import(value);
@@ -30,7 +32,7 @@ class Bot extends Client {
 		});
 
 		// Add events to collection
-		const eventFiles: string[] = await globPromise(`${__dirname}/../events/**/*.ts`);
+		const eventFiles: string[] = await globPromise(`${__dirname}/../events/**/*.${ext}`);
 
 		eventFiles.map(async (value: string) => {
 			const file: Event = await import(value);

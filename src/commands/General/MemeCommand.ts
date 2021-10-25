@@ -38,7 +38,7 @@ export const test = true;
 export const run: RunFunction = async(client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver) => {
 	interaction.deferReply();
 
-	fs.readdir(`${__dirname}/../../memes/`, (err, memes) => {
+	fs.readdir(`${__dirname}/../../../assets/memes/`, (err, memes) => {
 		if (err) {
 			interaction.followUp({ embeds: [errorEmbed(err.message)], ephemeral: true });
 			console.log(err);
@@ -49,10 +49,10 @@ export const run: RunFunction = async(client: Bot, interaction: CommandInteracti
 			const extension = memes.find(m => m.startsWith(file.toString()))?.split('.')[1];
 
 			if (extension == 'mp4' || extension == 'mp3') {
-				interaction.followUp({ files: [`${__dirname}/../../memes/${file}.${extension}`] });
+				interaction.followUp({ files: [`${__dirname}/../../../assets/memes//${file}.${extension}`] });
 			}
 			else {
-				interaction.followUp({ content: `\`${file}.${extension}\``, files: [`${__dirname}/../../memes/${file}.${extension}`] });
+				interaction.followUp({ content: `\`${file}.${extension}\``, files: [`${__dirname}/../../../assets/memes/${file}.${extension}`] });
 			}
 		}
 

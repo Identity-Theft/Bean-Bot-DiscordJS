@@ -48,14 +48,15 @@ class Bot extends discord_js_1.Client {
     start() {
         return __awaiter(this, void 0, void 0, function* () {
             this.login(process.env.TOKEN);
+            const ext = __filename.split(".")[1];
             // Add commands to collection
-            const commandFiles = yield globPromise(`${__dirname}/../commands/**/*.ts`);
+            const commandFiles = yield globPromise(`${__dirname}/../commands/**/*.${ext}`);
             commandFiles.map((value) => __awaiter(this, void 0, void 0, function* () {
                 const file = yield Promise.resolve().then(() => __importStar(require(value)));
                 this.commands.set(file.data.name, file);
             }));
             // Add events to collection
-            const eventFiles = yield globPromise(`${__dirname}/../events/**/*.ts`);
+            const eventFiles = yield globPromise(`${__dirname}/../events/**/*.${ext}`);
             eventFiles.map((value) => __awaiter(this, void 0, void 0, function* () {
                 const file = yield Promise.resolve().then(() => __importStar(require(value)));
                 this.events.set(file.name, file);
