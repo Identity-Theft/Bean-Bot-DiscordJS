@@ -1,4 +1,4 @@
-import { Bot } from "../client/Client";
+import Bot from "../classes/Bot";
 import { ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
 
 export interface RunFunction {

@@ -1,2 +1,2 @@
-import { Bot } from './client/Client';
+import Bot from './classes/Bot';
 new Bot().start();

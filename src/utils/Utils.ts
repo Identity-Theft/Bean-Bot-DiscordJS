@@ -1,10 +1,17 @@
 import { MessageEmbed } from "discord.js";
-import { Bot } from "../client/Client";
+import Bot from "../classes/Bot";
 
-function embed(client: Bot, description: string): MessageEmbed {
+function simpleEmbed(client: Bot, description: string): MessageEmbed {
 	return new MessageEmbed()
 		// eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-		.setAuthor(client.user!.username, client.user?.avatarURL()!)
+		.setAuthor(client.user!.username, client.user?.avatarURL() as string | undefined)
+		.setDescription(description)
+		.setColor('BLURPLE')
+}
+
+function simpleEmbed2(name: string, description: string): MessageEmbed {
+	return new MessageEmbed()
+		.setTitle(name)
 		.setDescription(description)
 		.setColor('BLURPLE')
 }
@@ -16,4 +23,4 @@ function errorEmbed(err: string): MessageEmbed {
 		.setColor('RED')
 }
 
-export { embed, errorEmbed };
+export { simpleEmbed, simpleEmbed2, errorEmbed };
