@@ -4,7 +4,8 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "nodemon ./src/index.ts",
-    "tsc": "tsc --skipLibCheck"
+    "tsc": "tsc --skipLibCheck",
+    "start": "node ./dist/index.js"
   },
   "keywords": [],
   "author": "",
