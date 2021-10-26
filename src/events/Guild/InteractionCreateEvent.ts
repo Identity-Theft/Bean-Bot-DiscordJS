@@ -10,7 +10,8 @@ export const run: RunFunction = async(client, interaction: Interaction): Promise
 
 		const cmd = client.commands.get(commandName);
 
-		if (!cmd) {
+		if (!cmd)
+		{
 			interaction.reply({ embeds: [errorEmbed(`Command \`/${commandName}\` doesn't exist or couldn't be loaded.`)], ephemeral: true });
 			return;
 		}
@@ -18,9 +19,10 @@ export const run: RunFunction = async(client, interaction: Interaction): Promise
 		cmd.run(client, interaction, options);
 	}
 
-	if (interaction.isButton()) {
-		// interaction.channel?.send('button moment');
-		switch(interaction.customId){
+	if (interaction.isButton())
+	{
+		switch(interaction.customId)
+		{
 		case 'ButtonTest1':
 			interaction.update({ embeds: [simpleEmbed(client, 'Beans')] });
 			break;

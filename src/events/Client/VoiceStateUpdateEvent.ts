@@ -6,7 +6,7 @@ export const name = 'voiceStateUpdate';
 
 export const run: RunFunction = async (client: Bot, oldState: VoiceState, newState: VoiceState) => {
 	const queue = client.botMusicManager.getQueue(oldState.guild.id);
-	if (queue != undefined && newState.channel != queue.voiceChannel && newState.channel != null) {
+
+	if (queue != undefined && newState.channel != queue.voiceChannel && newState.channel != null)
 		queue.voiceChannel == newState.channel;
-	}
 }

@@ -1,6 +1,7 @@
 import { User } from "discord.js";
 
-class Song {
+class Song
+{
 	public title = '';
 	public thumbnail: string | null = null;
 	public url = '';
@@ -8,7 +9,8 @@ class Song {
 	public addedBy: User | null = null;
 	public platform = '';
 
-	public constructor(title: string, url: string, addedBy: User, platform: string, thumbnail?: string | undefined, streamUrl?: string | undefined) {
+	public constructor(title: string, url: string, addedBy: User, platform: string, thumbnail?: string | undefined, streamUrl?: string | undefined)
+	{
 		this.title = title;
 		this.url = url;
 		this.addedBy = addedBy;

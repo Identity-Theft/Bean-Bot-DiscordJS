@@ -5,7 +5,7 @@ import { RunFunction } from "../../interfaces/Command";
 export const data: ApplicationCommandData = {
 	name: 'avatar',
 	description: 'Replies with a user\'s avatar.',
-	options:[
+	options: [
 		{
 			type: 'USER',
 			name: 'user',

@@ -1,4 +1,5 @@
-class NewgroundsResponse {
+class NewgroundsResponse
+{
 	public id = 0;
 	public title = '';
 	public download_url = '';
@@ -13,7 +14,8 @@ class NewgroundsResponse {
 	public allow_external_api = false
 }
 
-class Author {
+class Author
+{
 	public id = '';
 	public name = '';
 	public url = '';
@@ -23,7 +25,8 @@ class Author {
 	public is_scout = true;
 }
 
-class Icons {
+class Icons
+{
 	public small = '';
 	public medium = '';
 	public large = '';

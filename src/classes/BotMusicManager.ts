@@ -21,29 +21,36 @@ class BotMusicManger
 		const member = await interaction.guild?.members.fetch(interaction.user.id);
 		const channel = member!.voice.channel;
 
-		if (channel == null) {
+		if (channel == null)
+		{
 			interaction.reply({ embeds: [errorEmbed('You are not in a voice channel')], ephemeral: true });
 			return false;
 		}
 
-		if (this.getQueue(guildId)?.voiceChannel?.type == 'GUILD_STAGE_VOICE' && !member?.permissions.has('ADMINISTRATOR')) {
+		if (this.getQueue(guildId)?.voiceChannel?.type == 'GUILD_STAGE_VOICE' && !member?.permissions.has('ADMINISTRATOR'))
+		{
 			interaction.reply({ embeds: [errorEmbed('Only admins can use music commands when Bean Bot is in a Stage Channel.')] });
 			return false;
 		}
 
-		if (this.getQueue(guildId) != undefined && this.getQueue(guildId)!.voiceChannel != channel) {
+		if (this.getQueue(guildId) != undefined && this.getQueue(guildId)!.voiceChannel != channel)
+		{
 			interaction.reply({ embeds: [errorEmbed('You are not in a voice channel with Bean Bot.')], ephemeral: true});
 			return false;
 		}
 
-		if (interaction.commandName != 'play') {
-			if (this.getQueue(guildId) == undefined) {
+		if (interaction.commandName != 'play')
+		{
+			if (this.getQueue(guildId) == undefined)
+			{
 				interaction.reply({ embeds: [errorEmbed('Bean Bot is not in a Voice Channel.')] });
 				return false;
 			}
 		}
-		else {
-			if (channel.type == 'GUILD_VOICE' && !interaction.memberPermissions?.has('ADMINISTRATOR')) {
+		else
+		{
+			if (channel.type == 'GUILD_VOICE' && !interaction.memberPermissions?.has('ADMINISTRATOR'))
+			{
 				interaction.reply({ embeds: [errorEmbed(`Only admins can add Bean Bot to Stage Channels. ${channel}`)], ephemeral: true });
 				return false;
 			}

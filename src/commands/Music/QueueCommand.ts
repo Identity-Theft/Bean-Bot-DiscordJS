@@ -15,7 +15,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 
 	if (queue != undefined) {
 		interaction.reply('```\n' + queue.songs.map((song, index) =>
-			`${index + 1}. ${song.title} (${song.platform})${(queue.playing) != index ? '' : ' - Currently Playing'}`,
+			`${index + 1}. ${song.title} (${song.platform})${queue.playing != index ? '' : ' - Currently Playing'}`,
 		).join('\n') + '```');
 	}
 	else {

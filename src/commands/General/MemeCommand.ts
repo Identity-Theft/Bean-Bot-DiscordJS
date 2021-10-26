@@ -45,15 +45,12 @@ export const run: RunFunction = async(client: Bot, interaction: CommandInteracti
 			return;
 		}
 
-		async function sendMeme(file: number) {
+		async function sendMeme(file: number)
+		{
 			const extension = memes.find(m => m.startsWith(file.toString()))?.split('.')[1];
 
-			if (extension == 'mp4' || extension == 'mp3') {
-				interaction.followUp({ files: [`${__dirname}/../../../assets/memes//${file}.${extension}`] });
-			}
-			else {
-				interaction.followUp({ content: `\`${file}.${extension}\``, files: [`${__dirname}/../../../assets/memes/${file}.${extension}`] });
-			}
+			if (extension == 'mp4' || extension == 'mp3') interaction.followUp({ files: [`${__dirname}/../../../assets/memes//${file}.${extension}`] });
+			else interaction.followUp({ content: `\`${file}.${extension}\``, files: [`${__dirname}/../../../assets/memes/${file}.${extension}`] });
 		}
 
 		if (options.getInteger('number') != null)
@@ -63,6 +60,7 @@ export const run: RunFunction = async(client: Bot, interaction: CommandInteracti
 				interaction.followUp({ embeds: [errorEmbed(`Meme \`${options.getInteger('number')}\` does not exist.`)] });
 				return;
 			}
+
 			sendMeme(options.getInteger('number')!);
 		}
 		else
@@ -74,8 +72,10 @@ export const run: RunFunction = async(client: Bot, interaction: CommandInteracti
 				break;
 			case 'random':
 				let randomIndex = Math.floor(Math.random() * memes.length);
+
 				if (randomIndex > memes.length) randomIndex = memes.length;
 				if (randomIndex < 1) randomIndex = 1;
+
 				sendMeme(randomIndex);
 				break;
 			}

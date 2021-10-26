@@ -28,9 +28,9 @@ export const run: RunFunction = async(client: Bot, interaction: CommandInteracti
 			{ name: 'Verification Level', value: `[${guild.verificationLevel}](https://discord.com/developers/docs/resources/guild#guild-object-verification-level)`, inline: true },
 		);
 
-	if (guild.rulesChannel) {embed.addField('Rules Channel', `${guild.rulesChannel}`, true);}
+	if (guild.rulesChannel) embed.addField('Rules Channel', `${guild.rulesChannel}`, true);
 
-	if (guild.afkChannel) {embed.addField('AFK Channel', `${guild.afkChannel}`, true);}
+	if (guild.afkChannel) embed.addField('AFK Channel', `${guild.afkChannel}`, true);
 
 	embed
 		.addFields(
