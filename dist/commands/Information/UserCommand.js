@@ -27,7 +27,7 @@ exports.data = {
         }
     ]
 };
-exports.test = true;
+exports.test = false;
 const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
     const user = options.getUser('user');
     const guild = interaction.guild;

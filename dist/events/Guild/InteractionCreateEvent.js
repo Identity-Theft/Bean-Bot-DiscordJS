@@ -23,7 +23,6 @@ const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function*
         cmd.run(client, interaction, options);
     }
     if (interaction.isButton()) {
-        // interaction.channel?.send('button moment');
         switch (interaction.customId) {
             case 'ButtonTest1':
                 interaction.update({ embeds: [(0, Utils_1.simpleEmbed)(client, 'Beans')] });

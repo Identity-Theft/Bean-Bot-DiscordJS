@@ -15,13 +15,13 @@ exports.data = {
     name: 'queue',
     description: 'Replies with all the songs in to the queue',
 };
-exports.test = true;
+exports.test = false;
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
     if ((yield client.botMusicManager.canUseCommand(client, interaction)) == false)
         return;
     const queue = client.botMusicManager.getQueue(interaction.guildId);
     if (queue != undefined) {
-        interaction.reply('```\n' + queue.songs.map((song, index) => `${index + 1}. ${song.title} (${song.platform})${(queue.playing) != index ? '' : ' - Currently Playing'}`).join('\n') + '```');
+        interaction.reply('```\n' + queue.songs.map((song, index) => `${index + 1}. ${song.title} (${song.platform})${queue.playing != index ? '' : ' - Currently Playing'}`).join('\n') + '```');
     }
     else {
         interaction.reply({ embeds: [(0, Utils_1.errorEmbed)('There is no queue')], ephemeral: true });

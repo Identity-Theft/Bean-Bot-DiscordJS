@@ -32,12 +32,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const glob_1 = __importDefault(require("glob"));
+// import glob from "glob";
+const fs_1 = __importDefault(require("fs"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const util_1 = require("util");
+// import { promisify } from "util";
 const BotMusicManager_1 = __importDefault(require("./BotMusicManager"));
 dotenv_1.default.config();
-const globPromise = (0, util_1.promisify)(glob_1.default);
+// const globPromise = promisify(glob);
 class Bot extends discord_js_1.Client {
     constructor() {
         super({ intents: 643 });
@@ -46,22 +47,48 @@ class Bot extends discord_js_1.Client {
         this.botMusicManager = new BotMusicManager_1.default();
     }
     start() {
+        this.login(process.env.TOKEN);
+        // this.chadSetup()
+        this.herokuSetup();
+    }
+    // private async chadSetup(): Promise<void>
+    // {
+    // 	const ext = __filename.split(".")[1];
+    // 	// Add commands to collection
+    // 	const commandFiles: string[] = await globPromise(`${__dirname}/../commands/**/*.${ext}`);
+    // 	commandFiles.map(async (value: string) => {
+    // 		const file: Command = await import(value);
+    // 		this.commands.set(file.data.name, file);
+    // 	});
+    // 	// Add events to collection
+    // 	const eventFiles: string[] = await globPromise(`${__dirname}/../events/**/*.${ext}`);
+    // 	eventFiles.map(async (value: string) => {
+    // 		const file: Event = await import(value);
+    // 		this.events.set(file.name, file);
+    // 		// Bind event
+    // 		this.on(file.name, file.run.bind(null, this));
+    // 	});
+    // }
+    herokuSetup() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.login(process.env.TOKEN);
-            const ext = __filename.split(".")[1];
             // Add commands to collection
-            const commandFiles = yield globPromise(`${__dirname}/../commands/**/*.${ext}`);
-            commandFiles.map((value) => __awaiter(this, void 0, void 0, function* () {
-                const file = yield Promise.resolve().then(() => __importStar(require(value)));
-                this.commands.set(file.data.name, file);
+            const commandsFiles = yield fs_1.default.readdirSync(`${__dirname}/../commands/`);
+            commandsFiles.map((value) => __awaiter(this, void 0, void 0, function* () {
+                const commandFoler = yield fs_1.default.readdirSync(`${__dirname}/../commands/${value}`);
+                commandFoler.map((file) => __awaiter(this, void 0, void 0, function* () {
+                    const commandFile = yield Promise.resolve().then(() => __importStar(require(`${__dirname}/../commands/${value}/${file}`)));
+                    this.commands.set(commandFile.data.name, commandFile);
+                }));
             }));
             // Add events to collection
-            const eventFiles = yield globPromise(`${__dirname}/../events/**/*.${ext}`);
+            const eventFiles = yield fs_1.default.readdirSync(`${__dirname}/../events/`);
             eventFiles.map((value) => __awaiter(this, void 0, void 0, function* () {
-                const file = yield Promise.resolve().then(() => __importStar(require(value)));
-                this.events.set(file.name, file);
-                // Bind event
-                this.on(file.name, file.run.bind(null, this));
+                const eventFoler = yield fs_1.default.readdirSync(`${__dirname}/../events/${value}`);
+                eventFoler.map((file) => __awaiter(this, void 0, void 0, function* () {
+                    const eventFile = yield Promise.resolve().then(() => __importStar(require(`${__dirname}/../events/${value}/${file}`)));
+                    this.events.set(eventFile.name, eventFile);
+                    this.on(eventFile.name, eventFile.run.bind(null, this));
+                }));
             }));
         });
     }
@@ -69,12 +96,10 @@ class Bot extends discord_js_1.Client {
         return __awaiter(this, void 0, void 0, function* () {
             this.commands.forEach((file) => {
                 var _a, _b;
-                if (file.test == true) {
+                if (file.test == true)
                     (_a = this.application) === null || _a === void 0 ? void 0 : _a.commands.create(file.data, '844081963324407848');
-                }
-                else {
+                else
                     (_b = this.application) === null || _b === void 0 ? void 0 : _b.commands.create(file.data);
-                }
             });
         });
     }

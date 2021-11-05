@@ -16,7 +16,7 @@ export const data: ApplicationCommandData = {
 	]
 }
 
-export const test = true;
+export const test = false;
 
 export const run: RunFunction = async (client: Bot, interaction: CommandInteraction, args: CommandInteractionOptionResolver) => {
 	if (await client.botMusicManager.canUseCommand(client, interaction) == false) return;

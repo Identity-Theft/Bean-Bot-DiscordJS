@@ -1,13 +1,14 @@
 import { Client, Collection } from "discord.js";
 import { Command } from "../interfaces/Command";
 import { Event } from "../interfaces/Event";
-import glob from "glob";
+// import glob from "glob";
+import fs from "fs";
 import dotenv from "dotenv";
-import { promisify } from "util";
+// import { promisify } from "util";
 import BotMusicManger from "./BotMusicManager";
 dotenv.config();
 
-const globPromise = promisify(glob);
+// const globPromise = promisify(glob);
 
 class Bot extends Client
 {
@@ -20,29 +21,65 @@ class Bot extends Client
 		super({ intents: 643 });
 	}
 
-	public async start(): Promise<void>
+	public start(): void
 	{
 		this.login(process.env.TOKEN);
 
-		const ext = __filename.split(".")[1];
+		// this.chadSetup()
+		this.herokuSetup();
+	}
 
+	// private async chadSetup(): Promise<void>
+	// {
+	// 	const ext = __filename.split(".")[1];
+
+	// 	// Add commands to collection
+	// 	const commandFiles: string[] = await globPromise(`${__dirname}/../commands/**/*.${ext}`);
+
+	// 	commandFiles.map(async (value: string) => {
+	// 		const file: Command = await import(value);
+	// 		this.commands.set(file.data.name, file);
+	// 	});
+
+	// 	// Add events to collection
+	// 	const eventFiles: string[] = await globPromise(`${__dirname}/../events/**/*.${ext}`);
+
+	// 	eventFiles.map(async (value: string) => {
+	// 		const file: Event = await import(value);
+	// 		this.events.set(file.name, file);
+
+	// 		// Bind event
+	// 		this.on(file.name, file.run.bind(null, this));
+	// 	});
+	// }
+
+	private async herokuSetup(): Promise<void>
+	{
 		// Add commands to collection
-		const commandFiles: string[] = await globPromise(`${__dirname}/../commands/**/*.${ext}`);
+		const commandsFiles: string [] = await fs.readdirSync(`${__dirname}/../commands/`);
 
-		commandFiles.map(async (value: string) => {
-			const file: Command = await import(value);
-			this.commands.set(file.data.name, file);
+		commandsFiles.map(async (value: string) => {
+			const commandFoler: string[] = await fs.readdirSync(`${__dirname}/../commands/${value}`);
+
+			commandFoler.map(async (file: string) => {
+				const commandFile: Command = await import(`${__dirname}/../commands/${value}/${file}`);
+
+				this.commands.set(commandFile.data.name, commandFile);
+			});
 		});
 
 		// Add events to collection
-		const eventFiles: string[] = await globPromise(`${__dirname}/../events/**/*.${ext}`);
+		const eventFiles: string [] = await fs.readdirSync(`${__dirname}/../events/`);
 
 		eventFiles.map(async (value: string) => {
-			const file: Event = await import(value);
-			this.events.set(file.name, file);
+			const eventFoler: string[] = await fs.readdirSync(`${__dirname}/../events/${value}`);
 
-			// Bind event
-			this.on(file.name, file.run.bind(null, this));
+			eventFoler.map(async (file: string) => {
+				const eventFile: Event = await import(`${__dirname}/../events/${value}/${file}`);
+
+				this.events.set(eventFile.name, eventFile);
+				this.on(eventFile.name, eventFile.run.bind(null, this));
+			});
 		});
 	}
 

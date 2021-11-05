@@ -16,7 +16,7 @@ exports.data = {
     description: 'Disconnet Bean Bot from the Voice Channel and clear the queue.',
     options: []
 };
-exports.test = true;
+exports.test = false;
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     if ((yield client.botMusicManager.canUseCommand(client, interaction)) == false)

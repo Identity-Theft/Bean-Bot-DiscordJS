@@ -31,7 +31,7 @@ exports.data = {
         }
     ]
 };
-exports.test = true;
+exports.test = false;
 const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     if ((yield client.botMusicManager.canUseCommand(client, interaction)) == false)
@@ -114,10 +114,8 @@ const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, 
                     (0, voice_1.entersState)(connection, voice_1.VoiceConnectionStatus.Signalling, 5000),
                     (0, voice_1.entersState)(connection, voice_1.VoiceConnectionStatus.Connecting, 5000),
                 ]);
-                // Seems to be reconnecting to a new channel - ignore disconnect
             }
             catch (error) {
-                // Seems to be a real disconnect which SHOULDN'T be recovered from
                 client.botMusicManager.disconnect(guildId);
             }
         }));

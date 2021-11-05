@@ -7,7 +7,7 @@ export const data: ApplicationCommandData = {
 	description: 'Replies with info about Bean Bot.',
 	options: []
 }
-export const test = true;
+export const test = false;
 
 export const run: RunFunction = async(client: Bot, interaction: CommandInteraction) => {
 	const user = client.user!;

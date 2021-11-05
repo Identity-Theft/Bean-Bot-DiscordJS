@@ -16,7 +16,7 @@ exports.data = {
     description: 'Replies with info about Bean Bot.',
     options: []
 };
-exports.test = true;
+exports.test = false;
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
     const user = client.user;
     const days = Math.floor(client.uptime / 86400000);

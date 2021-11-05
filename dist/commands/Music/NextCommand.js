@@ -15,7 +15,7 @@ exports.data = {
     name: "next",
     description: "Play the next song in the queue"
 };
-exports.test = true;
+exports.test = false;
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     if ((yield client.botMusicManager.canUseCommand(client, interaction)) == false)

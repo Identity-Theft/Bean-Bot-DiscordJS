@@ -32,7 +32,7 @@ exports.data = {
         }
     ]
 };
-exports.test = true;
+exports.test = false;
 const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
     if ((yield client.botMusicManager.canUseCommand(client, interaction)) == false)
         return;

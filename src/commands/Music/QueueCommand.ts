@@ -7,7 +7,7 @@ export const data: ApplicationCommandData = {
 	name: 'queue',
 	description: 'Replies with all the songs in to the queue',
 }
-export const test = true;
+export const test = false;
 
 export const run: RunFunction = async (client: Bot, interaction: CommandInteraction) => {
 	if (await client.botMusicManager.canUseCommand(client, interaction) == false) return;
