@@ -1,11 +1,14 @@
+/* eslint-disable indent */
 import { Interaction } from "discord.js";
+import Bot from "../../classes/Bot";
 import { RunFunction } from "../../interfaces/Event";
 import { simpleEmbed, errorEmbed } from "../../utils/Utils";
 
 export const name = 'interactionCreate';
 
-export const run: RunFunction = async(client, interaction: Interaction): Promise<void> => {
-	if (interaction.isCommand()) {
+export const run: RunFunction = async(client: Bot, interaction: Interaction): Promise<void> => {
+	if (interaction.isCommand())
+	{
 		const { commandName, options } = interaction;
 
 		const cmd = client.commands.get(commandName);
@@ -21,11 +24,33 @@ export const run: RunFunction = async(client, interaction: Interaction): Promise
 
 	if (interaction.isButton())
 	{
+		const queue = client.musicManager.getQueue(interaction.guildId!);
+
 		switch(interaction.customId)
 		{
-		case 'ButtonTest1':
-			interaction.update({ embeds: [simpleEmbed(client, 'Beans')] });
-			break;
+			case 'ButtonTest1':
+				interaction.update({ embeds: [simpleEmbed(client, 'Beans')] });
+				break;
+			case 'FirstPage':
+				if (queue == undefined) return;
+
+				queue?.changePage(0, interaction);
+				break;
+			case 'PrevPage':
+				if (queue == undefined) return;
+
+				queue?.changePage(queue.currentPage - 1, interaction);
+				break;
+			case 'NextPage':
+				if (queue == undefined) return;
+
+				queue?.changePage(queue.currentPage + 1, interaction);
+				break;
+			case 'LastPage':
+				if (queue == undefined) return;
+
+				queue?.changePage(queue.embedPages.length - 1, interaction);
+				break;
 		}
 	}
 }

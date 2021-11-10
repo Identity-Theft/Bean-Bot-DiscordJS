@@ -11,9 +11,9 @@ export const data: ApplicationCommandData = {
 export const test = false;
 
 export const run: RunFunction = async (client: Bot, interaction: CommandInteraction) => {
-	if (await client.botMusicManager.canUseCommand(client, interaction) == false) return;
+	if (await client.musicManager.canUseCommand(client, interaction) == false) return;
 
-	client.botMusicManager.disconnect(interaction.guildId!);
+	client.musicManager.disconnect(interaction.guildId!);
 
 	const embed = simpleEmbed2("Disconnected", `${client.user?.username} was disconnected by ${interaction.user}`);
 	interaction.reply({ embeds: [embed] });

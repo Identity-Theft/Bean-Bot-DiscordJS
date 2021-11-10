@@ -2,14 +2,13 @@ import { AudioPlayer, VoiceConnection } from "@discordjs/voice";
 import { CommandInteraction, Snowflake, User } from "discord.js";
 import ytSearch from 'yt-search';
 import ytdl from "ytdl-core";
-import got from 'got';
+import ytpl from "ytpl";
 import Queue from "./Queue";
 import Song from "./Song";
-import NewgroundsResponse from "./NewgroundsResponse";
 import { errorEmbed } from "../utils/Utils";
 import Bot from "./Bot";
 
-class BotMusicManger
+export default class MusicManager
 {
 	private queues: Map<Snowflake, Queue> = new Map();
 	private connections: Map<Snowflake, VoiceConnection> = new Map();
@@ -102,7 +101,7 @@ class BotMusicManger
 		this.queues.delete(guildId);
 	}
 
-	public inQueue(guildId: Snowflake, song: Song, interaction: CommandInteraction): void | boolean
+	public inQueue(guildId: Snowflake, song: Song): boolean
 	{
 		const queue = this.getQueue(guildId)!;
 
@@ -111,8 +110,6 @@ class BotMusicManger
 
 			if (s.url == song.url)
 			{
-				const embed = errorEmbed("Song is already in the queue.");
-				interaction.followUp({ embeds: [embed], ephemeral: true });
 				return true;
 			}
 		}
@@ -120,7 +117,7 @@ class BotMusicManger
 		return false;
 	}
 
-	public async songInfo(url: string, addedBy: User): Promise<Song | null>
+	public async songInfo(url: string, addedBy: User): Promise<Song | Song[] | null>
 	{
 		if (!url.startsWith('https://'))
 		{
@@ -135,37 +132,39 @@ class BotMusicManger
 		}
 		else
 		{
-			// Check if url is from youtube
-			if (ytdl.validateURL(url) == true)
+			if (ytdl.validateURL(url))
 			{
-				const song = await ytdl.getInfo(url);
+				// YouTube Url
+				const info = await ytdl.getInfo(url);
 
-				return new Song(
-					song.videoDetails.title,
-					url,
-					addedBy,
-					'YouTube',
-					song.videoDetails.thumbnails[song.videoDetails.thumbnails.length - 1].url
-				)
+				if (!info.videoDetails.isLiveContent && !info.videoDetails.age_restricted)
+				{
+					return new Song(
+						info.videoDetails.title,
+						info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url,
+						info.videoDetails.lengthSeconds,
+						isNaN(info.videoDetails.likes!) ? 0 : info.videoDetails.likes!,
+						info.videoDetails.viewCount,
+						info.videoDetails.video_url,
+						addedBy
+					)
+				}
+				else return null;
 			}
-			else
+			else if (ytpl.validateID(url))
 			{
-				// Check if url is from newgrounds
-				if(!url.toLowerCase().startsWith('https://newgrounds.com/audio/listen/') && !url.toLowerCase().startsWith('https://www.newgrounds.com/audio/listen/')) return null;
+				const playlist = await ytpl(url);
+				const songs: Array<Song> = [];
 
-				const urlParts = url.split('/');
-				const id = urlParts[urlParts.length - 1];
-				const data: NewgroundsResponse = await got(`https://newgrounds.com/audio/feed/${id}`).json();
+				for (let index = 0; index < playlist.items.length; index++) {
+					const item = playlist.items[index];
+					const song = await this.songInfo(item.url, addedBy);
+					songs.push(song as Song);
+				}
 
-				return new Song(
-					data.title,
-					url,
-					addedBy,
-					'Newgrounds',
-					data.icons.small,
-					data.stream_url.split('?')[0],
-				);
+				return songs;
 			}
+			else return null;
 		}
 	}
 
@@ -177,5 +176,3 @@ class BotMusicManger
 		else return null;
 	}
 }
-
-export default BotMusicManger;

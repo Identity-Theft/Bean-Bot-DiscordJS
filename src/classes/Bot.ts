@@ -5,16 +5,16 @@ import { Event } from "../interfaces/Event";
 import fs from "fs";
 import dotenv from "dotenv";
 // import { promisify } from "util";
-import BotMusicManger from "./BotMusicManager";
+import MusicManager from "./MusicManager";
 dotenv.config();
 
 // const globPromise = promisify(glob);
 
-class Bot extends Client
+export default class Bot extends Client
 {
 	public commands: Collection<string, Command> = new Collection();
 	public events: Collection<string, Event> = new Collection();
-	public botMusicManager = new BotMusicManger();
+	public musicManager = new MusicManager();
 
 	public constructor()
 	{
@@ -23,13 +23,14 @@ class Bot extends Client
 
 	public start(): void
 	{
-		this.login(process.env.TOKEN);
+		// this.login(process.env.TOKEN);
+		this.login(process.env.DEV);
 
-		// this.chadSetup()
+		// this.setup()
 		this.herokuSetup();
 	}
 
-	// private async chadSetup(): Promise<void>
+	// private async setup(): Promise<void>
 	// {
 	// 	const ext = __filename.split(".")[1];
 
@@ -86,10 +87,8 @@ class Bot extends Client
 	public async generateCommands(): Promise<void>
 	{
 		this.commands.forEach((file) => {
-			if (file.test == true) this.application?.commands.create(file.data, '844081963324407848');
+			if (file.test == true || this.token == process.env.DEV) this.application?.commands.create(file.data, '844081963324407848');
 			else this.application?.commands.create(file.data);
 		});
 	}
 }
-
-export default Bot;

@@ -1,24 +1,30 @@
 import { User } from "discord.js";
+import { formatDuration } from "../utils/Utils";
 
-class Song
+export default class Song
 {
-	public title = '';
-	public thumbnail: string | null = null;
-	public url = '';
-	public streamUrl = ''
-	public addedBy: User | null = null;
-	public platform = '';
+	public title: string;
+	public thumbnail: string;
 
-	public constructor(title: string, url: string, addedBy: User, platform: string, thumbnail?: string | undefined, streamUrl?: string | undefined)
+	public duration = "";
+	public fortmatedDuration = "";
+
+	public likes: number;
+	public views: string;
+
+	public url: string;
+
+	public addedBy: User;
+
+	public constructor(title: string, thumbnail: string, duration: string, likes: number, views: string, url: string, addedBy: User, )
 	{
 		this.title = title;
+		this.thumbnail = thumbnail;
+		this.duration = duration;
+		this.likes = likes;
+		this.views = views;
+		this.fortmatedDuration = formatDuration(parseInt(duration))
 		this.url = url;
 		this.addedBy = addedBy;
-		this.platform = platform;
-
-		if (streamUrl != undefined) this.streamUrl = streamUrl;
-		if (thumbnail != undefined) this.thumbnail = thumbnail;
 	}
 }
-
-export default Song;

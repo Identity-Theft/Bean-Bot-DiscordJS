@@ -1,7 +1,7 @@
 import { ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
 import Bot from "../../classes/Bot";
 import { RunFunction } from "../../interfaces/Command";
-import { simpleEmbed } from "../../utils/Utils";
+import { simpleEmbed2 } from "../../utils/Utils";
 
 export const data: ApplicationCommandData = {
 	name: 'loop',
@@ -27,8 +27,8 @@ export const data: ApplicationCommandData = {
 export const test = false;
 
 export const run: RunFunction = async (client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver) => {
-	if (await client.botMusicManager.canUseCommand(client, interaction) == false) return;
+	if (await client.musicManager.canUseCommand(client, interaction) == false) return;
 
-	client.botMusicManager.getQueue(interaction.guildId!)!.loop = options.getSubcommand() as 'none' | 'song' | 'queue';
-	interaction.reply({ embeds: [simpleEmbed(client, options.getSubcommand()!)] });
+	client.musicManager.getQueue(interaction.guildId!)!.loop = options.getSubcommand() as 'none' | 'song' | 'queue';
+	interaction.reply({ embeds: [simpleEmbed2("Loop", `Now Looping: \`${options.getSubcommand()!}\``)] });
 }

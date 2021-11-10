@@ -4,8 +4,8 @@ import { RunFunction } from "../../interfaces/Command";
 import { errorEmbed, simpleEmbed2 } from "../../utils/Utils";
 
 export const data: ApplicationCommandData = {
-	name: "next",
-	description: "Play the next song in the queue."
+	name: "previous",
+	description: "Play the previous song in the queue."
 }
 
 export const test = false;
@@ -15,13 +15,14 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 
 	const queue = client.musicManager.getQueue(interaction.guildId!)!;
 
-	if (!queue.songs[queue.playing + 1])
+	if (!queue.songs[queue.playing - 1])
 	{
-		const embed = errorEmbed("There is no more songs in the queue.");
+		const embed = errorEmbed("There is no previous song.");
 		interaction.reply({ embeds: [embed], ephemeral: true});
 	}
 	else
 	{
+		queue.playing -= 2;
 		client.musicManager.getPlayer(interaction.guildId!)?.stop();
 
 		const embed = simpleEmbed2("Song Skipped", `Song skipped by ${interaction.user}`);

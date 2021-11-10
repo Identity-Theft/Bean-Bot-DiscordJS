@@ -1,6 +1,7 @@
 import { AudioPlayerState, AudioPlayerStatus, createAudioPlayer, createAudioResource, entersState, joinVoiceChannel, StreamType, VoiceConnection, VoiceConnectionStatus } from "@discordjs/voice";
 import { ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, MessageEmbed, TextChannel } from "discord.js";
 import ytdl from "ytdl-core";
+import ytpl from "ytpl";
 import Queue from "../../classes/Queue";
 import Song from "../../classes/Song";
 import Bot from "../../classes/Bot";
@@ -23,7 +24,7 @@ export const data: ApplicationCommandData = {
 export const test = false;
 
 export const run: RunFunction = async (client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver) => {
-	if (await client.botMusicManager.canUseCommand(client, interaction) == false) return;
+	if (await client.musicManager.canUseCommand(client, interaction) == false) return;
 
 	const guildId = interaction.guildId!;
 	const member = await interaction.guild?.members.fetch(interaction.user.id);
@@ -31,38 +32,25 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 
 	function playSong(song: Song, connection: VoiceConnection, queue: Queue) {
 		function getResource() {
-			if (song.platform == "YouTube") {
-				const stream = ytdl(song.url, { filter: 'audioonly', highWaterMark: 1048576 * 32 });
-				return createAudioResource(stream, { inputType: StreamType.Arbitrary });
-			}
-			else {
-				return createAudioResource(song.streamUrl, { inputType: StreamType.Arbitrary });
-			}
+			const stream = ytdl(song.url, { filter: 'audioonly', highWaterMark: 1048576 * 32 });
+			return createAudioResource(stream, { inputType: StreamType.Arbitrary });
 		}
 
 		const resource = getResource();
 
-		// if (resource.playbackDuration == 0) {
-		// 	if (queue.songs.length == 0) {
-		// 		client.botMusicManager.disconnect(guildId);
-		// 	}
-		// 	return;
-		// }
-
 		const player = createAudioPlayer();
 
-		client.botMusicManager.addPlayer(guildId, player);
+		client.musicManager.addPlayer(guildId, player);
 
 		player.play(resource);
 		connection.subscribe(player);
 
 		const embed = new MessageEmbed()
 			.setTitle('Now Playing')
-			.setDescription(`[${song?.title}](${song?.url}) (${song?.platform})`)
+			.setDescription(`[${song?.title}](${song?.url})`)
+			.setThumbnail(song.thumbnail)
 			.setFooter(`Added by ${song?.addedBy?.tag}`, song?.addedBy?.avatarURL() as string | undefined)
 			.setColor('BLURPLE')
-
-		if (song.thumbnail) embed.setThumbnail(song.thumbnail!);
 
 		queue.textChannel?.send({ embeds: [embed], reply: undefined });
 
@@ -82,7 +70,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 						queue.playing = 0;
 					}
 					else {
-						client.botMusicManager.disconnect(guildId);
+						client.musicManager.disconnect(guildId);
 					}
 				}
 			}
@@ -92,14 +80,16 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 	interaction.deferReply();
 
 	// Create song
-	const song = await client.botMusicManager.songInfo(options.getString('song')!, interaction.user);
+	const song = await client.musicManager.songInfo(options.getString('song')!, interaction.user);
 	if (song == null) {
 		interaction.followUp({ embeds: [errorEmbed('Could not play song.')] });
 		return;
 	}
 
+	const songsToAdd: Array<Song> = [];
+
 	// Create queue if one doesn't exist
-	if (client.botMusicManager.getQueue(guildId) == undefined)
+	if (client.musicManager.getQueue(guildId) == undefined)
 	{
 		const guild = await client.guilds.fetch(guildId);
 		const textChannel = await guild.channels.fetch(interaction.channelId!);
@@ -107,11 +97,14 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 		const connection = joinVoiceChannel({ channelId: channel.id, guildId: guildId, adapterCreator: createDiscordJSAdapter(channel) });
 		const queue = new Queue(channel, textChannel as TextChannel, interaction.user);
 
-		client.botMusicManager.addConnection(guildId, connection);
-		client.botMusicManager.addQueue(guildId, queue);
+		client.musicManager.addConnection(guildId, connection);
+		client.musicManager.addQueue(guildId, queue);
 
 		connection.on(VoiceConnectionStatus.Ready, async () => {
-			playSong(song!, connection, queue);
+			if (Array.isArray(song))
+				playSong(song[0]!, connection, queue);
+			else
+				playSong(song!, connection, queue);
 		});
 
 		connection.on(VoiceConnectionStatus.Disconnected, async () => {
@@ -124,7 +117,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 			}
 			catch (error)
 			{
-				client.botMusicManager.disconnect(guildId);
+				client.musicManager.disconnect(guildId);
 			}
 		});
 
@@ -133,21 +126,77 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 	}
 	else
 	{
-		const inQueue = client.botMusicManager.inQueue(guildId, song, interaction);
-
-		if (inQueue == false)
+		if (!Array.isArray(song))
 		{
-			const embed = new MessageEmbed()
-				.setTitle('Added Song to the Queue')
-				.setDescription(`[${song?.title}](${song?.url}) (${song?.platform})`)
-				.setFooter(`Added by ${song?.addedBy?.tag}`, song?.addedBy?.avatarURL() as string | undefined)
-				.setColor('BLURPLE')
+			const inQueue = client.musicManager.inQueue(guildId, song);
 
-			if (song?.thumbnail != null) embed.setThumbnail(song.thumbnail);
-			interaction.followUp({ embeds: [embed] });
+			if (inQueue == false)
+			{
+				const embed = new MessageEmbed()
+					.setTitle('Added Song to the Queue')
+					.setDescription(`[${song?.title}](${song?.url})`)
+					.setThumbnail(song.thumbnail)
+					.setFooter(`Added by ${song?.addedBy.tag}`, song?.addedBy.avatarURL() as string | undefined)
+					.setColor('BLURPLE')
+
+				interaction.followUp({ embeds: [embed] });
+			}
+			else
+			{
+				const embed = errorEmbed("Song is already in the queue.");
+				interaction.followUp({ embeds: [embed], ephemeral: true });
+				return;
+			}
+
+			const queue = client.musicManager.getQueue(guildId)!;
+
+			if (queue.songs.length == queue.maxSongs)
+			{
+				const embed = errorEmbed(`Cannot have more than ${queue.maxSongs} songs in a queue.`);
+				interaction.followUp({ embeds: [embed] });
+				return;
+			}
 		}
-		else return;
 	}
 
-	client.botMusicManager.addSong(guildId, song!);
+	if (Array.isArray(song))
+	{
+		for (let i = 0; i < song.length; i++) {
+			const s = song[i];
+			const inQueue = client.musicManager.inQueue(guildId, s);
+			const queue = client.musicManager.getQueue(guildId)!;
+
+			if (!inQueue && queue.songs.length! < queue.maxSongs)
+			{
+				songsToAdd.push(s);
+				client.musicManager.addSong(guildId, s);
+			}
+		}
+
+		if (songsToAdd.length != 0)
+		{
+			const playlist = await ytpl(options.getString("song")!);
+
+			const embed = new MessageEmbed()
+				.setTitle('Added Songs from Playlist')
+				.setDescription(`[${playlist.title}](${playlist.url}) (${songsToAdd.length}/${playlist.items.length} songs added)`)
+				.setFooter(`Added by ${song[0]?.addedBy?.tag}`, song[0]?.addedBy?.avatarURL() as string | undefined)
+				.setColor('BLURPLE')
+
+			if (playlist.bestThumbnail.url != null) embed.setThumbnail(playlist.bestThumbnail.url!);
+			if (!interaction.replied)
+				interaction.followUp({ embeds: [embed] });
+			else
+			{
+				const queue = client.musicManager.getQueue(guildId)!;
+				queue.textChannel?.send({ embeds: [embed] });
+			}
+		}
+		else
+		{
+			const embed = errorEmbed("Could not add any songs to the queue.");
+			interaction.followUp({ embeds: [embed], ephemeral: true });
+		}
+	}
+	else client.musicManager.addSong(guildId, song!);
 }
