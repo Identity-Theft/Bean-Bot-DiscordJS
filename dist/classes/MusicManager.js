@@ -24,7 +24,7 @@ class MusicManager {
         this.audioPlayers = new Map();
     }
     canUseCommand(client, interaction) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             const guildId = interaction.guildId;
             const member = yield ((_a = interaction.guild) === null || _a === void 0 ? void 0 : _a.members.fetch(interaction.user.id));
@@ -33,7 +33,7 @@ class MusicManager {
                 interaction.reply({ embeds: [(0, Utils_1.errorEmbed)('You are not in a voice channel')], ephemeral: true });
                 return false;
             }
-            if (((_c = (_b = this.getQueue(guildId)) === null || _b === void 0 ? void 0 : _b.voiceChannel) === null || _c === void 0 ? void 0 : _c.type) == 'GUILD_STAGE_VOICE' && !(member === null || member === void 0 ? void 0 : member.permissions.has('ADMINISTRATOR'))) {
+            if (((_b = this.getQueue(guildId)) === null || _b === void 0 ? void 0 : _b.voiceChannel.type) == 'GUILD_STAGE_VOICE' && !(member === null || member === void 0 ? void 0 : member.permissions.has('ADMINISTRATOR'))) {
                 interaction.reply({ embeds: [(0, Utils_1.errorEmbed)('Only admins can use music commands when Bean Bot is in a Stage Channel.')] });
                 return false;
             }
@@ -48,7 +48,7 @@ class MusicManager {
                 }
             }
             else {
-                if (channel.type == 'GUILD_STAGE_VOICE' && !((_d = interaction.memberPermissions) === null || _d === void 0 ? void 0 : _d.has('ADMINISTRATOR'))) {
+                if (channel.type == 'GUILD_STAGE_VOICE' && !((_c = interaction.memberPermissions) === null || _c === void 0 ? void 0 : _c.has('ADMINISTRATOR'))) {
                     interaction.reply({ embeds: [(0, Utils_1.errorEmbed)(`Only admins can add Bean Bot to Stage Channels. ${channel}`)], ephemeral: true });
                     return false;
                 }

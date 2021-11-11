@@ -26,7 +26,7 @@ export default class MusicManager
 			return false;
 		}
 
-		if (this.getQueue(guildId)?.voiceChannel?.type == 'GUILD_STAGE_VOICE' && !member?.permissions.has('ADMINISTRATOR'))
+		if (this.getQueue(guildId)?.voiceChannel.type == 'GUILD_STAGE_VOICE' && !member?.permissions.has('ADMINISTRATOR'))
 		{
 			interaction.reply({ embeds: [errorEmbed('Only admins can use music commands when Bean Bot is in a Stage Channel.')] });
 			return false;

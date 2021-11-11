@@ -12,9 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 class Queue {
     constructor(voiceChannel, textChannel, startedBy) {
-        this.voiceChannel = null;
-        this.textChannel = null;
-        this.startedBy = null;
         this.queueMessage = null;
         this.embedPages = [];
         this.currentPage = 0;

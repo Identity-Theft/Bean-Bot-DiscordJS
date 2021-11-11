@@ -49,13 +49,14 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 			.setTitle('Now Playing')
 			.setDescription(`[${song?.title}](${song?.url})`)
 			.setThumbnail(song.thumbnail)
-			.setFooter(`Added by ${song?.addedBy?.tag}`, song?.addedBy?.avatarURL() as string | undefined)
+			.setFooter(`Added by ${song?.addedBy.tag}`, song?.addedBy.avatarURL() as string | undefined)
 			.setColor('BLURPLE')
 
-		queue.textChannel?.send({ embeds: [embed], reply: undefined });
+		queue.textChannel.send({ embeds: [embed], reply: undefined });
 
 		player.on('stateChange', (oldState: AudioPlayerState, newState: AudioPlayerState) =>{
-			if (newState.status == AudioPlayerStatus.Idle && oldState.status == AudioPlayerStatus.Playing) {
+			if (newState.status == AudioPlayerStatus.Idle && oldState.status == AudioPlayerStatus.Playing )
+			{
 
 				if(queue.loop == 'song') {
 					playSong(queue.songs[queue.playing], connection, queue);
@@ -180,7 +181,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 			const embed = new MessageEmbed()
 				.setTitle('Added Songs from Playlist')
 				.setDescription(`[${playlist.title}](${playlist.url}) (${songsToAdd.length}/${playlist.items.length} songs added)`)
-				.setFooter(`Added by ${song[0]?.addedBy?.tag}`, song[0]?.addedBy?.avatarURL() as string | undefined)
+				.setFooter(`Added by ${song[0]?.addedBy.tag}`, song[0]?.addedBy.avatarURL() as string | undefined)
 				.setColor('BLURPLE')
 
 			if (playlist.bestThumbnail.url != null) embed.setThumbnail(playlist.bestThumbnail.url!);
@@ -189,7 +190,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 			else
 			{
 				const queue = client.musicManager.getQueue(guildId)!;
-				queue.textChannel?.send({ embeds: [embed] });
+				queue.textChannel.send({ embeds: [embed] });
 			}
 		}
 		else

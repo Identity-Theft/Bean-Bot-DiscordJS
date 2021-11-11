@@ -34,14 +34,13 @@ exports.data = {
 };
 exports.test = false;
 const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c;
     if ((yield client.musicManager.canUseCommand(client, interaction)) == false)
         return;
     const guildId = interaction.guildId;
     const member = yield ((_a = interaction.guild) === null || _a === void 0 ? void 0 : _a.members.fetch(interaction.user.id));
     const channel = member.voice.channel;
     function playSong(song, connection, queue) {
-        var _a, _b, _c;
         function getResource() {
             const stream = (0, ytdl_core_1.default)(song.url, { filter: 'audioonly', highWaterMark: 1048576 * 32 });
             return (0, voice_1.createAudioResource)(stream, { inputType: voice_1.StreamType.Arbitrary });
@@ -55,9 +54,9 @@ const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, 
             .setTitle('Now Playing')
             .setDescription(`[${song === null || song === void 0 ? void 0 : song.title}](${song === null || song === void 0 ? void 0 : song.url})`)
             .setThumbnail(song.thumbnail)
-            .setFooter(`Added by ${(_a = song === null || song === void 0 ? void 0 : song.addedBy) === null || _a === void 0 ? void 0 : _a.tag}`, (_b = song === null || song === void 0 ? void 0 : song.addedBy) === null || _b === void 0 ? void 0 : _b.avatarURL())
+            .setFooter(`Added by ${song === null || song === void 0 ? void 0 : song.addedBy.tag}`, song === null || song === void 0 ? void 0 : song.addedBy.avatarURL())
             .setColor('BLURPLE');
-        (_c = queue.textChannel) === null || _c === void 0 ? void 0 : _c.send({ embeds: [embed], reply: undefined });
+        queue.textChannel.send({ embeds: [embed], reply: undefined });
         player.on('stateChange', (oldState, newState) => {
             if (newState.status == voice_1.AudioPlayerStatus.Idle && oldState.status == voice_1.AudioPlayerStatus.Playing) {
                 if (queue.loop == 'song') {
@@ -155,7 +154,7 @@ const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, 
             const embed = new discord_js_1.MessageEmbed()
                 .setTitle('Added Songs from Playlist')
                 .setDescription(`[${playlist.title}](${playlist.url}) (${songsToAdd.length}/${playlist.items.length} songs added)`)
-                .setFooter(`Added by ${(_c = (_b = song[0]) === null || _b === void 0 ? void 0 : _b.addedBy) === null || _c === void 0 ? void 0 : _c.tag}`, (_e = (_d = song[0]) === null || _d === void 0 ? void 0 : _d.addedBy) === null || _e === void 0 ? void 0 : _e.avatarURL())
+                .setFooter(`Added by ${(_b = song[0]) === null || _b === void 0 ? void 0 : _b.addedBy.tag}`, (_c = song[0]) === null || _c === void 0 ? void 0 : _c.addedBy.avatarURL())
                 .setColor('BLURPLE');
             if (playlist.bestThumbnail.url != null)
                 embed.setThumbnail(playlist.bestThumbnail.url);
@@ -163,7 +162,7 @@ const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, 
                 interaction.followUp({ embeds: [embed] });
             else {
                 const queue = client.musicManager.getQueue(guildId);
-                (_f = queue.textChannel) === null || _f === void 0 ? void 0 : _f.send({ embeds: [embed] });
+                queue.textChannel.send({ embeds: [embed] });
             }
         }
         else {

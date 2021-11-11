@@ -3,9 +3,9 @@ import Song from "./Song";
 
 export default class Queue
 {
-	public voiceChannel: VoiceChannel | StageChannel | null = null;
-	public textChannel: TextBasedChannels | null = null;
-	public startedBy: User | null = null;
+	public voiceChannel: VoiceChannel | StageChannel;
+	public textChannel: TextBasedChannels;
+	public startedBy: User;
 
 	private queueMessage: Message | null = null;
 	public embedPages: Array<MessageEmbed> = [];
