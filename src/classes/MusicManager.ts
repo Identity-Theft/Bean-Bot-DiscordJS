@@ -48,7 +48,7 @@ export default class MusicManager
 		}
 		else
 		{
-			if (channel.type == 'GUILD_VOICE' && !interaction.memberPermissions?.has('ADMINISTRATOR'))
+			if (channel.type == 'GUILD_STAGE_VOICE' && !interaction.memberPermissions?.has('ADMINISTRATOR'))
 			{
 				interaction.reply({ embeds: [errorEmbed(`Only admins can add Bean Bot to Stage Channels. ${channel}`)], ephemeral: true });
 				return false;
