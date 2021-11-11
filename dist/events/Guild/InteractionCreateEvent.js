@@ -23,9 +23,30 @@ const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function*
         cmd.run(client, interaction, options);
     }
     if (interaction.isButton()) {
+        const queue = client.musicManager.getQueue(interaction.guildId);
         switch (interaction.customId) {
             case 'ButtonTest1':
                 interaction.update({ embeds: [(0, Utils_1.simpleEmbed)(client, 'Beans')] });
+                break;
+            case 'FirstPage':
+                if (queue == undefined)
+                    return;
+                queue === null || queue === void 0 ? void 0 : queue.changePage(0, interaction);
+                break;
+            case 'PrevPage':
+                if (queue == undefined)
+                    return;
+                queue === null || queue === void 0 ? void 0 : queue.changePage(queue.currentPage - 1, interaction);
+                break;
+            case 'NextPage':
+                if (queue == undefined)
+                    return;
+                queue === null || queue === void 0 ? void 0 : queue.changePage(queue.currentPage + 1, interaction);
+                break;
+            case 'LastPage':
+                if (queue == undefined)
+                    return;
+                queue === null || queue === void 0 ? void 0 : queue.changePage(queue.embedPages.length - 1, interaction);
                 break;
         }
     }

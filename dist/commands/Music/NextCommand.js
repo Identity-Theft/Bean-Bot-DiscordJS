@@ -13,20 +13,20 @@ exports.run = exports.test = exports.data = void 0;
 const Utils_1 = require("../../utils/Utils");
 exports.data = {
     name: "next",
-    description: "Play the next song in the queue"
+    description: "Play the next song in the queue."
 };
 exports.test = false;
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    if ((yield client.botMusicManager.canUseCommand(client, interaction)) == false)
+    if ((yield client.musicManager.canUseCommand(client, interaction)) == false)
         return;
-    const queue = client.botMusicManager.getQueue(interaction.guildId);
+    const queue = client.musicManager.getQueue(interaction.guildId);
     if (!queue.songs[queue.playing + 1]) {
         const embed = (0, Utils_1.errorEmbed)("There is no more songs in the queue.");
         interaction.reply({ embeds: [embed], ephemeral: true });
     }
     else {
-        (_a = client.botMusicManager.getPlayer(interaction.guildId)) === null || _a === void 0 ? void 0 : _a.stop();
+        (_a = client.musicManager.getPlayer(interaction.guildId)) === null || _a === void 0 ? void 0 : _a.stop();
         const embed = (0, Utils_1.simpleEmbed2)("Song Skipped", `Song skipped by ${interaction.user}`);
         interaction.reply({ embeds: [embed] });
     }

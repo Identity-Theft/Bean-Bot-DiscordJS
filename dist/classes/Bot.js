@@ -36,7 +36,7 @@ const discord_js_1 = require("discord.js");
 const fs_1 = __importDefault(require("fs"));
 const dotenv_1 = __importDefault(require("dotenv"));
 // import { promisify } from "util";
-const BotMusicManager_1 = __importDefault(require("./BotMusicManager"));
+const MusicManager_1 = __importDefault(require("./MusicManager"));
 dotenv_1.default.config();
 // const globPromise = promisify(glob);
 class Bot extends discord_js_1.Client {
@@ -44,14 +44,15 @@ class Bot extends discord_js_1.Client {
         super({ intents: 643 });
         this.commands = new discord_js_1.Collection();
         this.events = new discord_js_1.Collection();
-        this.botMusicManager = new BotMusicManager_1.default();
+        this.musicManager = new MusicManager_1.default();
     }
     start() {
         this.login(process.env.TOKEN);
-        // this.chadSetup()
+        // this.login(process.env.DEV);
+        // this.setup()
         this.herokuSetup();
     }
-    // private async chadSetup(): Promise<void>
+    // private async setup(): Promise<void>
     // {
     // 	const ext = __filename.split(".")[1];
     // 	// Add commands to collection
@@ -96,7 +97,7 @@ class Bot extends discord_js_1.Client {
         return __awaiter(this, void 0, void 0, function* () {
             this.commands.forEach((file) => {
                 var _a, _b;
-                if (file.test == true)
+                if (file.test == true || this.token == process.env.DEV)
                     (_a = this.application) === null || _a === void 0 ? void 0 : _a.commands.create(file.data, '844081963324407848');
                 else
                     (_b = this.application) === null || _b === void 0 ? void 0 : _b.commands.create(file.data);

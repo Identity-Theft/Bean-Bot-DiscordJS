@@ -10,19 +10,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.test = exports.data = void 0;
-const Utils_1 = require("../../utils/Utils");
+const discord_js_1 = require("discord.js");
 exports.data = {
-    name: 'stop',
-    description: 'Disconnet Bean Bot from the Voice Channel and clear the queue.',
+    name: 'playing',
+    description: 'Get info about the current song.',
     options: []
 };
 exports.test = false;
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     if ((yield client.musicManager.canUseCommand(client, interaction)) == false)
         return;
-    client.musicManager.disconnect(interaction.guildId);
-    const embed = (0, Utils_1.simpleEmbed2)("Disconnected", `${(_a = client.user) === null || _a === void 0 ? void 0 : _a.username} was disconnected by ${interaction.user}`);
+    const queue = client.musicManager.getQueue(interaction.guildId);
+    const song = queue.songs[queue.playing];
+    const embed = new discord_js_1.MessageEmbed()
+        .setTitle("Currently Playing")
+        .setDescription(`[${song.title}](${song.url})`)
+        .setThumbnail(song.thumbnail)
+        .addFields({ name: "Duration", value: song.fortmatedDuration, inline: true }, { name: "Likes", value: song.likes.toString(), inline: true }, { name: "Views", value: song.views, inline: true })
+        .setFooter(`Added by ${song.addedBy.tag}`, song.addedBy.avatarURL())
+        .setColor('BLURPLE');
     interaction.reply({ embeds: [embed] });
 });
 exports.run = run;

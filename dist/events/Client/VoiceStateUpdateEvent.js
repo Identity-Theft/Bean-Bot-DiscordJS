@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.name = void 0;
 exports.name = 'voiceStateUpdate';
 const run = (client, oldState, newState) => __awaiter(void 0, void 0, void 0, function* () {
-    const queue = client.botMusicManager.getQueue(oldState.guild.id);
+    const queue = client.musicManager.getQueue(oldState.guild.id);
     if (queue != undefined && newState.channel != queue.voiceChannel && newState.channel != null)
         queue.voiceChannel == newState.channel;
 });

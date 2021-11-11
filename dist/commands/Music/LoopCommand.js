@@ -34,9 +34,9 @@ exports.data = {
 };
 exports.test = false;
 const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
-    if ((yield client.botMusicManager.canUseCommand(client, interaction)) == false)
+    if ((yield client.musicManager.canUseCommand(client, interaction)) == false)
         return;
-    client.botMusicManager.getQueue(interaction.guildId).loop = options.getSubcommand();
-    interaction.reply({ embeds: [(0, Utils_1.simpleEmbed)(client, options.getSubcommand())] });
+    client.musicManager.getQueue(interaction.guildId).loop = options.getSubcommand();
+    interaction.reply({ embeds: [(0, Utils_1.simpleEmbed2)("Loop", `Now Looping: \`${options.getSubcommand()}\``)] });
 });
 exports.run = run;

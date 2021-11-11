@@ -12,17 +12,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.test = exports.data = void 0;
 const Utils_1 = require("../../utils/Utils");
 exports.data = {
-    name: 'stop',
-    description: 'Disconnet Bean Bot from the Voice Channel and clear the queue.',
-    options: []
+    name: "previous",
+    description: "Play the previous song in the queue."
 };
 exports.test = false;
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     if ((yield client.musicManager.canUseCommand(client, interaction)) == false)
         return;
-    client.musicManager.disconnect(interaction.guildId);
-    const embed = (0, Utils_1.simpleEmbed2)("Disconnected", `${(_a = client.user) === null || _a === void 0 ? void 0 : _a.username} was disconnected by ${interaction.user}`);
-    interaction.reply({ embeds: [embed] });
+    const queue = client.musicManager.getQueue(interaction.guildId);
+    if (!queue.songs[queue.playing - 1]) {
+        const embed = (0, Utils_1.errorEmbed)("There is no previous song.");
+        interaction.reply({ embeds: [embed], ephemeral: true });
+    }
+    else {
+        queue.playing -= 2;
+        (_a = client.musicManager.getPlayer(interaction.guildId)) === null || _a === void 0 ? void 0 : _a.stop();
+        const embed = (0, Utils_1.simpleEmbed2)("Song Skipped", `Song skipped by ${interaction.user}`);
+        interaction.reply({ embeds: [embed] });
+    }
 });
 exports.run = run;
