@@ -5,7 +5,7 @@ import ytdl from "ytdl-core";
 import ytpl from "ytpl";
 import Queue from "./Queue";
 import Song from "./Song";
-import { errorEmbed, getChannel } from "../utils/Utils";
+import { errorEmbed } from "../utils/Utils";
 import Bot from "./Bot";
 
 export default class MusicManager
