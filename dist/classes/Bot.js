@@ -47,8 +47,8 @@ class Bot extends discord_js_1.Client {
         this.musicManager = new MusicManager_1.default();
     }
     start() {
-        this.login(process.env.TOKEN);
-        // this.login(process.env.DEV);
+        // this.login(process.env.TOKEN);
+        this.login(process.env.DEV);
         // this.setup()
         this.herokuSetup();
     }

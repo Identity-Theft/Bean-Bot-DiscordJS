@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js";
+import { MessageEmbed, Snowflake } from "discord.js";
 import Bot from "../classes/Bot";
 
 function simpleEmbed(client: Bot, description: string): MessageEmbed
@@ -25,6 +25,13 @@ function errorEmbed(err: string): MessageEmbed
 		.setColor('RED')
 }
 
+async function getChannel(client: Bot, guildId: Snowflake, channelId: Snowflake): Promise<string | undefined>
+{
+	const guild = await client.guilds.fetch(guildId);
+	const channel = await guild.channels.cache.find(c => c.id == channelId);
+	return channel?.name;
+}
+
 const formatInt = (int: number) => (int < 10 ? `0${int}` : int);
 
 function formatDuration(sec: number): string {
@@ -37,4 +44,4 @@ function formatDuration(sec: number): string {
 	return `00:${formatInt(seconds)}`;
 }
 
-export { simpleEmbed, simpleEmbed2, errorEmbed, formatDuration };
+export { simpleEmbed, simpleEmbed2, errorEmbed, getChannel, formatDuration };

@@ -3,6 +3,8 @@ import Song from "./Song";
 
 export default class Queue
 {
+	public restricted = false;
+
 	public voiceChannel: VoiceChannel | StageChannel;
 	public textChannel: TextBasedChannels;
 	public startedBy: User;

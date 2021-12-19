@@ -5,7 +5,7 @@ import ytdl from "ytdl-core";
 import ytpl from "ytpl";
 import Queue from "./Queue";
 import Song from "./Song";
-import { errorEmbed } from "../utils/Utils";
+import { errorEmbed, getChannel } from "../utils/Utils";
 import Bot from "./Bot";
 
 export default class MusicManager
@@ -53,6 +53,12 @@ export default class MusicManager
 				interaction.reply({ embeds: [errorEmbed(`Only admins can add Bean Bot to Stage Channels. ${channel}`)], ephemeral: true });
 				return false;
 			}
+		}
+
+		if (this.getQueue(guildId)?.restricted == true && !interaction.memberPermissions?.has('ADMINISTRATOR'))
+		{
+			interaction.reply({ embeds: [errorEmbed(`An admin has restricted the queue.`)], ephemeral: true });
+			return false;
 		}
 
 		return true;

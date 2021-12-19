@@ -2,7 +2,7 @@
 import { Interaction } from "discord.js";
 import Bot from "../../classes/Bot";
 import { RunFunction } from "../../interfaces/Event";
-import { simpleEmbed, errorEmbed } from "../../utils/Utils";
+import { simpleEmbed, errorEmbed, getChannel } from "../../utils/Utils";
 
 export const name = 'interactionCreate';
 
@@ -10,6 +10,14 @@ export const run: RunFunction = async(client: Bot, interaction: Interaction): Pr
 	if (interaction.isCommand())
 	{
 		const { commandName, options } = interaction;
+
+		const c = await getChannel(client, interaction.guildId!, interaction.channelId)!;
+
+		if (!c?.includes("bot"))
+		{
+			interaction.reply({ embeds: [errorEmbed('Bean Bot must be used in a bot channel.')], ephemeral: true });
+			return;
+		}
 
 		const cmd = client.commands.get(commandName);
 
