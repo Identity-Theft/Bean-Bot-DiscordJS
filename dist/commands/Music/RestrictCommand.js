@@ -16,7 +16,7 @@ exports.data = {
     description: 'Retricts music commands to admins',
     options: []
 };
-exports.test = true;
+exports.test = false;
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
     if ((yield client.musicManager.canUseCommand(client, interaction)) == false)
         return;
