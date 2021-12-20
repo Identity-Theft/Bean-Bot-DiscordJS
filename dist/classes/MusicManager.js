@@ -24,7 +24,7 @@ class MusicManager {
         this.audioPlayers = new Map();
     }
     canUseCommand(client, interaction) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             const guildId = interaction.guildId;
             const member = yield ((_a = interaction.guild) === null || _a === void 0 ? void 0 : _a.members.fetch(interaction.user.id));
@@ -52,10 +52,6 @@ class MusicManager {
                     interaction.reply({ embeds: [(0, Utils_1.errorEmbed)(`Only admins can add Bean Bot to Stage Channels. ${channel}`)], ephemeral: true });
                     return false;
                 }
-            }
-            if (((_d = this.getQueue(guildId)) === null || _d === void 0 ? void 0 : _d.restricted) == true && !((_e = interaction.memberPermissions) === null || _e === void 0 ? void 0 : _e.has('ADMINISTRATOR'))) {
-                interaction.reply({ embeds: [(0, Utils_1.errorEmbed)(`An admin has restricted the queue.`)], ephemeral: true });
-                return false;
             }
             return true;
         });

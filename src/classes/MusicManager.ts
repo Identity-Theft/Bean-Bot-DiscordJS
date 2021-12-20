@@ -55,12 +55,6 @@ export default class MusicManager
 			}
 		}
 
-		if (this.getQueue(guildId)?.restricted == true && !interaction.memberPermissions?.has('ADMINISTRATOR'))
-		{
-			interaction.reply({ embeds: [errorEmbed(`An admin has restricted the queue.`)], ephemeral: true });
-			return false;
-		}
-
 		return true;
 	}
 
