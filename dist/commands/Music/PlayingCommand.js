@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.test = exports.data = void 0;
-const discord_js_1 = require("discord.js");
 exports.data = {
     name: 'playing',
     description: 'Get info about the current song.',
@@ -22,13 +21,35 @@ const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function*
         return;
     const queue = client.musicManager.getQueue(interaction.guildId);
     const song = queue.songs[queue.playing];
-    const embed = new discord_js_1.MessageEmbed()
-        .setTitle("Currently Playing")
-        .setDescription(`[${song.title}](${song.url})`)
-        .setThumbnail(song.thumbnail)
-        .addFields({ name: "Duration", value: song.fortmatedDuration, inline: true }, { name: "Likes", value: song.likes.toString(), inline: true }, { name: "Views", value: song.views, inline: true })
-        .setFooter(`Added by ${song.addedBy.tag}`, song.addedBy.avatarURL())
-        .setColor('BLURPLE');
+    const embed = {
+        title: "Currently Playing",
+        description: `[${song.title}](${song.url})`,
+        thumbnail: {
+            url: song.thumbnail
+        },
+        fields: [
+            {
+                name: "Duration",
+                value: song.fortmatedDuration,
+                inline: true
+            },
+            {
+                name: "Likes",
+                value: song.likes.toString(),
+                inline: true
+            },
+            {
+                name: "Views",
+                value: song.views,
+                inline: true
+            }
+        ],
+        color: 'BLURPLE',
+        footer: {
+            text: `Added by ${song.addedBy.tag}`,
+            icon_url: song.addedBy.avatarURL()
+        }
+    };
     interaction.reply({ embeds: [embed] });
 });
 exports.run = run;

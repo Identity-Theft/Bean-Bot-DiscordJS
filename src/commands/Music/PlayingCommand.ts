@@ -1,4 +1,4 @@
-import { ApplicationCommandData, CommandInteraction, MessageEmbed } from "discord.js";
+import { ApplicationCommandData, CommandInteraction, MessageEmbedOptions } from "discord.js";
 import Bot from "../../classes/Bot";
 import { RunFunction } from "../../interfaces/Command";
 
@@ -14,17 +14,35 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 	const queue = client.musicManager.getQueue(interaction.guildId!)!;
 	const song = queue.songs[queue.playing];
 
-	const embed = new MessageEmbed()
-		.setTitle("Currently Playing")
-		.setDescription(`[${song.title}](${song.url})`)
-		.setThumbnail(song.thumbnail)
-		.addFields(
-			{ name: "Duration", value: song.fortmatedDuration, inline: true },
-			{ name: "Likes", value: song.likes.toString(), inline: true },
-			{ name: "Views", value: song.views, inline: true }
-		)
-		.setFooter(`Added by ${song.addedBy.tag}`, song.addedBy.avatarURL() as string)
-		.setColor('BLURPLE');
+	const embed: MessageEmbedOptions = {
+		title: "Currently Playing",
+		description: `[${song.title}](${song.url})`,
+		thumbnail: {
+			url: song.thumbnail
+		},
+		fields: [
+			{
+				name: "Duration",
+				value: song.fortmatedDuration,
+				inline: true
+			},
+			{
+				name: "Likes",
+				value: song.likes.toString(),
+				inline: true
+			},
+			{
+				name: "Views",
+				value: song.views,
+				inline: true
+			}
+		],
+		color: 'BLURPLE',
+		footer: {
+			text: `Added by ${song.addedBy.tag}`,
+			icon_url: song.addedBy.avatarURL() as string | undefined
+		}
+	};
 
 	interaction.reply({ embeds: [embed] });
 }

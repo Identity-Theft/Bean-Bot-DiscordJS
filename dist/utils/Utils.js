@@ -12,25 +12,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.formatDuration = exports.getChannel = exports.errorEmbed = exports.simpleEmbed2 = exports.simpleEmbed = void 0;
 const discord_js_1 = require("discord.js");
 function simpleEmbed(client, description) {
-    var _a;
-    return new discord_js_1.MessageEmbed()
-        .setAuthor(client.user.username, (_a = client.user) === null || _a === void 0 ? void 0 : _a.avatarURL())
-        .setDescription(description)
-        .setColor('BLURPLE');
+    var _a, _b;
+    const embed = {
+        author: {
+            name: (_a = client.user) === null || _a === void 0 ? void 0 : _a.username,
+            icon_url: (_b = client.user) === null || _b === void 0 ? void 0 : _b.avatarURL()
+        },
+        description: description,
+        color: 'BLURPLE'
+    };
+    return new discord_js_1.MessageEmbed(embed);
 }
 exports.simpleEmbed = simpleEmbed;
 function simpleEmbed2(name, description) {
-    return new discord_js_1.MessageEmbed()
-        .setTitle(name)
-        .setDescription(description)
-        .setColor('BLURPLE');
+    const embed = {
+        title: name,
+        description: description,
+        color: 'BLURPLE'
+    };
+    return new discord_js_1.MessageEmbed(embed);
 }
 exports.simpleEmbed2 = simpleEmbed2;
 function errorEmbed(err) {
-    return new discord_js_1.MessageEmbed()
-        .setTitle('Error')
-        .setDescription(err)
-        .setColor('RED');
+    const embed = {
+        title: "⚠️ Error",
+        description: err,
+        color: 'RED'
+    };
+    return new discord_js_1.MessageEmbed(embed);
 }
 exports.errorEmbed = errorEmbed;
 function getChannel(client, guildId, channelId) {

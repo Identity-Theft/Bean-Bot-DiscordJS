@@ -1,4 +1,4 @@
-import { ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, MessageEmbed } from "discord.js";
+import { ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, MessageEmbedOptions } from "discord.js";
 import Bot from "../../classes/Bot";
 import { RunFunction } from "../../interfaces/Command";
 import { errorEmbed } from "../../utils/Utils";
@@ -27,19 +27,25 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 
 	if (queue.songs[position] == null)
 	{
-		const embed = errorEmbed(`Song \`${position}\` does not exist.`);
+		const embed = errorEmbed(`Song \`${position + 1}\` does not exist.`);
 		interaction.reply({ embeds: [embed], ephemeral: true});
 		return;
 	}
 
 	const song = queue.songs[position];
 
-	const embed = new MessageEmbed()
-		.setTitle("Song Removed")
-		.setDescription(`[${song.title}](${song.url})`)
-		.setThumbnail(song.thumbnail)
-		.setFooter(`Removed by ${interaction.user.tag}`)
-		.setColor('BLURPLE');
+	const embed: MessageEmbedOptions = {
+		title: "Song Removed",
+		description: `[${song.title}]{${song.url}}`,
+		thumbnail: {
+			url: song.thumbnail
+		},
+		color: 'BLURPLE',
+		footer: {
+			text: `Removed by ${interaction.user.tag}`,
+			icon_url: interaction.user.avatarURL() as string | undefined
+		}
+	};
 
 	interaction.reply({ embeds: [embed] });
 

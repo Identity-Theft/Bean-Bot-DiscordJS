@@ -1,4 +1,4 @@
-import { ApplicationCommandData, CommandInteraction, MessageEmbed } from "discord.js";
+import { ApplicationCommandData, CommandInteraction, MessageEmbedOptions } from "discord.js";
 import Bot from "../../classes/Bot";
 import { RunFunction } from "../../interfaces/Command";
 
@@ -17,15 +17,27 @@ export const run: RunFunction = async(client: Bot, interaction: CommandInteracti
 	const minutes = Math.floor(client.uptime! / 60000) % 60;
 	const seconds = Math.floor(client.uptime! / 1000) % 60;
 
-	const embed = new MessageEmbed()
-		.setTitle(user.username)
-		.addFields(
-			{ name: 'Ping', value: `${Math.round(client.ws.ping)} ms` },
-			{ name: 'Uptime', value: `${days} Days, ${hours} Hours, ${minutes} Minutes, ${seconds} Seconds` },
-			// { name: 'Shard', value: client.shard },
-		)
-		.setColor('BLURPLE')
-		.setFooter(`User ID: ${user.id}`);
+	const embed: MessageEmbedOptions = {
+		title: user.username,
+		fields: [
+			{
+				name: "Ping",
+				value: `${Math.round(client.ws.ping)} ms`
+			},
+			{
+				name: 'Uptime',
+				value: `${days} Days, ${hours} Hours, ${minutes} Minutes, ${seconds} Seconds`
+			},
+			// {
+			// 	name: 'Shard',
+			// 	value: client.shard
+			// }
+		],
+		color: 'BLURPLE',
+		footer: {
+			text: `User ID: ${user.id}`
+		}
+	};
 
 	interaction.reply({ embeds: [embed] });
 }

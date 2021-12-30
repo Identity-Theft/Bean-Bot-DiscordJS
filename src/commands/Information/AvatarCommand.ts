@@ -1,4 +1,4 @@
-import { MessageEmbed, ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
+import { MessageEmbedOptions, ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
 import Bot from "../../classes/Bot";
 import { RunFunction } from "../../interfaces/Command";
 
@@ -19,10 +19,13 @@ export const test = false;
 export const run: RunFunction = async(client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver) => {
 	const user = options.getUser('user')!;
 
-	const embed = new MessageEmbed()
-		.setTitle(`${user.tag}`)
-		.setImage(`${user.avatarURL()}`)
-		.setColor('BLURPLE')
+	const embed: MessageEmbedOptions = {
+		title: user.tag,
+		image: {
+			url: user.avatarURL()?.toString()
+		},
+		color: 'BLURPLE'
+	};
 
 	interaction.reply({ embeds: [embed] });
 }

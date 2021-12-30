@@ -1,5 +1,4 @@
-/* eslint-disable indent */
-import { Interaction } from "discord.js";
+import { CommandInteractionOptionResolver, Interaction } from "discord.js";
 import Bot from "../../classes/Bot";
 import { RunFunction } from "../../interfaces/Event";
 import { simpleEmbed, errorEmbed, getChannel } from "../../utils/Utils";
@@ -27,7 +26,7 @@ export const run: RunFunction = async(client: Bot, interaction: Interaction): Pr
 			return;
 		}
 
-		cmd.run(client, interaction, options);
+		cmd.run(client, interaction, options as CommandInteractionOptionResolver);
 	}
 
 	if (interaction.isButton())
@@ -36,29 +35,29 @@ export const run: RunFunction = async(client: Bot, interaction: Interaction): Pr
 
 		switch(interaction.customId)
 		{
-			case 'ButtonTest1':
-				interaction.update({ embeds: [simpleEmbed(client, 'Beans')] });
-				break;
-			case 'FirstPage':
-				if (queue == undefined) return;
+		case 'ButtonTest1':
+			interaction.update({ embeds: [simpleEmbed(client, 'Beans')] });
+			break;
+		case 'FirstPage':
+			if (queue == undefined) return;
 
-				queue?.changePage(0, interaction);
-				break;
-			case 'PrevPage':
-				if (queue == undefined) return;
+			queue?.changePage(0, interaction);
+			break;
+		case 'PrevPage':
+			if (queue == undefined) return;
 
-				queue?.changePage(queue.currentPage - 1, interaction);
-				break;
-			case 'NextPage':
-				if (queue == undefined) return;
+			queue?.changePage(queue.currentPage - 1, interaction);
+			break;
+		case 'NextPage':
+			if (queue == undefined) return;
 
-				queue?.changePage(queue.currentPage + 1, interaction);
-				break;
-			case 'LastPage':
-				if (queue == undefined) return;
+			queue?.changePage(queue.currentPage + 1, interaction);
+			break;
+		case 'LastPage':
+			if (queue == undefined) return;
 
-				queue?.changePage(queue.embedPages.length - 1, interaction);
-				break;
+			queue?.changePage(queue.embedPages.length - 1, interaction);
+			break;
 		}
 	}
 }

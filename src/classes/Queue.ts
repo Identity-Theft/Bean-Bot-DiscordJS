@@ -1,10 +1,10 @@
-import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageButton, MessageEmbed, StageChannel, TextBasedChannels, User, VoiceChannel } from "discord.js";
+import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageButton, MessageEmbed, MessageEmbedOptions, StageChannel, TextBasedChannel, User, VoiceChannel } from "discord.js";
 import Song from "./Song";
 
 export default class Queue
 {
 	public voiceChannel: VoiceChannel | StageChannel;
-	public textChannel: TextBasedChannels;
+	public textChannel: TextBasedChannel;
 	public startedBy: User;
 
 	private queueMessage: Message | null = null;
@@ -17,7 +17,7 @@ export default class Queue
 	public songs: Array<Song> = [];
 	public readonly maxSongs = 100;
 
-	public constructor(voiceChannel: VoiceChannel | StageChannel, textChannel: TextBasedChannels, startedBy: User)
+	public constructor(voiceChannel: VoiceChannel | StageChannel, textChannel: TextBasedChannel, startedBy: User)
 	{
 		this.voiceChannel = voiceChannel,
 		this.textChannel = textChannel,
@@ -36,10 +36,12 @@ export default class Queue
 			k += 10;
 
 			const info = current.map(track => `${++j}) [${track.title}](${track.url}) - Added by ${track.addedBy}`).join('\n');
-			const embed = new MessageEmbed()
-				.setDescription(info)
-				.setColor('BLURPLE')
-			embeds.push(embed);
+			const embed: MessageEmbedOptions = {
+				description: info,
+				color: 'BLURPLE'
+			};
+
+			embeds.push(new MessageEmbed(embed));
 		}
 
 		const row = new MessageActionRow()
@@ -62,7 +64,8 @@ export default class Queue
 					.setStyle('PRIMARY'),
 			)
 
-		const embed = embeds[0].setFooter(`Page ${1}/${embeds.length}`);
+		const embed = embeds[0];
+		embed.footer = { text: `Page ${1}/${embeds.length}` }
 
 		if (embeds.length > 1)
 			interaction.reply({ embeds: [embed], components: [row] });
@@ -84,7 +87,8 @@ export default class Queue
 			return;
 		}
 
-		const embed = this.embedPages[page].setFooter(`Page ${page + 1}/${this.embedPages.length}`);
+		const embed = this.embedPages[page];
+		embed.footer = { text: `Page ${page + 1}/${this.embedPages.length}` };
 		this.currentPage = page;
 
 		interaction.update({ embeds: [embed] });

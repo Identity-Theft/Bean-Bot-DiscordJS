@@ -41,7 +41,7 @@ dotenv_1.default.config();
 // const globPromise = promisify(glob);
 class Bot extends discord_js_1.Client {
     constructor() {
-        super({ intents: 643 });
+        super({ intents: 647 });
         this.commands = new discord_js_1.Collection();
         this.events = new discord_js_1.Collection();
         this.musicManager = new MusicManager_1.default();

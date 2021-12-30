@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.test = exports.data = void 0;
-const discord_js_1 = require("discord.js");
 exports.data = {
     name: 'bot',
     description: 'Replies with info about Bean Bot.',
@@ -23,11 +22,27 @@ const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function*
     const hours = Math.floor(client.uptime / 3600000) % 24;
     const minutes = Math.floor(client.uptime / 60000) % 60;
     const seconds = Math.floor(client.uptime / 1000) % 60;
-    const embed = new discord_js_1.MessageEmbed()
-        .setTitle(user.username)
-        .addFields({ name: 'Ping', value: `${Math.round(client.ws.ping)} ms` }, { name: 'Uptime', value: `${days} Days, ${hours} Hours, ${minutes} Minutes, ${seconds} Seconds` })
-        .setColor('BLURPLE')
-        .setFooter(`User ID: ${user.id}`);
+    const embed = {
+        title: user.username,
+        fields: [
+            {
+                name: "Ping",
+                value: `${Math.round(client.ws.ping)} ms`
+            },
+            {
+                name: 'Uptime',
+                value: `${days} Days, ${hours} Hours, ${minutes} Minutes, ${seconds} Seconds`
+            },
+            // {
+            // 	name: 'Shard',
+            // 	value: client.shard
+            // }
+        ],
+        color: 'BLURPLE',
+        footer: {
+            text: `User ID: ${user.id}`
+        }
+    };
     interaction.reply({ embeds: [embed] });
 });
 exports.run = run;

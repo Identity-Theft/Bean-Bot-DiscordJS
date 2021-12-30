@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.test = exports.data = void 0;
-const discord_js_1 = require("discord.js");
 const Utils_1 = require("../../utils/Utils");
 exports.data = {
     name: "remove",
@@ -33,17 +32,23 @@ const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, 
     const queue = client.musicManager.getQueue(guildId);
     const position = options.getInteger("song") - 1;
     if (queue.songs[position] == null) {
-        const embed = (0, Utils_1.errorEmbed)(`Song \`${position}\` does not exist.`);
+        const embed = (0, Utils_1.errorEmbed)(`Song \`${position + 1}\` does not exist.`);
         interaction.reply({ embeds: [embed], ephemeral: true });
         return;
     }
     const song = queue.songs[position];
-    const embed = new discord_js_1.MessageEmbed()
-        .setTitle("Song Removed")
-        .setDescription(`[${song.title}](${song.url})`)
-        .setThumbnail(song.thumbnail)
-        .setFooter(`Removed by ${interaction.user.tag}`)
-        .setColor('BLURPLE');
+    const embed = {
+        title: "Song Removed",
+        description: `[${song.title}]{${song.url}}`,
+        thumbnail: {
+            url: song.thumbnail
+        },
+        color: 'BLURPLE',
+        footer: {
+            text: `Removed by ${interaction.user.tag}`,
+            icon_url: interaction.user.avatarURL()
+        }
+    };
     interaction.reply({ embeds: [embed] });
     if (position == queue.playing) {
         queue.playing -= 1;

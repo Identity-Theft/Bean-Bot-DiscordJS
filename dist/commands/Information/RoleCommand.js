@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.test = exports.data = void 0;
-const discord_js_1 = require("discord.js");
 const moment_1 = __importDefault(require("moment"));
 exports.data = {
     name: 'role',
@@ -34,13 +33,45 @@ const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, 
     const role = yield guild.roles.fetch(roleId);
     if (!role)
         return;
-    const embed = new discord_js_1.MessageEmbed()
-        .setTitle(role.name)
-        .addFields({ name: 'Mentionable', value: role.mentionable ? 'True' : 'False', inline: true }, { name: 'Hex Colour', value: role.hexColor.toString(), inline: true }, 
-    // { name: 'Permissions', value: role.permissions.map(p => p).join(' '), inline: true },
-    { name: 'Hoisted', value: role.hoist ? 'True' : 'False', inline: true }, { name: 'Role Created', value: moment_1.default.utc(role.createdAt).format('dddd, MMMM Do YYYY'), inline: true }, { name: 'Position', value: role.position.toString(), inline: true })
-        .setColor(role.color)
-        .setFooter(`Role ID: ${roleId}`);
+    const embed = {
+        title: role.name,
+        fields: [
+            {
+                name: 'Mentionable',
+                value: role.mentionable ? 'True' : 'False',
+                inline: true
+            },
+            {
+                name: 'Hex Colour',
+                value: role.hexColor.toString(),
+                inline: true
+            },
+            // {
+            // 	name: 'Permissions',
+            // 	value: role.permissions.map(p => p).join(' '),
+            // 	inline: true
+            // },
+            {
+                name: 'Hoisted',
+                value: role.hoist ? 'True' : 'False',
+                inline: true
+            },
+            {
+                name: 'Role Created',
+                value: moment_1.default.utc(role.createdAt).format('dddd, MMMM Do YYYY'),
+                inline: true
+            },
+            {
+                name: 'Position',
+                value: role.position.toString(),
+                inline: true
+            }
+        ],
+        color: role.color,
+        footer: {
+            text: `Role ID: ${roleId}`
+        }
+    };
     interaction.reply({ embeds: [embed] });
 });
 exports.run = run;

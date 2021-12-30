@@ -32,10 +32,11 @@ class Queue {
                 let j = i;
                 k += 10;
                 const info = current.map(track => `${++j}) [${track.title}](${track.url}) - Added by ${track.addedBy}`).join('\n');
-                const embed = new discord_js_1.MessageEmbed()
-                    .setDescription(info)
-                    .setColor('BLURPLE');
-                embeds.push(embed);
+                const embed = {
+                    description: info,
+                    color: 'BLURPLE'
+                };
+                embeds.push(new discord_js_1.MessageEmbed(embed));
             }
             const row = new discord_js_1.MessageActionRow()
                 .addComponents(new discord_js_1.MessageButton()
@@ -51,7 +52,8 @@ class Queue {
                 .setCustomId('LastPage')
                 .setEmoji('➡️')
                 .setStyle('PRIMARY'));
-            const embed = embeds[0].setFooter(`Page ${1}/${embeds.length}`);
+            const embed = embeds[0];
+            embed.footer = { text: `Page ${1}/${embeds.length}` };
             if (embeds.length > 1)
                 interaction.reply({ embeds: [embed], components: [row] });
             else
@@ -68,7 +70,8 @@ class Queue {
             interaction.update({ components: [] });
             return;
         }
-        const embed = this.embedPages[page].setFooter(`Page ${page + 1}/${this.embedPages.length}`);
+        const embed = this.embedPages[page];
+        embed.footer = { text: `Page ${page + 1}/${this.embedPages.length}` };
         this.currentPage = page;
         interaction.update({ embeds: [embed] });
     }

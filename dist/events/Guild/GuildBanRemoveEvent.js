@@ -9,30 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.test = exports.data = void 0;
-exports.data = {
-    name: 'avatar',
-    description: 'Replies with a user\'s avatar.',
-    options: [
-        {
-            type: 'USER',
-            name: 'user',
-            description: 'User to get avatar from.',
-            required: true,
-        }
-    ],
-};
-exports.test = false;
-const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const user = options.getUser('user');
-    const embed = {
-        title: user.tag,
-        image: {
-            url: (_a = user.avatarURL()) === null || _a === void 0 ? void 0 : _a.toString()
-        },
-        color: 'BLURPLE'
-    };
-    interaction.reply({ embeds: [embed] });
+exports.run = exports.name = void 0;
+exports.name = "guildBanRemove";
+const run = (client, ban) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Unbanned ${ban.user.username} from ${ban.guild.name}`);
+    ban.user.send({
+        content: `You have been unbanned from **${ban.guild.name}**.`,
+        files: [`${__dirname}/../../../assets/reflection.mov`]
+    });
 });
 exports.run = run;

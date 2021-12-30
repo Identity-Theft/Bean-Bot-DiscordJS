@@ -1,5 +1,5 @@
 import { AudioPlayerState, AudioPlayerStatus, createAudioPlayer, createAudioResource, entersState, joinVoiceChannel, StreamType, VoiceConnection, VoiceConnectionStatus } from "@discordjs/voice";
-import { ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, MessageEmbed, TextChannel } from "discord.js";
+import { ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, MessageEmbedOptions, TextChannel } from "discord.js";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
 import Queue from "../../classes/Queue";
@@ -45,14 +45,20 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 		player.play(resource);
 		connection.subscribe(player);
 
-		const embed = new MessageEmbed()
-			.setTitle('Now Playing')
-			.setDescription(`[${song?.title}](${song?.url})`)
-			.setThumbnail(song.thumbnail)
-			.setFooter(`Added by ${song?.addedBy.tag}`, song?.addedBy.avatarURL() as string | undefined)
-			.setColor('BLURPLE')
+		const embed: MessageEmbedOptions = {
+			title: "Now Playing",
+			description: `[${song.title}](${song.url})`,
+			thumbnail: {
+				url: song.thumbnail
+			},
+			color: 'BLURPLE',
+			footer: {
+				text: `Added by ${song.addedBy.tag}`,
+				icon_url: song.addedBy.avatarURL() as string | undefined
+			}
+		};
 
-		queue.textChannel.send({ embeds: [embed], reply: undefined });
+		queue.textChannel.send({ embeds: [embed] });
 
 		player.on('stateChange', (oldState: AudioPlayerState, newState: AudioPlayerState) =>{
 			if (newState.status == AudioPlayerStatus.Idle && oldState.status == AudioPlayerStatus.Playing )
@@ -133,12 +139,18 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 
 			if (inQueue == false)
 			{
-				const embed = new MessageEmbed()
-					.setTitle('Added Song to the Queue')
-					.setDescription(`[${song?.title}](${song?.url})`)
-					.setThumbnail(song.thumbnail)
-					.setFooter(`Added by ${song?.addedBy.tag}`, song?.addedBy.avatarURL() as string | undefined)
-					.setColor('BLURPLE')
+				const embed: MessageEmbedOptions = {
+					title: "Added Song to the Queue",
+					description: `[${song.title}](${song.url})`,
+					thumbnail: {
+						url: song.thumbnail
+					},
+					color: 'BLURPLE',
+					footer: {
+						text: `Added by ${song.addedBy.tag}`,
+						icon_url: song.addedBy.avatarURL() as string | undefined
+					}
+				};
 
 				interaction.followUp({ embeds: [embed] });
 			}
@@ -178,13 +190,19 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 		{
 			const playlist = await ytpl(options.getString("song")!);
 
-			const embed = new MessageEmbed()
-				.setTitle('Added Songs from Playlist')
-				.setDescription(`[${playlist.title}](${playlist.url}) (${songsToAdd.length}/${playlist.items.length} songs added)`)
-				.setFooter(`Added by ${song[0]?.addedBy.tag}`, song[0]?.addedBy.avatarURL() as string | undefined)
-				.setColor('BLURPLE')
+			const embed: MessageEmbedOptions = {
+				title: "Added Songs from Playlist",
+				description: `[${playlist.title}](${playlist.url}) (${songsToAdd.length}/${playlist.items.length} songs added)`,
+				thumbnail: {
+					url: playlist.bestThumbnail.url?.toString()
+				},
+				color: 'BLURPLE',
+				footer: {
+					text: `Added by ${song[0].addedBy.tag}`,
+					icon_url: song[0].addedBy.avatarURL() as string | undefined
+				}
+			};
 
-			if (playlist.bestThumbnail.url != null) embed.setThumbnail(playlist.bestThumbnail.url!);
 			if (!interaction.replied)
 				interaction.followUp({ embeds: [embed] });
 			else

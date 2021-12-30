@@ -18,7 +18,7 @@ export default class Bot extends Client
 
 	public constructor()
 	{
-		super({ intents: 643 });
+		super({ intents: 647 });
 	}
 
 	public start(): void
