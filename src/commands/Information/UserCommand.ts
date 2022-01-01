@@ -25,10 +25,10 @@ export const run: RunFunction = async(client: Bot, interaction: CommandInteracti
 	const embed: MessageEmbedOptions = {
 		author: {
 			name: user.tag,
-			icon_url: user.defaultAvatarURL
+			icon_url: user.avatarURL()?.toString()
 		},
 		thumbnail: {
-			url: user.defaultAvatarURL
+			url: user.avatarURL()?.toString()
 		},
 		fields: [
 			{

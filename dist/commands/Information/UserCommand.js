@@ -28,16 +28,17 @@ exports.data = {
 };
 exports.test = false;
 const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     const user = options.getUser('user');
     const guild = interaction.guild;
     const guildMember = yield guild.members.fetch(user.id);
     const embed = {
         author: {
             name: user.tag,
-            icon_url: user.defaultAvatarURL
+            icon_url: (_a = user.avatarURL()) === null || _a === void 0 ? void 0 : _a.toString()
         },
         thumbnail: {
-            url: user.defaultAvatarURL
+            url: (_b = user.avatarURL()) === null || _b === void 0 ? void 0 : _b.toString()
         },
         fields: [
             {
