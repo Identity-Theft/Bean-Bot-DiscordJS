@@ -31,7 +31,7 @@ export const run: RunFunction = async(client: Bot, interaction: Interaction): Pr
 
 	if (interaction.isButton())
 	{
-		const queue = client.musicManager.getQueue(interaction.guildId!);
+		const queue = client.musicManager.queues.get(interaction.guildId!);
 
 		switch(interaction.customId)
 		{

@@ -11,6 +11,7 @@ export default class Queue
 	public embedPages: Array<MessageEmbed> = [];
 	public currentPage = 0;
 
+	public paused = false;
 	public loop: 'none' | 'song' | 'queue' = 'none'
 	public playing = 0;
 

@@ -10,9 +10,9 @@ import Bot from "./Bot";
 
 export default class MusicManager
 {
-	private queues: Map<Snowflake, Queue> = new Map();
-	private connections: Map<Snowflake, VoiceConnection> = new Map();
-	private audioPlayers: Map<Snowflake, AudioPlayer> = new Map();
+	public queues: Map<Snowflake, Queue> = new Map();
+	public connections: Map<Snowflake, VoiceConnection> = new Map();
+	public audioPlayers: Map<Snowflake, AudioPlayer> = new Map();
 
 	public async canUseCommand(client: Bot, interaction: CommandInteraction): Promise<boolean>
 	{
@@ -26,13 +26,13 @@ export default class MusicManager
 			return false;
 		}
 
-		if (this.getQueue(guildId)?.voiceChannel.type == 'GUILD_STAGE_VOICE' && !member?.permissions.has('ADMINISTRATOR'))
+		if (this.queues.get(guildId)?.voiceChannel.type == 'GUILD_STAGE_VOICE' && !member?.permissions.has('ADMINISTRATOR'))
 		{
 			interaction.reply({ embeds: [errorEmbed('Only admins can use music commands when Bean Bot is in a Stage Channel.')] });
 			return false;
 		}
 
-		if (this.getQueue(guildId) != undefined && this.getQueue(guildId)!.voiceChannel != channel)
+		if (this.queues.get(guildId) != undefined && this.queues.get(guildId)!.voiceChannel != channel)
 		{
 			interaction.reply({ embeds: [errorEmbed('You are not in a voice channel with Bean Bot.')], ephemeral: true});
 			return false;
@@ -40,7 +40,7 @@ export default class MusicManager
 
 		if (interaction.commandName != 'play')
 		{
-			if (this.getQueue(guildId) == undefined)
+			if (this.queues.get(guildId) == undefined)
 			{
 				interaction.reply({ embeds: [errorEmbed('Bean Bot is not in a Voice Channel.')] });
 				return false;
@@ -58,40 +58,10 @@ export default class MusicManager
 		return true;
 	}
 
-	public addQueue(guildId: Snowflake, queue: Queue): void
-	{
-		this.queues.set(guildId, queue);
-	}
-
-	public addConnection(guildId: Snowflake, connection: VoiceConnection): void
-	{
-		this.connections.set(guildId, connection);
-	}
-
-	public addPlayer(guildId: Snowflake, audioPlayer: AudioPlayer): void
-	{
-		this.audioPlayers.set(guildId, audioPlayer);
-	}
-
 	public addSong(guildId: Snowflake, song: Song): void
 	{
 		const songs = this.queues.get(guildId)?.songs;
 		songs?.push(song);
-	}
-
-	public getConnection(guildId: Snowflake): VoiceConnection | undefined
-	{
-		return this.connections.get(guildId);
-	}
-
-	public getQueue(guildId: Snowflake): Queue | undefined
-	{
-		return this.queues.get(guildId);
-	}
-
-	public getPlayer(guildId: Snowflake): AudioPlayer | undefined
-	{
-		return this.audioPlayers.get(guildId);
 	}
 
 	public disconnect(guildId: Snowflake): void
@@ -103,7 +73,7 @@ export default class MusicManager
 
 	public inQueue(guildId: Snowflake, song: Song): boolean
 	{
-		const queue = this.getQueue(guildId)!;
+		const queue = this.queues.get(guildId)!;
 
 		for (let i = 0; i < queue.songs.length; i++) {
 			const s = queue.songs[i];

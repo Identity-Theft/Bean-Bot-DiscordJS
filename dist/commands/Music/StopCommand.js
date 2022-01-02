@@ -9,14 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.test = exports.data = void 0;
+exports.run = exports.data = void 0;
 const Utils_1 = require("../../utils/Utils");
 exports.data = {
     name: 'stop',
     description: 'Disconnet Bean Bot from the Voice Channel and clear the queue.',
     options: []
 };
-exports.test = false;
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     if ((yield client.musicManager.canUseCommand(client, interaction)) == false)

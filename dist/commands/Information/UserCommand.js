@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.test = exports.data = void 0;
+exports.run = exports.data = void 0;
 const moment_1 = __importDefault(require("moment"));
 exports.data = {
     name: 'user',
@@ -26,7 +26,6 @@ exports.data = {
         }
     ]
 };
-exports.test = false;
 const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const user = options.getUser('user');

@@ -8,7 +8,6 @@ export const data: ApplicationCommandData = {
 	description: 'Replies with info about the server.',
 	options: [],
 }
-export const test = false;
 
 export const run: RunFunction = async(client: Bot, interaction: CommandInteraction) => {
 	const guild = interaction.guild!;

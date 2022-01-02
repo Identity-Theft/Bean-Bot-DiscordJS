@@ -9,6 +9,5 @@ export interface RunFunction
 export interface Command
 {
 	data: ApplicationCommandData;
-	test: boolean;
 	run: RunFunction;
 }

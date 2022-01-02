@@ -73,18 +73,18 @@ class Bot extends discord_js_1.Client {
     herokuSetup() {
         return __awaiter(this, void 0, void 0, function* () {
             // Add commands to collection
-            const commandsFiles = yield fs_1.default.readdirSync(`${__dirname}/../commands/`);
+            const commandsFiles = fs_1.default.readdirSync(`${__dirname}/../commands/`);
             commandsFiles.map((value) => __awaiter(this, void 0, void 0, function* () {
-                const commandFoler = yield fs_1.default.readdirSync(`${__dirname}/../commands/${value}`);
+                const commandFoler = fs_1.default.readdirSync(`${__dirname}/../commands/${value}`);
                 commandFoler.map((file) => __awaiter(this, void 0, void 0, function* () {
                     const commandFile = yield Promise.resolve().then(() => __importStar(require(`${__dirname}/../commands/${value}/${file}`)));
                     this.commands.set(commandFile.data.name, commandFile);
                 }));
             }));
             // Add events to collection
-            const eventFiles = yield fs_1.default.readdirSync(`${__dirname}/../events/`);
+            const eventFiles = fs_1.default.readdirSync(`${__dirname}/../events/`);
             eventFiles.map((value) => __awaiter(this, void 0, void 0, function* () {
-                const eventFoler = yield fs_1.default.readdirSync(`${__dirname}/../events/${value}`);
+                const eventFoler = fs_1.default.readdirSync(`${__dirname}/../events/${value}`);
                 eventFoler.map((file) => __awaiter(this, void 0, void 0, function* () {
                     const eventFile = yield Promise.resolve().then(() => __importStar(require(`${__dirname}/../events/${value}/${file}`)));
                     this.events.set(eventFile.name, eventFile);
@@ -97,7 +97,7 @@ class Bot extends discord_js_1.Client {
         return __awaiter(this, void 0, void 0, function* () {
             this.commands.forEach((file) => {
                 var _a, _b;
-                if (file.test == true || this.token == process.env.DEV)
+                if (this.token == process.env.DEV)
                     (_a = this.application) === null || _a === void 0 ? void 0 : _a.commands.create(file.data, '844081963324407848');
                 else
                     (_b = this.application) === null || _b === void 0 ? void 0 : _b.commands.create(file.data);

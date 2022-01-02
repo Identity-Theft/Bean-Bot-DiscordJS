@@ -8,12 +8,11 @@ export const data: ApplicationCommandData = {
 	description: "Play the next song in the queue."
 }
 
-export const test = false;
 
 export const run: RunFunction = async (client: Bot, interaction: CommandInteraction) => {
 	if (await client.musicManager.canUseCommand(client, interaction) == false) return;
 
-	const queue = client.musicManager.getQueue(interaction.guildId!)!;
+	const queue = client.musicManager.queues.get(interaction.guildId!)!;
 
 	if (!queue.songs[queue.playing + 1])
 	{
@@ -22,7 +21,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 	}
 	else
 	{
-		client.musicManager.getPlayer(interaction.guildId!)?.stop();
+		client.musicManager.audioPlayers.get(interaction.guildId!)?.stop();
 
 		const embed = simpleEmbed2("Song Skipped", `Song skipped by ${interaction.user}`);
 		interaction.reply({ embeds: [embed] });

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.test = exports.data = void 0;
+exports.run = exports.data = void 0;
 exports.data = {
     name: 'avatar',
     description: 'Replies with a user\'s avatar.',
@@ -22,7 +22,6 @@ exports.data = {
         }
     ],
 };
-exports.test = false;
 const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const user = options.getUser('user');

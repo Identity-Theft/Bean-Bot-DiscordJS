@@ -9,13 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.test = exports.data = void 0;
+exports.run = exports.data = void 0;
 exports.data = {
     name: 'bot',
     description: 'Replies with info about Bean Bot.',
     options: []
 };
-exports.test = false;
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
     const user = client.user;
     const days = Math.floor(client.uptime / 86400000);

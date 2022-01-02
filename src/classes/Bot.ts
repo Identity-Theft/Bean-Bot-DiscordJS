@@ -57,10 +57,10 @@ export default class Bot extends Client
 	private async herokuSetup(): Promise<void>
 	{
 		// Add commands to collection
-		const commandsFiles: string [] = await fs.readdirSync(`${__dirname}/../commands/`);
+		const commandsFiles = fs.readdirSync(`${__dirname}/../commands/`);
 
 		commandsFiles.map(async (value: string) => {
-			const commandFoler: string[] = await fs.readdirSync(`${__dirname}/../commands/${value}`);
+			const commandFoler = fs.readdirSync(`${__dirname}/../commands/${value}`);
 
 			commandFoler.map(async (file: string) => {
 				const commandFile: Command = await import(`${__dirname}/../commands/${value}/${file}`);
@@ -70,10 +70,10 @@ export default class Bot extends Client
 		});
 
 		// Add events to collection
-		const eventFiles: string [] = await fs.readdirSync(`${__dirname}/../events/`);
+		const eventFiles = fs.readdirSync(`${__dirname}/../events/`);
 
 		eventFiles.map(async (value: string) => {
-			const eventFoler: string[] = await fs.readdirSync(`${__dirname}/../events/${value}`);
+			const eventFoler = fs.readdirSync(`${__dirname}/../events/${value}`);
 
 			eventFoler.map(async (file: string) => {
 				const eventFile: Event = await import(`${__dirname}/../events/${value}/${file}`);
@@ -87,7 +87,7 @@ export default class Bot extends Client
 	public async generateCommands(): Promise<void>
 	{
 		this.commands.forEach((file) => {
-			if (file.test == true || this.token == process.env.DEV) this.application?.commands.create(file.data, '844081963324407848');
+			if (this.token == process.env.DEV) this.application?.commands.create(file.data, '844081963324407848');
 			else this.application?.commands.create(file.data);
 		});
 	}

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.test = exports.data = void 0;
+exports.run = exports.data = void 0;
 const fs_1 = __importDefault(require("fs"));
 const Utils_1 = require("../../utils/Utils");
 exports.data = {
@@ -44,7 +44,6 @@ exports.data = {
         },
     ],
 };
-exports.test = false;
 const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
     interaction.deferReply();
     fs_1.default.readdir(`${__dirname}/../../../assets/memes/`, (err, memes) => {

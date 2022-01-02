@@ -16,13 +16,12 @@ export const data: ApplicationCommandData = {
 	]
 }
 
-export const test = false;
 
 export const run: RunFunction = async (client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver) => {
 	if (await client.musicManager.canUseCommand(client, interaction) == false) return;
 
 	const guildId = interaction.guildId!;
-	const queue = client.musicManager.getQueue(guildId)!;
+	const queue = client.musicManager.queues.get(guildId)!;
 	const position = options.getInteger("song")! - 1;
 
 	if (queue.songs[position] == null)
@@ -36,7 +35,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 
 	const embed: MessageEmbedOptions = {
 		title: "Song Removed",
-		description: `[${song.title}]{${song.url}}`,
+		description: `[${song.title}](${song.url})`,
 		thumbnail: {
 			url: song.thumbnail
 		},
@@ -52,7 +51,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 	if (position == queue.playing)
 	{
 		queue.playing -= 1;
-		client.musicManager.getPlayer(interaction.guildId!)?.stop();
+		client.musicManager.audioPlayers.get(guildId)!.stop();
 	}
 	else if (position < queue.playing)
 		queue.playing -= 1;

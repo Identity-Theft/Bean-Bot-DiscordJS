@@ -7,16 +7,15 @@ export const data: ApplicationCommandData = {
 	description: 'Get info about the current song.',
 	options: []
 }
-export const test = false;
 
 export const run: RunFunction = async (client: Bot, interaction: CommandInteraction) => {
 	if (await client.musicManager.canUseCommand(client, interaction) == false) return;
-	const queue = client.musicManager.getQueue(interaction.guildId!)!;
+	const queue = client.musicManager.queues.get(interaction.guildId!)!;
 	const song = queue.songs[queue.playing];
 
 	const embed: MessageEmbedOptions = {
 		title: "Currently Playing",
-		description: `[${song.title}](${song.url})`,
+		description: `${queue.paused == true ? "(Paused)" : ""} [${song.title}](${song.url})`,
 		thumbnail: {
 			url: song.thumbnail
 		},

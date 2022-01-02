@@ -9,21 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.test = exports.data = void 0;
+exports.run = exports.data = void 0;
 exports.data = {
     name: 'playing',
     description: 'Get info about the current song.',
     options: []
 };
-exports.test = false;
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
     if ((yield client.musicManager.canUseCommand(client, interaction)) == false)
         return;
-    const queue = client.musicManager.getQueue(interaction.guildId);
+    const queue = client.musicManager.queues.get(interaction.guildId);
     const song = queue.songs[queue.playing];
     const embed = {
         title: "Currently Playing",
-        description: `[${song.title}](${song.url})`,
+        description: `${queue.paused == true ? "(Paused)" : ""} [${song.title}](${song.url})`,
         thumbnail: {
             url: song.thumbnail
         },

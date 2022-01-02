@@ -21,7 +21,6 @@ export const data: ApplicationCommandData = {
 		}
 	]
 }
-export const test = false;
 
 export const run: RunFunction = async (client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver) => {
 	if (await client.musicManager.canUseCommand(client, interaction) == false) return;
@@ -40,7 +39,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 
 		const player = createAudioPlayer();
 
-		client.musicManager.addPlayer(guildId, player);
+		client.musicManager.audioPlayers.set(guildId, player);
 
 		player.play(resource);
 		connection.subscribe(player);
@@ -96,7 +95,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 	const songsToAdd: Array<Song> = [];
 
 	// Create queue if one doesn't exist
-	if (client.musicManager.getQueue(guildId) == undefined)
+	if (client.musicManager.queues.get(interaction.guildId!) == undefined)
 	{
 		const guild = await client.guilds.fetch(guildId);
 		const textChannel = await guild.channels.fetch(interaction.channelId!);
@@ -104,8 +103,8 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 		const connection = joinVoiceChannel({ channelId: channel.id, guildId: guildId, adapterCreator: createDiscordJSAdapter(channel) });
 		const queue = new Queue(channel, textChannel as TextChannel, interaction.user);
 
-		client.musicManager.addConnection(guildId, connection);
-		client.musicManager.addQueue(guildId, queue);
+		client.musicManager.connections.set(guildId, connection);
+		client.musicManager.queues.set(guildId, queue);
 
 		connection.on(VoiceConnectionStatus.Ready, async () => {
 			if (Array.isArray(song))
@@ -161,7 +160,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 				return;
 			}
 
-			const queue = client.musicManager.getQueue(guildId)!;
+			const queue = client.musicManager.queues.get(interaction.guildId!)!;
 
 			if (queue.songs.length == queue.maxSongs)
 			{
@@ -177,7 +176,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 		for (let i = 0; i < song.length; i++) {
 			const s = song[i];
 			const inQueue = client.musicManager.inQueue(guildId, s);
-			const queue = client.musicManager.getQueue(guildId)!;
+			const queue = client.musicManager.queues.get(interaction.guildId!)!;
 
 			if (!inQueue && queue.songs.length! < queue.maxSongs)
 			{
@@ -207,7 +206,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 				interaction.followUp({ embeds: [embed] });
 			else
 			{
-				const queue = client.musicManager.getQueue(guildId)!;
+				const queue = client.musicManager.queues.get(interaction.guildId!)!;
 				queue.textChannel.send({ embeds: [embed] });
 			}
 		}

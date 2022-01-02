@@ -33,16 +33,16 @@ class MusicManager {
                 interaction.reply({ embeds: [(0, Utils_1.errorEmbed)('You are not in a voice channel')], ephemeral: true });
                 return false;
             }
-            if (((_b = this.getQueue(guildId)) === null || _b === void 0 ? void 0 : _b.voiceChannel.type) == 'GUILD_STAGE_VOICE' && !(member === null || member === void 0 ? void 0 : member.permissions.has('ADMINISTRATOR'))) {
+            if (((_b = this.queues.get(guildId)) === null || _b === void 0 ? void 0 : _b.voiceChannel.type) == 'GUILD_STAGE_VOICE' && !(member === null || member === void 0 ? void 0 : member.permissions.has('ADMINISTRATOR'))) {
                 interaction.reply({ embeds: [(0, Utils_1.errorEmbed)('Only admins can use music commands when Bean Bot is in a Stage Channel.')] });
                 return false;
             }
-            if (this.getQueue(guildId) != undefined && this.getQueue(guildId).voiceChannel != channel) {
+            if (this.queues.get(guildId) != undefined && this.queues.get(guildId).voiceChannel != channel) {
                 interaction.reply({ embeds: [(0, Utils_1.errorEmbed)('You are not in a voice channel with Bean Bot.')], ephemeral: true });
                 return false;
             }
             if (interaction.commandName != 'play') {
-                if (this.getQueue(guildId) == undefined) {
+                if (this.queues.get(guildId) == undefined) {
                     interaction.reply({ embeds: [(0, Utils_1.errorEmbed)('Bean Bot is not in a Voice Channel.')] });
                     return false;
                 }
@@ -56,28 +56,10 @@ class MusicManager {
             return true;
         });
     }
-    addQueue(guildId, queue) {
-        this.queues.set(guildId, queue);
-    }
-    addConnection(guildId, connection) {
-        this.connections.set(guildId, connection);
-    }
-    addPlayer(guildId, audioPlayer) {
-        this.audioPlayers.set(guildId, audioPlayer);
-    }
     addSong(guildId, song) {
         var _a;
         const songs = (_a = this.queues.get(guildId)) === null || _a === void 0 ? void 0 : _a.songs;
         songs === null || songs === void 0 ? void 0 : songs.push(song);
-    }
-    getConnection(guildId) {
-        return this.connections.get(guildId);
-    }
-    getQueue(guildId) {
-        return this.queues.get(guildId);
-    }
-    getPlayer(guildId) {
-        return this.audioPlayers.get(guildId);
     }
     disconnect(guildId) {
         var _a;
@@ -86,7 +68,7 @@ class MusicManager {
         this.queues.delete(guildId);
     }
     inQueue(guildId, song) {
-        const queue = this.getQueue(guildId);
+        const queue = this.queues.get(guildId);
         for (let i = 0; i < queue.songs.length; i++) {
             const s = queue.songs[i];
             if (s.url == song.url) {

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.test = exports.data = void 0;
+exports.run = exports.data = void 0;
 const voice_1 = require("@discordjs/voice");
 const ytdl_core_1 = __importDefault(require("ytdl-core"));
 const ytpl_1 = __importDefault(require("ytpl"));
@@ -31,7 +31,6 @@ exports.data = {
         }
     ]
 };
-exports.test = false;
 const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     if ((yield client.musicManager.canUseCommand(client, interaction)) == false)
@@ -46,7 +45,7 @@ const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, 
         }
         const resource = getResource();
         const player = (0, voice_1.createAudioPlayer)();
-        client.musicManager.addPlayer(guildId, player);
+        client.musicManager.audioPlayers.set(guildId, player);
         player.play(resource);
         connection.subscribe(player);
         const embed = {
@@ -92,13 +91,13 @@ const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, 
     }
     const songsToAdd = [];
     // Create queue if one doesn't exist
-    if (client.musicManager.getQueue(guildId) == undefined) {
+    if (client.musicManager.queues.get(interaction.guildId) == undefined) {
         const guild = yield client.guilds.fetch(guildId);
         const textChannel = yield guild.channels.fetch(interaction.channelId);
         const connection = (0, voice_1.joinVoiceChannel)({ channelId: channel.id, guildId: guildId, adapterCreator: (0, VoiceUtils_1.createDiscordJSAdapter)(channel) });
         const queue = new Queue_1.default(channel, textChannel, interaction.user);
-        client.musicManager.addConnection(guildId, connection);
-        client.musicManager.addQueue(guildId, queue);
+        client.musicManager.connections.set(guildId, connection);
+        client.musicManager.queues.set(guildId, queue);
         connection.on(voice_1.VoiceConnectionStatus.Ready, () => __awaiter(void 0, void 0, void 0, function* () {
             if (Array.isArray(song))
                 playSong(song[0], connection, queue);
@@ -142,7 +141,7 @@ const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, 
                 interaction.followUp({ embeds: [embed], ephemeral: true });
                 return;
             }
-            const queue = client.musicManager.getQueue(guildId);
+            const queue = client.musicManager.queues.get(interaction.guildId);
             if (queue.songs.length == queue.maxSongs) {
                 const embed = (0, Utils_1.errorEmbed)(`Cannot have more than ${queue.maxSongs} songs in a queue.`);
                 interaction.followUp({ embeds: [embed] });
@@ -154,7 +153,7 @@ const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, 
         for (let i = 0; i < song.length; i++) {
             const s = song[i];
             const inQueue = client.musicManager.inQueue(guildId, s);
-            const queue = client.musicManager.getQueue(guildId);
+            const queue = client.musicManager.queues.get(interaction.guildId);
             if (!inQueue && queue.songs.length < queue.maxSongs) {
                 songsToAdd.push(s);
                 client.musicManager.addSong(guildId, s);
@@ -177,7 +176,7 @@ const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, 
             if (!interaction.replied)
                 interaction.followUp({ embeds: [embed] });
             else {
-                const queue = client.musicManager.getQueue(guildId);
+                const queue = client.musicManager.queues.get(interaction.guildId);
                 queue.textChannel.send({ embeds: [embed] });
             }
         }

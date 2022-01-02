@@ -7,11 +7,10 @@ export const data: ApplicationCommandData = {
 	name: 'queue',
 	description: 'Replies with all the songs in to the queue',
 }
-export const test = false;
 
 export const run: RunFunction = async (client: Bot, interaction: CommandInteraction) => {
 	if (await client.musicManager.canUseCommand(client, interaction) == false) return;
-	const queue = client.musicManager.getQueue(interaction.guildId!)!;
+	const queue = client.musicManager.queues.get(interaction.guildId!)!;
 
 	queue.generateQueueEmbed(interaction);
 }

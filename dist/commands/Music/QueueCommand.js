@@ -9,17 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.test = exports.data = void 0;
+exports.run = exports.data = void 0;
 // import { errorEmbed } from "../../utils/Utils";
 exports.data = {
     name: 'queue',
     description: 'Replies with all the songs in to the queue',
 };
-exports.test = false;
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
     if ((yield client.musicManager.canUseCommand(client, interaction)) == false)
         return;
-    const queue = client.musicManager.getQueue(interaction.guildId);
+    const queue = client.musicManager.queues.get(interaction.guildId);
     queue.generateQueueEmbed(interaction);
 });
 exports.run = run;

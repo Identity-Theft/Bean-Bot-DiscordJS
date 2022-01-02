@@ -14,7 +14,6 @@ export const data: ApplicationCommandData = {
 		}
 	],
 }
-export const test = false;
 
 export const run: RunFunction = async(client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver) => {
 	const user = options.getUser('user')!;

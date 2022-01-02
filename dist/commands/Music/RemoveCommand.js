@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.test = exports.data = void 0;
+exports.run = exports.data = void 0;
 const Utils_1 = require("../../utils/Utils");
 exports.data = {
     name: "remove",
@@ -23,13 +23,11 @@ exports.data = {
         }
     ]
 };
-exports.test = false;
 const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     if ((yield client.musicManager.canUseCommand(client, interaction)) == false)
         return;
     const guildId = interaction.guildId;
-    const queue = client.musicManager.getQueue(guildId);
+    const queue = client.musicManager.queues.get(guildId);
     const position = options.getInteger("song") - 1;
     if (queue.songs[position] == null) {
         const embed = (0, Utils_1.errorEmbed)(`Song \`${position + 1}\` does not exist.`);
@@ -39,7 +37,7 @@ const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, 
     const song = queue.songs[position];
     const embed = {
         title: "Song Removed",
-        description: `[${song.title}]{${song.url}}`,
+        description: `[${song.title}](${song.url})`,
         thumbnail: {
             url: song.thumbnail
         },
@@ -52,7 +50,7 @@ const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, 
     interaction.reply({ embeds: [embed] });
     if (position == queue.playing) {
         queue.playing -= 1;
-        (_a = client.musicManager.getPlayer(interaction.guildId)) === null || _a === void 0 ? void 0 : _a.stop();
+        client.musicManager.audioPlayers.get(guildId).stop();
     }
     else if (position < queue.playing)
         queue.playing -= 1;

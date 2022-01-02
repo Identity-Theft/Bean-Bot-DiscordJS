@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.test = exports.data = void 0;
+exports.run = exports.data = void 0;
 const Utils_1 = require("../../utils/Utils");
 exports.data = {
     name: "jump",
@@ -23,13 +23,12 @@ exports.data = {
         }
     ]
 };
-exports.test = false;
 const run = (client, interaction, args) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     if ((yield client.musicManager.canUseCommand(client, interaction)) == false)
         return;
     const guildId = interaction.guildId;
-    const queue = client.musicManager.getQueue(guildId);
+    const queue = client.musicManager.queues.get(interaction.guildId);
     const position = args.getInteger("song");
     if (queue.songs[position - 1] == null) {
         const embed = (0, Utils_1.errorEmbed)(`Song \`${position}\` does not exist.`);
@@ -42,7 +41,7 @@ const run = (client, interaction, args) => __awaiter(void 0, void 0, void 0, fun
         return;
     }
     queue.playing = position - 2;
-    (_a = client.musicManager.getPlayer(guildId)) === null || _a === void 0 ? void 0 : _a.stop();
+    (_a = client.musicManager.audioPlayers.get(guildId)) === null || _a === void 0 ? void 0 : _a.stop();
     const embed = (0, Utils_1.simpleEmbed2)("Song Skipped", `Song skipped by ${interaction.user}`);
     interaction.reply({ embeds: [embed] });
 });

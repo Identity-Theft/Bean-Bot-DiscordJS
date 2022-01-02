@@ -15,6 +15,7 @@ class Queue {
         this.queueMessage = null;
         this.embedPages = [];
         this.currentPage = 0;
+        this.paused = false;
         this.loop = 'none';
         this.playing = 0;
         this.songs = [];

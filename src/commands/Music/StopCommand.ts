@@ -8,7 +8,6 @@ export const data: ApplicationCommandData = {
 	description: 'Disconnet Bean Bot from the Voice Channel and clear the queue.',
 	options: []
 }
-export const test = false;
 
 export const run: RunFunction = async (client: Bot, interaction: CommandInteraction) => {
 	if (await client.musicManager.canUseCommand(client, interaction) == false) return;

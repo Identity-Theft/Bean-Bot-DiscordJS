@@ -10,25 +10,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.data = void 0;
-const Utils_1 = require("../../utils/Utils");
 exports.data = {
-    name: "previous",
-    description: "Play the previous song in the queue."
+    name: "pause",
+    description: "Pause or resume the current song.",
 };
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     if ((yield client.musicManager.canUseCommand(client, interaction)) == false)
         return;
-    const queue = client.musicManager.queues.get(interaction.guildId);
-    if (!queue.songs[queue.playing - 1]) {
-        const embed = (0, Utils_1.errorEmbed)("There is no previous song.");
-        interaction.reply({ embeds: [embed], ephemeral: true });
-    }
-    else {
-        queue.playing -= 2;
-        (_a = client.musicManager.audioPlayers.get(interaction.guildId)) === null || _a === void 0 ? void 0 : _a.stop();
-        const embed = (0, Utils_1.simpleEmbed2)("Song Skipped", `Song skipped by ${interaction.user}`);
-        interaction.reply({ embeds: [embed] });
-    }
+    const guildId = interaction.guildId;
+    const queue = client.musicManager.queues.get(guildId);
+    const player = client.musicManager.audioPlayers.get(guildId);
+    if (queue.paused == false)
+        player.pause();
+    else
+        player.unpause();
+    queue.paused = !queue.paused;
+    const song = queue.songs[queue.playing];
+    const embed = {
+        title: `Song ${queue.paused == true ? "Paused" : "Unpaused"}`,
+        description: `[${song.title}](${song.url})`,
+        thumbnail: {
+            url: song.thumbnail
+        },
+        color: 'BLURPLE',
+        footer: {
+            text: `${queue.paused == true ? "Paused" : "Unpaused"} by ${interaction.user.tag}`,
+            icon_url: interaction.user.avatarURL()
+        }
+    };
+    interaction.reply({ embeds: [embed] });
 });
 exports.run = run;

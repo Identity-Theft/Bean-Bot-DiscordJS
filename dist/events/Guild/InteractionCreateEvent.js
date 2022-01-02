@@ -28,7 +28,7 @@ const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function*
         cmd.run(client, interaction, options);
     }
     if (interaction.isButton()) {
-        const queue = client.musicManager.getQueue(interaction.guildId);
+        const queue = client.musicManager.queues.get(interaction.guildId);
         switch (interaction.customId) {
             case 'ButtonTest1':
                 interaction.update({ embeds: [(0, Utils_1.simpleEmbed)(client, 'Beans')] });

@@ -16,13 +16,12 @@ export const data: ApplicationCommandData = {
 	]
 }
 
-export const test = false;
 
 export const run: RunFunction = async (client: Bot, interaction: CommandInteraction, args: CommandInteractionOptionResolver) => {
 	if (await client.musicManager.canUseCommand(client, interaction) == false) return;
 
 	const guildId = interaction.guildId!;
-	const queue = client.musicManager.getQueue(guildId)!;
+	const queue = client.musicManager.queues.get(interaction.guildId!)!;
 	const position = args.getInteger("song")!;
 
 	if (queue.songs[position - 1] == null)
@@ -40,7 +39,7 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 	}
 
 	queue.playing = position - 2;
-	client.musicManager.getPlayer(guildId)?.stop();
+	client.musicManager.audioPlayers.get(guildId)?.stop();
 
 	const embed = simpleEmbed2("Song Skipped", `Song skipped by ${interaction.user}`);
 	interaction.reply({ embeds: [embed] });

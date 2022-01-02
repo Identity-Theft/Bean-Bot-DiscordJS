@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = exports.test = exports.data = void 0;
+exports.run = exports.data = void 0;
 const Utils_1 = require("../../utils/Utils");
 exports.data = {
     name: 'loop',
@@ -32,11 +32,10 @@ exports.data = {
         }
     ]
 };
-exports.test = false;
 const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
     if ((yield client.musicManager.canUseCommand(client, interaction)) == false)
         return;
-    client.musicManager.getQueue(interaction.guildId).loop = options.getSubcommand();
+    client.musicManager.queues.get(interaction.guildId).loop = options.getSubcommand();
     interaction.reply({ embeds: [(0, Utils_1.simpleEmbed2)("Loop", `Now Looping: \`${options.getSubcommand()}\``)] });
 });
 exports.run = run;
