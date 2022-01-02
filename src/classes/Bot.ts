@@ -6,6 +6,7 @@ import fs from "fs";
 import dotenv from "dotenv";
 // import { promisify } from "util";
 import MusicManager from "./MusicManager";
+import { DiscordTogether } from "discord-together";
 dotenv.config();
 
 // const globPromise = promisify(glob);
@@ -15,6 +16,7 @@ export default class Bot extends Client
 	public commands: Collection<string, Command> = new Collection();
 	public events: Collection<string, Event> = new Collection();
 	public musicManager = new MusicManager();
+	public discordTogether = new DiscordTogether(this);
 
 	public constructor()
 	{
@@ -86,9 +88,10 @@ export default class Bot extends Client
 
 	public async generateCommands(): Promise<void>
 	{
-		this.commands.forEach((file) => {
-			if (this.token == process.env.DEV) this.application?.commands.create(file.data, '844081963324407848');
-			else this.application?.commands.create(file.data);
+		this.commands.forEach((cmd) => {
+			if (this.token == process.env.DEV) this.application?.commands.create(cmd.data, '844081963324407848');
+			else if (cmd.data.name == "activity") this.application?.commands.create(cmd.data, "905958361995022356");
+			else this.application?.commands.create(cmd.data);
 		});
 	}
 }

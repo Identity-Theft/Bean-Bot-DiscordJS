@@ -37,6 +37,7 @@ const fs_1 = __importDefault(require("fs"));
 const dotenv_1 = __importDefault(require("dotenv"));
 // import { promisify } from "util";
 const MusicManager_1 = __importDefault(require("./MusicManager"));
+const discord_together_1 = require("discord-together");
 dotenv_1.default.config();
 // const globPromise = promisify(glob);
 class Bot extends discord_js_1.Client {
@@ -45,6 +46,7 @@ class Bot extends discord_js_1.Client {
         this.commands = new discord_js_1.Collection();
         this.events = new discord_js_1.Collection();
         this.musicManager = new MusicManager_1.default();
+        this.discordTogether = new discord_together_1.DiscordTogether(this);
     }
     start() {
         this.login(process.env.TOKEN);
@@ -95,12 +97,14 @@ class Bot extends discord_js_1.Client {
     }
     generateCommands() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.commands.forEach((file) => {
-                var _a, _b;
+            this.commands.forEach((cmd) => {
+                var _a, _b, _c;
                 if (this.token == process.env.DEV)
-                    (_a = this.application) === null || _a === void 0 ? void 0 : _a.commands.create(file.data, '844081963324407848');
+                    (_a = this.application) === null || _a === void 0 ? void 0 : _a.commands.create(cmd.data, '844081963324407848');
+                else if (cmd.data.name == "activity")
+                    (_b = this.application) === null || _b === void 0 ? void 0 : _b.commands.create(cmd.data, "905958361995022356");
                 else
-                    (_b = this.application) === null || _b === void 0 ? void 0 : _b.commands.create(file.data);
+                    (_c = this.application) === null || _c === void 0 ? void 0 : _c.commands.create(cmd.data);
             });
         });
     }
