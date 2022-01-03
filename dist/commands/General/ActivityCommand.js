@@ -10,98 +10,77 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.data = void 0;
+const discord_js_1 = require("discord.js");
 exports.data = {
     name: "activity",
-    description: "Start an activity in a VC.",
-    options: [
+    description: "Start an activity in a VC."
+};
+const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
+    const row = new discord_js_1.MessageActionRow().addComponents(new discord_js_1.MessageSelectMenu()
+        .setCustomId("activities")
+        .setPlaceholder("Select Activty")
+        .addOptions([
         {
-            type: "SUB_COMMAND",
-            name: "list-activities",
-            description: "Get a list of all activities."
+            label: "Poker Night",
+            description: "Up to 25 particpants",
+            value: "poker"
         },
         {
-            type: "SUB_COMMAND",
-            name: "youtube",
-            description: "Play YouTube videos in VC."
+            label: "Chess In The Park",
+            description: "Unlimited particpants",
+            value: "chess"
         },
         {
-            type: "SUB_COMMAND",
-            name: "poker",
-            description: "Play Poker in VC."
+            label: "Doodle Crew",
+            description: "Up to 16 particpants",
+            value: "doodlecrew"
         },
         {
-            type: "SUB_COMMAND",
-            name: "betrayal",
-            description: "Play Betrayal in VC."
+            label: "Letter Tile",
+            description: "Up to 8 particpants",
+            value: "lettertile"
         },
         {
-            type: "SUB_COMMAND",
-            name: "fishing",
-            description: "Play Fishing in VC."
+            label: "SpellCast",
+            description: "Up to 100 particpants",
+            value: "speelcast"
         },
         {
-            type: "SUB_COMMAND",
-            name: "chess",
-            description: "Play Chess in VC."
+            label: "Watch Together",
+            description: "Unlimited particpants",
+            value: "youtube"
         },
         {
-            type: "SUB_COMMAND",
-            name: "lettertile",
-            description: "Play Lettertile in VC."
+            label: "Checkers In The Park",
+            description: "Unlimited particpants",
+            value: "checkers"
         },
         {
-            type: "SUB_COMMAND",
-            name: "wordsnack",
-            description: "Play Wordsnack in VC."
+            label: "Word Snacks",
+            description: "Up to 8 particpants",
+            value: "wordsnacks"
         },
         {
-            type: "SUB_COMMAND",
-            name: "doodlecrew",
-            description: "Play Doodlecrew in VC."
+            label: "Betrayal.io",
+            description: "Unkown particpants (May not work)",
+            value: "betrayal"
         },
         {
-            type: "SUB_COMMAND",
-            name: "awkword",
-            description: "Play Awkword in VC."
-        },
-        {
-            type: "SUB_COMMAND",
-            name: "spellcast",
-            description: "Play Spellcast in VC."
-        },
-        {
-            type: "SUB_COMMAND",
-            name: "checkers",
-            description: "Play Checkers in VC."
-        },
-        {
-            type: "SUB_COMMAND",
-            name: "puttparty",
-            description: "Play Puttparty in VC."
+            label: "Fishington.io",
+            description: "Unkown particpants (May not work)",
+            value: "fishing"
         },
         // {
-        // 	type: "SUB_COMMAND",
-        // 	name: "sketchyartist",
-        // 	description: "Play Sketchyartist in VC."
+        // 	label: "AwkWord",
+        // 	description: "Unkown particpants (May not work)",
+        // 	value: "awkword"
+        // },
+        // {
+        // 	label: "Sketchy Artist",
+        // 	description: "Unkown particpants (May not work)",
+        // 	value: "sketchyartist"
         // }
-    ]
-};
-const run = (client, interaction, options) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const member = (_a = interaction.guild) === null || _a === void 0 ? void 0 : _a.members.cache.get(interaction.user.id);
-    if (options.getSubcommand() == "list-activities") {
-        const embed = {
-            title: "Activities",
-            description: "YouTube, Poker, Betrayal, Fishing, Chess, Lettertile, Wordsnack, Doodlecrew, Awkword, Spellcast, Checkers, Puttparty, ~~Sketchy Artist~~"
-        };
-        return interaction.reply({ embeds: [embed], ephemeral: true });
-    }
-    if (member) {
-        if (member.voice.channel) {
-            client.discordTogether.createTogetherCode(member.voice.channel.id, options.getSubcommand()).then((invite) => __awaiter(void 0, void 0, void 0, function* () {
-                return interaction.reply({ content: `Click the link to start the activity then have everyone else click 'Join' or 'Spectate': ${invite.code}`, ephemeral: true });
-            }));
-        }
-    }
+    ]));
+    interaction.reply({ content: "Select an activity using the dropdown menu below.", components: [row] });
 });
 exports.run = run;

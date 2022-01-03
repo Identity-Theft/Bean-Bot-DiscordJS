@@ -1,104 +1,82 @@
-import { ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, MessageEmbedOptions } from "discord.js";
+import { ApplicationCommandData, CommandInteraction, MessageActionRow, MessageSelectMenu } from "discord.js";
 import Bot from "../../classes/Bot";
 import { RunFunction } from "../../interfaces/Command";
 
 export const data: ApplicationCommandData = {
 	name: "activity",
-	description: "Start an activity in a VC.",
-	options: [
-		{
-			type: "SUB_COMMAND",
-			name: "list-activities",
-			description: "Get a list of all activities."
-		},
-		{
-			type: "SUB_COMMAND",
-			name: "youtube",
-			description: "Play YouTube videos in VC."
-		},
-		{
-			type: "SUB_COMMAND",
-			name: "poker",
-			description: "Play Poker in VC."
-		},
-		{
-			type: "SUB_COMMAND",
-			name: "betrayal",
-			description: "Play Betrayal in VC."
-		},
-		{
-			type: "SUB_COMMAND",
-			name: "fishing",
-			description: "Play Fishing in VC."
-		},
-		{
-			type: "SUB_COMMAND",
-			name: "chess",
-			description: "Play Chess in VC."
-		},
-		{
-			type: "SUB_COMMAND",
-			name: "lettertile",
-			description: "Play Lettertile in VC."
-		},
-		{
-			type: "SUB_COMMAND",
-			name: "wordsnack",
-			description: "Play Wordsnack in VC."
-		},
-		{
-			type: "SUB_COMMAND",
-			name: "doodlecrew",
-			description: "Play Doodlecrew in VC."
-		},
-		{
-			type: "SUB_COMMAND",
-			name: "awkword",
-			description: "Play Awkword in VC."
-		},
-		{
-			type: "SUB_COMMAND",
-			name: "spellcast",
-			description: "Play Spellcast in VC."
-		},
-		{
-			type: "SUB_COMMAND",
-			name: "checkers",
-			description: "Play Checkers in VC."
-		},
-		{
-			type: "SUB_COMMAND",
-			name: "puttparty",
-			description: "Play Puttparty in VC."
-		},
-		// {
-		// 	type: "SUB_COMMAND",
-		// 	name: "sketchyartist",
-		// 	description: "Play Sketchyartist in VC."
-		// }
-	]
+	description: "Start an activity in a VC."
 }
 
-export const run: RunFunction = async (client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver) => {
-	const member = interaction.guild?.members.cache.get(interaction.user.id);
 
-	if (options.getSubcommand() == "list-activities")
-	{
-		const embed: MessageEmbedOptions = {
-			title: "Activities",
-			description: "YouTube, Poker, Betrayal, Fishing, Chess, Lettertile, Wordsnack, Doodlecrew, Awkword, Spellcast, Checkers, Puttparty, ~~Sketchy Artist~~"
-		};
 
-		return interaction.reply({ embeds: [embed], ephemeral: true });
-	}
+export const run: RunFunction = async (client: Bot, interaction: CommandInteraction) => {
+	const row = new MessageActionRow().addComponents(
+		new MessageSelectMenu()
+			.setCustomId("activities")
+			.setPlaceholder("Select Activty")
+			.addOptions([
+				{
+					label: "Poker Night",
+					description: "Up to 25 particpants",
+					value: "poker"
+				},
+				{
+					label: "Chess In The Park",
+					description: "Unlimited particpants",
+					value: "chess"
+				},
+				{
+					label: "Doodle Crew",
+					description: "Up to 16 particpants",
+					value: "doodlecrew"
+				},
+				{
+					label: "Letter Tile",
+					description: "Up to 8 particpants",
+					value: "lettertile"
+				},
+				{
+					label: "SpellCast",
+					description: "Up to 100 particpants",
+					value: "speelcast"
+				},
+				{
+					label: "Watch Together",
+					description: "Unlimited particpants",
+					value: "youtube"
+				},
+				{
+					label: "Checkers In The Park",
+					description: "Unlimited particpants",
+					value: "checkers"
+				},
+				{
+					label: "Word Snacks",
+					description: "Up to 8 particpants",
+					value: "wordsnacks"
+				},
+				{
+					label: "Betrayal.io",
+					description: "Unkown particpants (May not work)",
+					value: "betrayal"
+				},
+				{
+					label: "Fishington.io",
+					description: "Unkown particpants (May not work)",
+					value: "fishing"
+				},
+				// {
+				// 	label: "AwkWord",
+				// 	description: "Unkown particpants (May not work)",
+				// 	value: "awkword"
+				// },
+				// {
+				// 	label: "Sketchy Artist",
+				// 	description: "Unkown particpants (May not work)",
+				// 	value: "sketchyartist"
+				// }
+			])
+	);
 
-	if (member)
-	{
-		if (member.voice.channel)
-		{
-			client.discordTogether.createTogetherCode(member.voice.channel.id, options.getSubcommand()).then(async invite => {
-				return interaction.reply({ content: `Click the link to start the activity then have everyone else click 'Join' or 'Spectate': ${invite.code}`, ephemeral: true});
-			});
-		}
-	}
+	interaction.reply({ content: "Select an activity using the dropdown menu below.", components: [row] });
 }

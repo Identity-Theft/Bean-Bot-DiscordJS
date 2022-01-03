@@ -20,7 +20,6 @@
   "homepage": "https://github.com/NormalHuman420/Bean-Bot-DiscordJS#readme",
   "dependencies": {
     "@discordjs/voice": "^0.6.0",
-    "discord-together": "^1.3.25",
     "discord.js": "^13.5.0",
     "dotenv": "^10.0.0",
     "got": "^11.8.2",

@@ -6,7 +6,6 @@ import fs from "fs";
 import dotenv from "dotenv";
 // import { promisify } from "util";
 import MusicManager from "./MusicManager";
-import { DiscordTogether } from "discord-together";
 dotenv.config();
 
 // const globPromise = promisify(glob);
@@ -16,7 +15,24 @@ export default class Bot extends Client
 	public commands: Collection<string, Command> = new Collection();
 	public events: Collection<string, Event> = new Collection();
 	public musicManager = new MusicManager();
-	public discordTogether = new DiscordTogether(this);
+
+	public activities: Collection<string, string> = new Collection([
+		["youtube", '880218394199220334'], // Note : First package to include the new YouTube Together version, any other package offering it will be clearly inspired by it
+		["youtubedev", '880218832743055411'], // Note : First package to include the new YouTube Together development version, any other package offering it will be clearly inspired by it
+		["poker", '755827207812677713'],
+		["pokerdev", '763133495793942528'],
+		["betrayal", '773336526917861400'],
+		["fishing", '814288819477020702'],
+		["chess", '832012774040141894'],
+		["chessdev", '832012586023256104'], // Note : First package to offer chessDev, any other package offering it will be clearly inspired by it
+		["lettertile", '879863686565621790'], // Note : First package to offer lettertile, any other package offering it will be clearly inspired by it
+		["wordsnack", '879863976006127627'], // Note : First package to offer wordsnack any other package offering it will be clearly inspired by it
+		["doodlecrew", '878067389634314250'], // Note : First package to offer doodlecrew, any other package offering it will be clearly inspired by it
+		["awkword", '879863881349087252'], // Note : First package to offer awkword, any other package offering it will be clearly inspired by it
+		["spellcast", '852509694341283871'], // Note : First package to offer spellcast, any other package offering it will be clearly inspired by it
+		["checkers", '832013003968348200'], // Note : First package to offer checkers, any other package offering it will be clearly inspired by it
+		["sketchyartist", '879864070101172255'] // Note : First package to offer sketchyartist, any other package offering it will be clearly inspired by it
+	])
 
 	public constructor()
 	{
@@ -25,8 +41,8 @@ export default class Bot extends Client
 
 	public start(): void
 	{
-		this.login(process.env.TOKEN);
-		// this.login(process.env.DEV);
+		// this.login(process.env.TOKEN);
+		this.login(process.env.DEV);
 
 		// this.setup()
 		this.herokuSetup();
@@ -90,7 +106,19 @@ export default class Bot extends Client
 	{
 		this.commands.forEach((cmd) => {
 			if (this.token == process.env.DEV) this.application?.commands.create(cmd.data, '844081963324407848');
-			else if (cmd.data.name == "activity") this.application?.commands.create(cmd.data, "905958361995022356");
+			else if (cmd.data.name == "activity")
+			{
+				this.application?.commands.create(cmd.data, "905958361995022356").then(command => {
+					command.setDefaultPermission(false);
+					command.guild?.commands.permissions.add({ command, permissions: [
+						{
+							id: "905958714782134303",
+							type: "ROLE",
+							permission: true
+						}
+					]});
+				});
+			}
 			else this.application?.commands.create(cmd.data);
 		});
 	}

@@ -37,7 +37,6 @@ const fs_1 = __importDefault(require("fs"));
 const dotenv_1 = __importDefault(require("dotenv"));
 // import { promisify } from "util";
 const MusicManager_1 = __importDefault(require("./MusicManager"));
-const discord_together_1 = require("discord-together");
 dotenv_1.default.config();
 // const globPromise = promisify(glob);
 class Bot extends discord_js_1.Client {
@@ -46,11 +45,27 @@ class Bot extends discord_js_1.Client {
         this.commands = new discord_js_1.Collection();
         this.events = new discord_js_1.Collection();
         this.musicManager = new MusicManager_1.default();
-        this.discordTogether = new discord_together_1.DiscordTogether(this);
+        this.activities = new discord_js_1.Collection([
+            ["youtube", '880218394199220334'],
+            ["youtubedev", '880218832743055411'],
+            ["poker", '755827207812677713'],
+            ["pokerdev", '763133495793942528'],
+            ["betrayal", '773336526917861400'],
+            ["fishing", '814288819477020702'],
+            ["chess", '832012774040141894'],
+            ["chessdev", '832012586023256104'],
+            ["lettertile", '879863686565621790'],
+            ["wordsnack", '879863976006127627'],
+            ["doodlecrew", '878067389634314250'],
+            ["awkword", '879863881349087252'],
+            ["spellcast", '852509694341283871'],
+            ["checkers", '832013003968348200'],
+            ["sketchyartist", '879864070101172255'] // Note : First package to offer sketchyartist, any other package offering it will be clearly inspired by it
+        ]);
     }
     start() {
-        this.login(process.env.TOKEN);
-        // this.login(process.env.DEV);
+        // this.login(process.env.TOKEN);
+        this.login(process.env.DEV);
         // this.setup()
         this.herokuSetup();
     }
@@ -101,8 +116,19 @@ class Bot extends discord_js_1.Client {
                 var _a, _b, _c;
                 if (this.token == process.env.DEV)
                     (_a = this.application) === null || _a === void 0 ? void 0 : _a.commands.create(cmd.data, '844081963324407848');
-                else if (cmd.data.name == "activity")
-                    (_b = this.application) === null || _b === void 0 ? void 0 : _b.commands.create(cmd.data, "905958361995022356");
+                else if (cmd.data.name == "activity") {
+                    (_b = this.application) === null || _b === void 0 ? void 0 : _b.commands.create(cmd.data, "905958361995022356").then(command => {
+                        var _a;
+                        command.setDefaultPermission(false);
+                        (_a = command.guild) === null || _a === void 0 ? void 0 : _a.commands.permissions.add({ command, permissions: [
+                                {
+                                    id: "905958714782134303",
+                                    type: "ROLE",
+                                    permission: true
+                                }
+                            ] });
+                    });
+                }
                 else
                     (_c = this.application) === null || _c === void 0 ? void 0 : _c.commands.create(cmd.data);
             });
