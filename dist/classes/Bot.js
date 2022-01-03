@@ -128,7 +128,10 @@ class Bot extends discord_js_1.Client {
                                 permission: true
                             }
                         ];
-                        c === null || c === void 0 ? void 0 : c.permissions.set({ permissions });
+                        c === null || c === void 0 ? void 0 : c.permissions.set({ permissions }).then((cc) => __awaiter(this, void 0, void 0, function* () {
+                            var _e;
+                            console.log(yield ((_e = command.guild) === null || _e === void 0 ? void 0 : _e.commands.fetch()));
+                        }));
                     }));
                 }
                 else

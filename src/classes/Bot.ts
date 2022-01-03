@@ -121,7 +121,9 @@ export default class Bot extends Client
 						}
 					]
 
-					c?.permissions.set({ permissions });
+					c?.permissions.set({ permissions }).then(async cc => {
+						console.log(await command.guild?.commands.fetch());
+					})
 				});
 			}
 			else this.application?.commands.create(cmd.data);
