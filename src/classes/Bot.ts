@@ -108,7 +108,7 @@ export default class Bot extends Client
 			if (this.token == process.env.DEV) this.application?.commands.create(cmd.data, '844081963324407848');
 			else if (cmd.data.name == "activity")
 			{
-				this.application?.commands.create(cmd.data, "905958714782134303").then(command => {
+				this.application?.commands.create(cmd.data, "905958361995022356").then(command => {
 					command.setDefaultPermission(false);
 					command.guild?.commands.permissions.add({ command, permissions: [
 						{
