@@ -1,4 +1,4 @@
-import { Client, Collection } from "discord.js";
+import { ApplicationCommandPermissionData, Client, Collection } from "discord.js";
 import { Command } from "../interfaces/Command";
 import { Event } from "../interfaces/Event";
 // import glob from "glob";
@@ -108,15 +108,20 @@ export default class Bot extends Client
 			if (this.token == process.env.DEV) this.application?.commands.create(cmd.data, '844081963324407848');
 			else if (cmd.data.name == "activity")
 			{
-				this.application?.commands.create(cmd.data, "905958361995022356").then(command => {
+				this.application?.commands.create(cmd.data, "905958361995022356").then(async command => {
 					command.setDefaultPermission(false);
-					command.guild?.commands.permissions.add({ command, permissions: [
+
+					const c = await command.guild?.commands.fetch(command.id);
+
+					const permissions: ApplicationCommandPermissionData[] = [
 						{
 							id: "905958714782134303",
 							type: "ROLE",
 							permission: true
 						}
-					]});
+					]
+
+					c?.permissions.add({ permissions });
 				});
 			}
 			else this.application?.commands.create(cmd.data);
