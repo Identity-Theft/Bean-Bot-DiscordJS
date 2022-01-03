@@ -108,7 +108,7 @@ export default class Bot extends Client
 			if (this.token == process.env.DEV) this.application?.commands.create(cmd.data, '844081963324407848');
 			else if (cmd.data.name == "activity")
 			{
-				this.application?.commands.create(cmd.data, "905958361995022356").then(async command => {
+				this.application?.commands.create(cmd.data, "905958361995022356").then(command => {
 					command.setDefaultPermission(false);
 
 					const guild = command.guild!;
@@ -120,9 +120,7 @@ export default class Bot extends Client
 						}
 					]
 
-					command.permissions.set({ guild, permissions}).then(async () => {
-						console.log(guild.commands.fetch());
-					})
+					command.permissions.set({ guild, permissions });
 				});
 			}
 			else this.application?.commands.create(cmd.data);
