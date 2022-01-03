@@ -118,9 +118,8 @@ class Bot extends discord_js_1.Client {
                     (_a = this.application) === null || _a === void 0 ? void 0 : _a.commands.create(cmd.data, '844081963324407848');
                 else if (cmd.data.name == "activity") {
                     (_b = this.application) === null || _b === void 0 ? void 0 : _b.commands.create(cmd.data, "905958361995022356").then((command) => __awaiter(this, void 0, void 0, function* () {
-                        var _d;
                         command.setDefaultPermission(false);
-                        const c = yield ((_d = command.guild) === null || _d === void 0 ? void 0 : _d.commands.fetch(command.id));
+                        const guild = command.guild;
                         const permissions = [
                             {
                                 id: "905958714782134303",
@@ -128,9 +127,8 @@ class Bot extends discord_js_1.Client {
                                 permission: true
                             }
                         ];
-                        c === null || c === void 0 ? void 0 : c.permissions.set({ permissions }).then((cc) => __awaiter(this, void 0, void 0, function* () {
-                            var _e;
-                            console.log(yield ((_e = command.guild) === null || _e === void 0 ? void 0 : _e.commands.fetch()));
+                        command.permissions.set({ guild, permissions }).then(() => __awaiter(this, void 0, void 0, function* () {
+                            console.log(guild.commands.fetch());
                         }));
                     }));
                 }

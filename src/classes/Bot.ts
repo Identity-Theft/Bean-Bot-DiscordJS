@@ -111,8 +111,7 @@ export default class Bot extends Client
 				this.application?.commands.create(cmd.data, "905958361995022356").then(async command => {
 					command.setDefaultPermission(false);
 
-					const c = await command.guild?.commands.fetch(command.id);
-
+					const guild = command.guild!;
 					const permissions: ApplicationCommandPermissionData[] = [
 						{
 							id: "905958714782134303",
@@ -121,8 +120,8 @@ export default class Bot extends Client
 						}
 					]
 
-					c?.permissions.set({ permissions }).then(async cc => {
-						console.log(await command.guild?.commands.fetch());
+					command.permissions.set({ guild, permissions}).then(async () => {
+						console.log(guild.commands.fetch());
 					})
 				});
 			}
