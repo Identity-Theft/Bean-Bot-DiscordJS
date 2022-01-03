@@ -41,8 +41,8 @@ export default class Bot extends Client
 
 	public start(): void
 	{
-		// this.login(process.env.TOKEN);
-		this.login(process.env.DEV);
+		this.login(process.env.TOKEN);
+		// this.login(process.env.DEV);
 
 		// this.setup()
 		this.herokuSetup();
