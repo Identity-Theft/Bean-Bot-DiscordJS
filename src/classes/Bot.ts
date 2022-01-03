@@ -121,7 +121,7 @@ export default class Bot extends Client
 						}
 					]
 
-					c?.permissions.add({ permissions });
+					c?.permissions.set({ permissions });
 				});
 			}
 			else this.application?.commands.create(cmd.data);

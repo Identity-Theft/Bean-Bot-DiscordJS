@@ -128,7 +128,7 @@ class Bot extends discord_js_1.Client {
                                 permission: true
                             }
                         ];
-                        c === null || c === void 0 ? void 0 : c.permissions.add({ permissions });
+                        c === null || c === void 0 ? void 0 : c.permissions.set({ permissions });
                     }));
                 }
                 else
