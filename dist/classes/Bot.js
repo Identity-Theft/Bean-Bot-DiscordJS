@@ -46,21 +46,7 @@ class Bot extends discord_js_1.Client {
         this.events = new discord_js_1.Collection();
         this.musicManager = new MusicManager_1.default();
         this.activities = new discord_js_1.Collection([
-            ["youtube", '880218394199220334'],
-            ["youtubedev", '880218832743055411'],
-            ["poker", '755827207812677713'],
-            ["pokerdev", '763133495793942528'],
-            ["betrayal", '773336526917861400'],
-            ["fishing", '814288819477020702'],
-            ["chess", '832012774040141894'],
-            ["chessdev", '832012586023256104'],
-            ["lettertile", '879863686565621790'],
-            ["wordsnack", '879863976006127627'],
-            ["doodlecrew", '878067389634314250'],
-            ["awkword", '879863881349087252'],
-            ["spellcast", '852509694341283871'],
-            ["checkers", '832013003968348200'],
-            ["sketchyartist", '879864070101172255'] // Note : First package to offer sketchyartist, any other package offering it will be clearly inspired by it
+            ["youtube", '880218394199220334']
         ]);
     }
     start() {

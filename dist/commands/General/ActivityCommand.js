@@ -21,65 +21,10 @@ const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function*
         .setPlaceholder("Select Activty")
         .addOptions([
         {
-            label: "Poker Night",
-            description: "Up to 25 particpants",
-            value: "poker"
-        },
-        {
-            label: "Chess In The Park",
-            description: "Unlimited particpants",
-            value: "chess"
-        },
-        {
-            label: "Doodle Crew",
-            description: "Up to 16 particpants",
-            value: "doodlecrew"
-        },
-        {
-            label: "Letter Tile",
-            description: "Up to 8 particpants",
-            value: "lettertile"
-        },
-        {
-            label: "SpellCast",
-            description: "Up to 100 particpants",
-            value: "speelcast"
-        },
-        {
             label: "Watch Together",
             description: "Unlimited particpants",
             value: "youtube"
-        },
-        {
-            label: "Checkers In The Park",
-            description: "Unlimited particpants",
-            value: "checkers"
-        },
-        {
-            label: "Word Snacks",
-            description: "Up to 8 particpants",
-            value: "wordsnacks"
-        },
-        {
-            label: "Betrayal.io",
-            description: "Unkown particpants (May not work)",
-            value: "betrayal"
-        },
-        {
-            label: "Fishington.io",
-            description: "Unkown particpants (May not work)",
-            value: "fishing"
-        },
-        // {
-        // 	label: "AwkWord",
-        // 	description: "Unkown particpants (May not work)",
-        // 	value: "awkword"
-        // },
-        // {
-        // 	label: "Sketchy Artist",
-        // 	description: "Unkown particpants (May not work)",
-        // 	value: "sketchyartist"
-        // }
+        }
     ]));
     interaction.reply({ content: "Select an activity using the dropdown menu below.", components: [row] });
 });
