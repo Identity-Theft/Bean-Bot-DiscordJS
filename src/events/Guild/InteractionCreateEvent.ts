@@ -9,11 +9,17 @@ export const name = 'interactionCreate';
 export const run: RunFunction = async(client: Bot, interaction: Interaction): Promise<void> => {
 	if (interaction.isCommand())
 	{
+		if (interaction.guild == null)
+		{
+			interaction.reply({ embeds: [errorEmbed('Bean Bot must be used in a server.')], ephemeral: true });
+			return;
+		}
+
 		const { commandName, options } = interaction;
 
-		const c = await getChannel(client, interaction.guildId!, interaction.channelId)!;
+		const channelUsed = await getChannel(client, interaction.guildId!, interaction.channelId)!;
 
-		if (!c?.includes("bot"))
+		if (!channelUsed?.includes("bot"))
 		{
 			interaction.reply({ embeds: [errorEmbed('Bean Bot must be used in a bot channel.')], ephemeral: true });
 			return;

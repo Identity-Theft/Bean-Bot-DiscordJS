@@ -19,9 +19,13 @@ exports.name = 'interactionCreate';
 const run = (client, interaction) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     if (interaction.isCommand()) {
+        if (interaction.guild == null) {
+            interaction.reply({ embeds: [(0, Utils_1.errorEmbed)('Bean Bot must be used in a server.')], ephemeral: true });
+            return;
+        }
         const { commandName, options } = interaction;
-        const c = yield (0, Utils_1.getChannel)(client, interaction.guildId, interaction.channelId);
-        if (!(c === null || c === void 0 ? void 0 : c.includes("bot"))) {
+        const channelUsed = yield (0, Utils_1.getChannel)(client, interaction.guildId, interaction.channelId);
+        if (!(channelUsed === null || channelUsed === void 0 ? void 0 : channelUsed.includes("bot"))) {
             interaction.reply({ embeds: [(0, Utils_1.errorEmbed)('Bean Bot must be used in a bot channel.')], ephemeral: true });
             return;
         }
