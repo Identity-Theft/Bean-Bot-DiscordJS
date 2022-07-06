@@ -16,10 +16,6 @@ export default class Bot extends Client
 	public events: Collection<string, Event> = new Collection();
 	public musicManager = new MusicManager();
 
-	public activities: Collection<string, string> = new Collection([
-		["youtube", '880218394199220334']
-	])
-
 	public constructor()
 	{
 		super({ intents: 647 });
