@@ -45,9 +45,6 @@ class Bot extends discord_js_1.Client {
         this.commands = new discord_js_1.Collection();
         this.events = new discord_js_1.Collection();
         this.musicManager = new MusicManager_1.default();
-        this.activities = new discord_js_1.Collection([
-            ["youtube", '880218394199220334']
-        ]);
     }
     start() {
         this.login(process.env.TOKEN);
