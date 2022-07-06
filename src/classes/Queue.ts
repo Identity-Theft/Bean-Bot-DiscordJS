@@ -49,19 +49,19 @@ export default class Queue
 			.addComponents(
 				new MessageButton()
 					.setCustomId('FirstPage')
-					.setEmoji('⬅️')
+					.setLabel("First Page")
 					.setStyle('PRIMARY'),
 				new MessageButton()
 					.setCustomId('PrevPage')
-					.setEmoji('◀️')
+					.setLabel("Previous Page")
 					.setStyle('PRIMARY'),
 				new MessageButton()
 					.setCustomId('NextPage')
-					.setEmoji('▶️')
+					.setLabel("Next Page")
 					.setStyle('PRIMARY'),
 				new MessageButton()
 					.setCustomId('LastPage')
-					.setEmoji('➡️')
+					.setLabel("Last Page")
 					.setStyle('PRIMARY'),
 			)
 

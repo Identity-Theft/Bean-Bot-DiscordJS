@@ -42,16 +42,16 @@ class Queue {
             const row = new discord_js_1.MessageActionRow()
                 .addComponents(new discord_js_1.MessageButton()
                 .setCustomId('FirstPage')
-                .setEmoji('⬅️')
+                .setLabel("First Page")
                 .setStyle('PRIMARY'), new discord_js_1.MessageButton()
                 .setCustomId('PrevPage')
-                .setEmoji('◀️')
+                .setLabel("Previous Page")
                 .setStyle('PRIMARY'), new discord_js_1.MessageButton()
                 .setCustomId('NextPage')
-                .setEmoji('▶️')
+                .setLabel("Next Page")
                 .setStyle('PRIMARY'), new discord_js_1.MessageButton()
                 .setCustomId('LastPage')
-                .setEmoji('➡️')
+                .setLabel("Last Page")
                 .setStyle('PRIMARY'));
             const embed = embeds[0];
             embed.footer = { text: `Page ${1}/${embeds.length}` };
