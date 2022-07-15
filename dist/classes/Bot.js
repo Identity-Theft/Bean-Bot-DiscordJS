@@ -96,25 +96,11 @@ class Bot extends discord_js_1.Client {
     generateCommands() {
         return __awaiter(this, void 0, void 0, function* () {
             this.commands.forEach((cmd) => {
-                var _a, _b, _c;
+                var _a, _b;
                 if (this.token == process.env.DEV)
                     (_a = this.application) === null || _a === void 0 ? void 0 : _a.commands.create(cmd.data, '844081963324407848');
-                else if (cmd.data.name == "activity") {
-                    (_b = this.application) === null || _b === void 0 ? void 0 : _b.commands.create(cmd.data, "905958361995022356").then(command => {
-                        command.setDefaultPermission(false);
-                        const guild = command.guild;
-                        const permissions = [
-                            {
-                                id: "905958714782134303",
-                                type: "ROLE",
-                                permission: true
-                            }
-                        ];
-                        command.permissions.set({ guild, permissions });
-                    });
-                }
                 else
-                    (_c = this.application) === null || _c === void 0 ? void 0 : _c.commands.create(cmd.data);
+                    (_b = this.application) === null || _b === void 0 ? void 0 : _b.commands.create(cmd.data);
             });
         });
     }
