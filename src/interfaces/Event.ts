@@ -1,12 +1,7 @@
 import Bot from "../classes/Bot";
 
-export interface RunFunction
-{
-	(client: Bot, ...args: any[]): Promise<void>
-}
-
-export interface Event
+export default interface IEvent
 {
 	name: string;
-	run: RunFunction;
+	run(client: Bot, ...args: any[]): Promise<void>;
 }

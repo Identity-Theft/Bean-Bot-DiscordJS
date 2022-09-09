@@ -1,4 +1,4 @@
-import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageButton, MessageEmbed, MessageEmbedOptions, StageChannel, TextBasedChannel, User, VoiceChannel } from "discord.js";
+import { ButtonInteraction, Message, ActionRowBuilder, ButtonBuilder, EmbedBuilder, StageChannel, TextBasedChannel, User, VoiceChannel, ButtonStyle, CommandInteraction } from "discord.js";
 import Song from "./Song";
 
 export default class Queue
@@ -8,11 +8,11 @@ export default class Queue
 	public startedBy: User;
 
 	private queueMessage: Message | null = null;
-	public embedPages: Array<MessageEmbed> = [];
+	public embedPages: Array<EmbedBuilder> = [];
 	public currentPage = 0;
 
 	public paused = false;
-	public loop: 'none' | 'song' | 'queue' = 'none'
+	public loop: "none" | "song" | "queue" = "none"
 	public playing = 0;
 
 	public songs: Array<Song> = [];
@@ -27,7 +27,7 @@ export default class Queue
 
 	public async generateQueueEmbed(interaction: CommandInteraction): Promise<void>
 	{
-		const embeds: Array<MessageEmbed> = [];
+		const embeds: Array<EmbedBuilder> = [];
 		let k = 10;
 
 		for (let i = 0; i < this.songs.length; i += 10)
@@ -36,42 +36,41 @@ export default class Queue
 			let j = i
 			k += 10;
 
-			const info = current.map(track => `${++j}) [${track.title}](${track.url}) - Added by ${track.addedBy}`).join('\n');
-			const embed: MessageEmbedOptions = {
-				description: info,
-				color: 'BLURPLE'
-			};
+			const info = current.map(track => `${++j}) [${track.title}](${track.url}) - Added by ${track.addedBy}`).join("\n");
 
-			embeds.push(new MessageEmbed(embed));
+			embeds.push(new EmbedBuilder()
+				.setDescription(info)
+				.setColor("Blurple")
+			);
 		}
 
-		const row = new MessageActionRow()
-			.addComponents(
-				new MessageButton()
-					.setCustomId('FirstPage')
+		const row = new ActionRowBuilder<any>()
+			.setComponents(
+				new ButtonBuilder()
+					.setCustomId("FirstPage")
 					.setLabel("First Page")
-					.setStyle('PRIMARY'),
-				new MessageButton()
-					.setCustomId('PrevPage')
+					.setStyle(ButtonStyle.Primary),
+				new ButtonBuilder()
+					.setCustomId("PrevPage")
 					.setLabel("Previous Page")
-					.setStyle('PRIMARY'),
-				new MessageButton()
-					.setCustomId('NextPage')
+					.setStyle(ButtonStyle.Primary),
+				new ButtonBuilder()
+					.setCustomId("NextPage")
 					.setLabel("Next Page")
-					.setStyle('PRIMARY'),
-				new MessageButton()
-					.setCustomId('LastPage')
+					.setStyle(ButtonStyle.Primary),
+				new ButtonBuilder()
+					.setCustomId("LastPage")
 					.setLabel("Last Page")
-					.setStyle('PRIMARY'),
-			)
+					.setStyle(ButtonStyle.Primary),
+			);
 
 		const embed = embeds[0];
-		embed.footer = { text: `Page ${1}/${embeds.length}` }
+		embed.setFooter({ text: `Page ${1}/${embeds.length}` });
 
 		if (embeds.length > 1)
-			interaction.reply({ embeds: [embed], components: [row] });
+			await interaction.reply({ embeds: [embed], components: [row] });
 		else
-			interaction.reply({ embeds: [embed] });
+			await interaction.reply({ embeds: [embed] });
 
 		this.currentPage = 0;
 		this.queueMessage = await interaction.fetchReply() as Message;
@@ -89,7 +88,7 @@ export default class Queue
 		}
 
 		const embed = this.embedPages[page];
-		embed.footer = { text: `Page ${page + 1}/${this.embedPages.length}` };
+		embed.setFooter({ text: `Page ${page + 1}/${this.embedPages.length}` });
 		this.currentPage = page;
 
 		interaction.update({ embeds: [embed] });

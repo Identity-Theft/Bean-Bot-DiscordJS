@@ -1,6 +1,6 @@
-import { ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
+import { ApplicationCommandData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
 import Bot from "../../classes/Bot";
-import { RunFunction } from "../../interfaces/Command";
+import { CommandFunction } from "../../interfaces/Command";
 import { errorEmbed, simpleEmbed2 } from "../../utils/Utils";
 
 export const data: ApplicationCommandData = {
@@ -10,15 +10,15 @@ export const data: ApplicationCommandData = {
 		{
 			name: "song",
 			description: "Song's position in the queue",
-			type: "INTEGER",
+			type: ApplicationCommandOptionType.Integer,
 			required: true
 		}
 	]
 }
 
 
-export const run: RunFunction = async (client: Bot, interaction: CommandInteraction, args: CommandInteractionOptionResolver) => {
-	if (await client.musicManager.canUseCommand(client, interaction) == false) return;
+export const run: CommandFunction = async (client: Bot, interaction: CommandInteraction, args: CommandInteractionOptionResolver) => {
+	if (await client.musicManager.canUseCommand(interaction) == false) return;
 
 	const guildId = interaction.guildId!;
 	const queue = client.musicManager.queues.get(interaction.guildId!)!;

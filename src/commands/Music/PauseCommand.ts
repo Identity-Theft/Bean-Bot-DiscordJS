@@ -1,5 +1,5 @@
-import { ApplicationCommandData, CommandInteraction, MessageEmbedOptions } from "discord.js";
-import { RunFunction } from "../../interfaces/Command";
+import { ApplicationCommandData, CommandInteraction, EmbedBuilder } from "discord.js";
+import { CommandFunction } from "../../interfaces/Command";
 import Bot from "../../classes/Bot";
 
 export const data: ApplicationCommandData = {
@@ -7,8 +7,8 @@ export const data: ApplicationCommandData = {
 	description: "Pause or resume the current song.",
 }
 
-export const run: RunFunction = async (client: Bot, interaction: CommandInteraction) => {
-	if (await client.musicManager.canUseCommand(client, interaction) == false) return;
+export const run: CommandFunction = async (client: Bot, interaction: CommandInteraction) => {
+	if (await client.musicManager.canUseCommand(interaction) == false) return;
 
 	const guildId = interaction.guildId!;
 
@@ -22,18 +22,15 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 
 	const song = queue.songs[queue.playing];
 
-	const embed: MessageEmbedOptions = {
-		title: `Song ${queue.paused == true ? "Paused" : "Unpaused"}`,
-		description: `[${song.title}](${song.url})`,
-		thumbnail: {
-			url: song.thumbnail
-		},
-		color: 'BLURPLE',
-		footer: {
+	const embed = new EmbedBuilder()
+		.setTitle(`Song ${queue.paused == true ? "Paused" : "Unpaused"}`)
+		.setDescription(`[${song.title}](${song.url})`)
+		.setThumbnail(song.thumbnail)
+		.setColor("Blurple")
+		.setFooter({
 			text: `${queue.paused == true ? "Paused" : "Unpaused"} by ${interaction.user.tag}`,
-			icon_url: interaction.user.avatarURL() as string | undefined
-		}
-	};
+			iconURL: interaction.user.avatarURL() as string | undefined
+		})
 
 	interaction.reply({ embeds: [embed] });
 }

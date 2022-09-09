@@ -1,2 +1,2 @@
-import Bot from './classes/Bot';
+import Bot from "./classes/Bot";
 new Bot().start();

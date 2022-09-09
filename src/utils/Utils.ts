@@ -1,52 +1,41 @@
-import { MessageEmbed, MessageEmbedOptions, Snowflake } from "discord.js";
+import { EmbedBuilder, Snowflake } from "discord.js";
 import Bot from "../classes/Bot";
 
-function simpleEmbed(client: Bot, description: string): MessageEmbed
+function simpleEmbed(client: Bot, description: string): EmbedBuilder
 {
-	const embed: MessageEmbedOptions = {
-		author: {
-			name: client.user?.username,
-			icon_url: client.user?.avatarURL() as string | undefined
-		},
-		description: description,
-		color: 'BLURPLE'
-	};
-
-	return new MessageEmbed(embed);
+	return new EmbedBuilder()
+		.setDescription(description)
+		.setAuthor({name: client.user?.username as string, iconURL: client.user?.avatarURL() as string | undefined})
+		.setColor("Blurple");
 }
 
-function simpleEmbed2(name: string, description: string): MessageEmbed
+function simpleEmbed2(name: string, description: string): EmbedBuilder
 {
-	const embed: MessageEmbedOptions = {
-		title: name,
-		description: description,
-		color: 'BLURPLE'
-	};
-
-	return new MessageEmbed(embed)
+	return new EmbedBuilder()
+		.setTitle(name)
+		.setDescription(description)
+		.setColor("Blurple");
 }
 
-function errorEmbed(err: string): MessageEmbed
+function errorEmbed(err: string): EmbedBuilder
 {
-	const embed: MessageEmbedOptions = {
-		title: "⚠️ Error",
-		description: err,
-		color: 'RED'
-	};
-
-	return new MessageEmbed(embed);
+	return new EmbedBuilder()
+		.setTitle("⚠️ Error",)
+		.setDescription(err)
+		.setColor("Blurple");
 }
 
 async function getChannel(client: Bot, guildId: Snowflake, channelId: Snowflake): Promise<string | undefined>
 {
 	const guild = await client.guilds.fetch(guildId);
-	const channel = await guild.channels.cache.find(c => c.id == channelId);
+	const channel = guild.channels.cache.find(c => c.id == channelId);
 	return channel?.name;
 }
 
 const formatInt = (int: number) => (int < 10 ? `0${int}` : int);
 
-function formatDuration(sec: number): string {
+function formatDuration(sec: number): string
+{
 	if (!sec || !Number(sec)) return "00:00";
 	const seconds = Math.round(sec % 60);
 	const minutes = Math.floor((sec % 3600) / 60);

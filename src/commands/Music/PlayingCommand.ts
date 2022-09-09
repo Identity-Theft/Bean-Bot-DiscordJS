@@ -1,25 +1,23 @@
-import { ApplicationCommandData, CommandInteraction, MessageEmbedOptions } from "discord.js";
+import { ApplicationCommandData, CommandInteraction, EmbedBuilder } from "discord.js";
 import Bot from "../../classes/Bot";
-import { RunFunction } from "../../interfaces/Command";
+import { CommandFunction } from "../../interfaces/Command";
 
 export const data: ApplicationCommandData = {
-	name: 'playing',
-	description: 'Get info about the current song.',
+	name: "playing",
+	description: "Get info about the current song.",
 	options: []
 }
 
-export const run: RunFunction = async (client: Bot, interaction: CommandInteraction) => {
-	if (await client.musicManager.canUseCommand(client, interaction) == false) return;
+export const run: CommandFunction = async (client: Bot, interaction: CommandInteraction) => {
+	if (await client.musicManager.canUseCommand(interaction) == false) return;
 	const queue = client.musicManager.queues.get(interaction.guildId!)!;
 	const song = queue.songs[queue.playing];
 
-	const embed: MessageEmbedOptions = {
-		title: "Currently Playing",
-		description: `${queue.paused == true ? "(Paused)" : ""} [${song.title}](${song.url})`,
-		thumbnail: {
-			url: song.thumbnail
-		},
-		fields: [
+	const embed = new EmbedBuilder()
+		.setTitle("Currently Playing")
+		.setDescription(`${queue.paused == true ? "(Paused)" : ""} [${song.title}](${song.url})`)
+		.setThumbnail(song.thumbnail)
+		.setFields([
 			{
 				name: "Duration",
 				value: song.fortmatedDuration,
@@ -35,13 +33,12 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 				value: song.views,
 				inline: true
 			}
-		],
-		color: 'BLURPLE',
-		footer: {
+		])
+		.setColor("Blurple")
+		.setFooter({
 			text: `Added by ${song.addedBy.tag}`,
-			icon_url: song.addedBy.avatarURL() as string | undefined
-		}
-	};
+			iconURL: song.addedBy.avatarURL() as string | undefined
+		});
 
 	interaction.reply({ embeds: [embed] });
 }

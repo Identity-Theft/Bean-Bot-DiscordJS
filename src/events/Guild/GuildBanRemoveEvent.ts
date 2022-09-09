@@ -1,13 +1,17 @@
 import { GuildBan } from "discord.js";
 import Bot from "../../classes/Bot";
-import { RunFunction } from "../../interfaces/Event";
+import IEvent from "../../interfaces/Event";
 
-export const name = "guildBanRemove";
+export default class GuildBanRemoveEvent implements IEvent
+{
+	public name = "guildBanRemove";
 
-export const run: RunFunction = async (client: Bot, ban: GuildBan) => {
-	console.log(`Unbanned ${ban.user.username} from ${ban.guild.name}`)
-	ban.user.send({
-		content: `You have been unbanned from **${ban.guild.name}**.`,
-		files: [`${__dirname}/../../../assets/reflection.mov`]
-	})
+	public async run(client: Bot, ban: GuildBan): Promise<void>
+	{
+		console.log(`Unbanned ${ban.user.username} from ${ban.guild.name}`)
+		ban.user.send({
+			content: `You have been unbanned from **${ban.guild.name}**.`,
+			files: [`${__dirname}/../../../assets/reflection.mov`]
+		})
+	}
 }

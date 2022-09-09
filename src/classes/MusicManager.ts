@@ -1,20 +1,18 @@
 import { AudioPlayer, VoiceConnection } from "@discordjs/voice";
-import { CommandInteraction, Snowflake, User } from "discord.js";
-import ytSearch from 'yt-search';
+import { ChannelType, CommandInteraction, Snowflake, User } from "discord.js";
+import ytSearch from "yt-search";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
 import Queue from "./Queue";
 import Song from "./Song";
 import { errorEmbed } from "../utils/Utils";
-import Bot from "./Bot";
-
 export default class MusicManager
 {
 	public queues: Map<Snowflake, Queue> = new Map();
 	public connections: Map<Snowflake, VoiceConnection> = new Map();
 	public audioPlayers: Map<Snowflake, AudioPlayer> = new Map();
 
-	public async canUseCommand(client: Bot, interaction: CommandInteraction): Promise<boolean>
+	public async canUseCommand(interaction: CommandInteraction): Promise<boolean>
 	{
 		const guildId = interaction.guildId!;
 		const member = await interaction.guild?.members.fetch(interaction.user.id);
@@ -22,33 +20,33 @@ export default class MusicManager
 
 		if (channel == null)
 		{
-			interaction.reply({ embeds: [errorEmbed('You are not in a voice channel')], ephemeral: true });
+			interaction.reply({ embeds: [errorEmbed("You are not in a voice channel")], ephemeral: true });
 			return false;
 		}
 
-		if (this.queues.get(guildId)?.voiceChannel.type == 'GUILD_STAGE_VOICE' && !member?.permissions.has('ADMINISTRATOR'))
+		if (this.queues.get(guildId)?.voiceChannel.type == ChannelType.GuildStageVoice && !member?.permissions.has("Administrator"))
 		{
-			interaction.reply({ embeds: [errorEmbed('Only admins can use music commands when Bean Bot is in a Stage Channel.')] });
+			interaction.reply({ embeds: [errorEmbed("Only admins can use music commands when Bean Bot is in a Stage Channel.")] });
 			return false;
 		}
 
 		if (this.queues.get(guildId) != undefined && this.queues.get(guildId)!.voiceChannel != channel)
 		{
-			interaction.reply({ embeds: [errorEmbed('You are not in a voice channel with Bean Bot.')], ephemeral: true});
+			interaction.reply({ embeds: [errorEmbed("You are not in a voice channel with Bean Bot.")], ephemeral: true});
 			return false;
 		}
 
-		if (interaction.commandName != 'play')
+		if (interaction.commandName != "play")
 		{
 			if (this.queues.get(guildId) == undefined)
 			{
-				interaction.reply({ embeds: [errorEmbed('Bean Bot is not in a Voice Channel.')] });
+				interaction.reply({ embeds: [errorEmbed("Bean Bot is not in a Voice Channel.")] });
 				return false;
 			}
 		}
 		else
 		{
-			if (channel.type == 'GUILD_STAGE_VOICE' && !interaction.memberPermissions?.has('ADMINISTRATOR'))
+			if (channel.type == ChannelType.GuildStageVoice && !interaction.memberPermissions?.has("Administrator"))
 			{
 				interaction.reply({ embeds: [errorEmbed(`Only admins can add Bean Bot to Stage Channels. ${channel}`)], ephemeral: true });
 				return false;
@@ -89,7 +87,7 @@ export default class MusicManager
 
 	public async songInfo(url: string, addedBy: User): Promise<Song | Song[] | null>
 	{
-		if (!url.startsWith('https://'))
+		if (!url.startsWith("https://"))
 		{
 			const newUrl = await this.findVideo(url);
 

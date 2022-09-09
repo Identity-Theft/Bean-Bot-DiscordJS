@@ -1,9 +1,15 @@
-import { RunFunction } from "../../interfaces/Event";
+import { ActivityType } from "discord.js";
+import Bot from "../../classes/Bot";
+import IEvent from "../../interfaces/Event";
 
-export const name = 'ready';
+export default class ReadyEvent implements IEvent
+{
+	public name = "ready";
 
-export const run: RunFunction = async(client): Promise<void> => {
-	client.user?.setPresence({ activities: [{ name: 'Beans', type: 'WATCHING' }] });
-	console.log(`${client.user?.tag} is now online!`);
-	client.generateCommands();
+	public async run(client: Bot): Promise<void>
+	{
+		client.user?.setPresence({ activities: [{ name: "Beans", type: ActivityType.Competing }] });
+		console.log(`${client.user?.tag} is now online!`);
+		client.generateCommands();
+	}
 }

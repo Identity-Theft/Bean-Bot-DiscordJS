@@ -1,30 +1,27 @@
-import { MessageEmbedOptions, ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
+import { EmbedBuilder, ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, ApplicationCommandOptionType } from "discord.js";
 import Bot from "../../classes/Bot";
-import { RunFunction } from "../../interfaces/Command";
+import { CommandFunction } from "../../interfaces/Command";
 
 export const data: ApplicationCommandData = {
-	name: 'avatar',
-	description: 'Replies with a user\'s avatar.',
+	name: "avatar",
+	description: "Replies with a user\"s avatar.",
 	options: [
 		{
-			type: 'USER',
-			name: 'user',
-			description: 'User to get avatar from.',
+			type: ApplicationCommandOptionType.User,
+			name: "user",
+			description: "User to get avatar from.",
 			required: true,
 		}
 	],
 }
 
-export const run: RunFunction = async(client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver) => {
-	const user = options.getUser('user')!;
+export const run: CommandFunction = async(client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver) => {
+	const user = options.getUser("user")!;
 
-	const embed: MessageEmbedOptions = {
-		title: user.tag,
-		image: {
-			url: user.avatarURL()?.toString()
-		},
-		color: 'BLURPLE'
-	};
-
-	interaction.reply({ embeds: [embed] });
+	interaction.reply({ embeds: [
+		new EmbedBuilder()
+			.setTitle(user.tag)
+			.setImage(user.avatarURL())
+			.setColor("Blurple")
+	]});
 }

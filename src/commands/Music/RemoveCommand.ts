@@ -1,6 +1,6 @@
-import { ApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, MessageEmbedOptions } from "discord.js";
+import { ApplicationCommandData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder } from "discord.js";
 import Bot from "../../classes/Bot";
-import { RunFunction } from "../../interfaces/Command";
+import { CommandFunction } from "../../interfaces/Command";
 import { errorEmbed } from "../../utils/Utils";
 
 export const data: ApplicationCommandData = {
@@ -10,15 +10,15 @@ export const data: ApplicationCommandData = {
 		{
 			name: "song",
 			description: "Song's position in the queue",
-			type: "INTEGER",
+			type: ApplicationCommandOptionType.Integer,
 			required: true
 		}
 	]
 }
 
 
-export const run: RunFunction = async (client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver) => {
-	if (await client.musicManager.canUseCommand(client, interaction) == false) return;
+export const run: CommandFunction = async (client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver) => {
+	if (await client.musicManager.canUseCommand(interaction) == false) return;
 
 	const guildId = interaction.guildId!;
 	const queue = client.musicManager.queues.get(guildId)!;
@@ -33,18 +33,15 @@ export const run: RunFunction = async (client: Bot, interaction: CommandInteract
 
 	const song = queue.songs[position];
 
-	const embed: MessageEmbedOptions = {
-		title: "Song Removed",
-		description: `[${song.title}](${song.url})`,
-		thumbnail: {
-			url: song.thumbnail
-		},
-		color: 'BLURPLE',
-		footer: {
+	const embed = new EmbedBuilder()
+		.setTitle("Song Removed")
+		.setDescription(`[${song.title}](${song.url})`)
+		.setThumbnail(song.thumbnail)
+		.setColor("Blurple")
+		.setFooter({
 			text: `Removed by ${interaction.user.tag}`,
-			icon_url: interaction.user.avatarURL() as string | undefined
-		}
-	};
+			iconURL: interaction.user.avatarURL() as string | undefined
+		});
 
 	interaction.reply({ embeds: [embed] });
 
