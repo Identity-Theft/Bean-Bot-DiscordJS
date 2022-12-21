@@ -1,8 +1,8 @@
 import { ActivityType } from "discord.js";
 import Bot from "../../classes/Bot";
-import IEvent from "../../interfaces/Event";
+import Event from "../../interfaces/Event";
 
-export default class ReadyEvent implements IEvent
+export default class ReadyEvent implements Event
 {
 	public name = "ready";
 

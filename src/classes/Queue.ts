@@ -13,6 +13,7 @@ export default class Queue
 
 	public paused = false;
 	public loop: "none" | "song" | "queue" = "none"
+	public skipped = false;
 	public playing = 0;
 
 	public songs: Array<Song> = [];
@@ -92,5 +93,10 @@ export default class Queue
 		this.currentPage = page;
 
 		interaction.update({ embeds: [embed] });
+	}
+
+	public isSongInQueue(song: Song): boolean
+	{
+		return (this.songs.includes(song));
 	}
 }

@@ -1,8 +1,8 @@
 import { GuildBan } from "discord.js";
 import Bot from "../../classes/Bot";
-import IEvent from "../../interfaces/Event";
+import Event from "../../interfaces/Event";
 
-export default class GuildBanRemoveEvent implements IEvent
+export default class GuildBanRemoveEvent implements Event
 {
 	public name = "guildBanRemove";
 

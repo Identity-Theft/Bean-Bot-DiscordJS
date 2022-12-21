@@ -1,8 +1,8 @@
 import { GuildMember } from "discord.js";
 import Bot from "../../classes/Bot";
-import IEvent from "../../interfaces/Event";
+import Event from "../../interfaces/Event";
 
-export default class GuildMemberUpdateEvent implements IEvent
+export default class GuildMemberUpdateEvent implements Event
 {
 	public name = "guildMemberUpdate";
 

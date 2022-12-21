@@ -1,9 +1,9 @@
 import { VoiceState } from "discord.js";
 import Bot from "../../classes/Bot";
-import IEvent from "../../interfaces/Event";
+import Event from "../../interfaces/Event";
 import { simpleEmbed2 } from "../../utils/Utils";
 
-export default class VoiceStateUpdateEvent implements IEvent
+export default class VoiceStateUpdateEvent implements Event
 {
 	public name = "voiceStateUpdate";
 	public async run(client: Bot, oldState: VoiceState, newState: VoiceState): Promise<void>

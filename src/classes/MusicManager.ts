@@ -1,18 +1,19 @@
 import { AudioPlayer, VoiceConnection } from "@discordjs/voice";
-import { ChannelType, CommandInteraction, Snowflake, User } from "discord.js";
+import { Attachment, ChannelType, CommandInteraction, Snowflake, User } from "discord.js";
 import ytSearch from "yt-search";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
 import Queue from "./Queue";
 import Song from "./Song";
 import { errorEmbed } from "../utils/Utils";
+
 export default class MusicManager
 {
 	public queues: Map<Snowflake, Queue> = new Map();
 	public connections: Map<Snowflake, VoiceConnection> = new Map();
 	public audioPlayers: Map<Snowflake, AudioPlayer> = new Map();
 
-	public async canUseCommand(interaction: CommandInteraction): Promise<boolean>
+	public async canUseCommand(interaction: CommandInteraction, command: string): Promise<boolean>
 	{
 		const guildId = interaction.guildId!;
 		const member = await interaction.guild?.members.fetch(interaction.user.id);
@@ -36,7 +37,7 @@ export default class MusicManager
 			return false;
 		}
 
-		if (interaction.commandName != "play")
+		if (command != "play")
 		{
 			if (this.queues.get(guildId) == undefined)
 			{
@@ -58,8 +59,12 @@ export default class MusicManager
 
 	public addSong(guildId: Snowflake, song: Song): void
 	{
-		const songs = this.queues.get(guildId)?.songs;
-		songs?.push(song);
+		const queue = this.queues.get(guildId);
+
+		if (!queue) throw new Error(`No Queue ${guildId}`)
+
+		const songs = queue.songs;
+		songs.push(song);
 	}
 
 	public disconnect(guildId: Snowflake): void
@@ -69,78 +74,108 @@ export default class MusicManager
 		this.queues.delete(guildId);
 	}
 
-	public inQueue(guildId: Snowflake, song: Song): boolean
+	public getUrlFromOption(option: string | Attachment): string | null
 	{
-		const queue = this.queues.get(guildId)!;
-
-		for (let i = 0; i < queue.songs.length; i++) {
-			const s = queue.songs[i];
-
-			if (s.url == song.url)
-			{
-				return true;
-			}
+		if (typeof option == "object") {
+			if (!option.contentType?.startsWith("video") && !option.contentType?.startsWith("audio")) return null;
+			return option.proxyURL;
 		}
 
-		return false;
+		return option;
 	}
 
-	public async songInfo(url: string, addedBy: User): Promise<Song | Song[] | null>
+	public async songInfo(option: string | Attachment, addedBy: User): Promise<Song[]>
 	{
+		const url = this.getUrlFromOption(option);
+		let songsToReturn: Array<Song> = [];
+
+		if (!url) throw new Error('Invalid Type');
+
 		if (!url.startsWith("https://"))
 		{
+			// Find YouTube video with matching name
 			const newUrl = await this.findVideo(url);
 
-			if (newUrl != null)
+			if (newUrl)
 			{
-				const song = await this.songInfo(newUrl, addedBy);
-				return song as Song;
+				const song = await this.songFromURL(newUrl, addedBy);
+				songsToReturn = song;
 			}
-			else return null;
+			else throw new Error('Invalid URL');
 		}
 		else
 		{
-			if (ytdl.validateURL(url))
-			{
-				// YouTube Url
-				const info = await ytdl.getInfo(url);
-
-				if (!info.videoDetails.isLiveContent && !info.videoDetails.age_restricted)
-				{
-					return new Song(
-						info.videoDetails.title,
-						info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url,
-						info.videoDetails.lengthSeconds,
-						isNaN(info.videoDetails.likes!) ? 0 : info.videoDetails.likes!,
-						info.videoDetails.viewCount,
-						info.videoDetails.video_url,
-						addedBy
-					)
-				}
-				else return null;
-			}
-			else if (ytpl.validateID(url))
-			{
-				const playlist = await ytpl(url);
-				const songs: Array<Song> = [];
-
-				for (let index = 0; index < playlist.items.length; index++) {
-					const item = playlist.items[index];
-					const song = await this.songInfo(item.url, addedBy);
-					songs.push(song as Song);
-				}
-
-				return songs;
-			}
-			else return null;
+			songsToReturn = typeof(option) == "string" ? await this.songFromURL(option, addedBy) : [this.songFromAttachment(option, addedBy)];
 		}
+
+		return songsToReturn;
 	}
 
-	private async findVideo (search: string): Promise<string | null>
+	private async songFromURL(url: string, addedBy: User): Promise<Song[]>
+	{
+		// Check for valid URL
+		if (ytdl.validateURL(url))
+		{
+			// YouTube URL
+			const info = await ytdl.getInfo(url);
+
+			if (!info.videoDetails.isLiveContent && !info.videoDetails.age_restricted)
+			{
+				return [new Song(
+					info.videoDetails.title,
+					info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url,
+					info.videoDetails.lengthSeconds,
+					info.videoDetails.video_url,
+					addedBy
+				)];
+			}
+			else throw new Error('Live streams and age restricted content cannot be played');
+		}
+		else if (ytpl.validateID(url))
+		{
+			// YouTube playlist URL
+			const playlist = await ytpl(url);
+			const songsToReturn: Song[] = [];
+
+			for (let index = 0; index < playlist.items.length; index++) {
+				const item = playlist.items[index];
+				const song = await this.songFromURL(item.url, addedBy);
+				songsToReturn.push(song[0]);
+			}
+
+			return songsToReturn;
+		}
+		else if (url.startsWith("https://cdn.discordapp.com/attachments/") && (url.endsWith(".mp4") || url.endsWith(".mp3")))
+		{
+			// Discord Attachment URL
+			return [new Song(
+				"Discord Attachment",
+				null,
+				"0",
+				url,
+				addedBy
+			)];
+		}
+		else throw new Error('Invalid URL');
+	}
+
+	private songFromAttachment(attachment: Attachment, addedBy: User): Song
+	{
+		return new Song(
+			attachment.name!,
+			null,
+			"Unkown",
+			attachment.url,
+			addedBy
+		);
+	}
+
+	private async findVideo(search: string): Promise<string | null>
 	{
 		const result = await ytSearch(search);
 
-		if (result) return result.videos[0].url;
-		else return null;
+		if (!result) return null;
+
+		return result.videos[0].url;
 	}
 }

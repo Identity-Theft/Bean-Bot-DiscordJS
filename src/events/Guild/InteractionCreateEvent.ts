@@ -1,9 +1,10 @@
 import { CommandInteractionOptionResolver, Interaction } from "discord.js";
 import Bot from "../../classes/Bot";
-import IEvent from "../../interfaces/Event";
+import { CommandCategory } from "../../classes/Command";
+import Event from "../../interfaces/Event";
 import { simpleEmbed, errorEmbed } from "../../utils/Utils";
 
-export default class InteractionCreateEvent implements IEvent
+export default class InteractionCreateEvent implements Event
 {
 	public name = "interactionCreate";
 
@@ -27,7 +28,13 @@ export default class InteractionCreateEvent implements IEvent
 				return;
 			}
 
-			cmd.run(client, interaction, options as CommandInteractionOptionResolver);
+			if (cmd.catergory == CommandCategory.Deprecated)
+			{
+				interaction.reply({ embeds: [errorEmbed(`Command \`/${commandName}\` is depracted and will be replaced.`)], ephemeral: true });
+				return;
+			}
+
+			cmd.execute(client, interaction, options as CommandInteractionOptionResolver);
 		}
 		else if (interaction.isButton())
 		{
@@ -37,29 +44,29 @@ export default class InteractionCreateEvent implements IEvent
 
 			switch(interaction.customId)
 			{
-			case "ButtonTest1":
-				interaction.update({ embeds: [simpleEmbed(client, "Beans")] });
-				break;
-			case "FirstPage":
-				if (queue == undefined) return;
+				case "ButtonTest1":
+					interaction.update({ embeds: [simpleEmbed(client, "Beans")] });
+					break;
+				case "FirstPage":
+					if (queue == undefined) return;
 
-				queue?.changePage(0, interaction);
-				break;
-			case "PrevPage":
-				if (queue == undefined) return;
+					queue?.changePage(0, interaction);
+					break;
+				case "PrevPage":
+					if (queue == undefined) return;
 
-				queue?.changePage(queue.currentPage - 1, interaction);
-				break;
-			case "NextPage":
-				if (queue == undefined) return;
+					queue?.changePage(queue.currentPage - 1, interaction);
+					break;
+				case "NextPage":
+					if (queue == undefined) return;
 
-				queue?.changePage(queue.currentPage + 1, interaction);
-				break;
-			case "LastPage":
-				if (queue == undefined) return;
+					queue?.changePage(queue.currentPage + 1, interaction);
+					break;
+				case "LastPage":
+					if (queue == undefined) return;
 
-				queue?.changePage(queue.embedPages.length - 1, interaction);
-				break;
+					queue?.changePage(queue.embedPages.length - 1, interaction);
+					break;
 			}
 		}
 		else if (interaction.isSelectMenu())
