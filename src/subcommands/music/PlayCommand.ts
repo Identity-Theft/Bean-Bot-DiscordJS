@@ -201,8 +201,8 @@ export default class PlayCommand extends Subcommand
 
 		queue.textChannel.send({ embeds: [embed] });
 
-		player.on('stateChange', (oldState: AudioPlayerState, newState: AudioPlayerState) => {
-			if (newState.status != AudioPlayerStatus.Idle || oldState.status != AudioPlayerStatus.Playing) return;
+		player.on(AudioPlayerStatus.Idle, (oldState: AudioPlayerState) => {
+			if (oldState.status != AudioPlayerStatus.Playing) return;
 
 			if(queue.loop == "song" && !queue.skipped)
 			{
@@ -211,8 +211,7 @@ export default class PlayCommand extends Subcommand
 			else
 			{
 				if (queue.songs[queue.playing + 1] != undefined) {
-					if (oldState.status == oldState.status)
-						this.playSong(client, guildId, connection, queue, queue.songs[queue.playing + 1]!,);
+					this.playSong(client, guildId, connection, queue, queue.songs[queue.playing + 1]!,);
 
 					queue.playing++;
 				}
