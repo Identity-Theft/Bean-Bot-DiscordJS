@@ -25,13 +25,7 @@ export default class MusicCommand extends Command
 		const commandFiles = fs.readdirSync(dir);
 
 		commandFiles.map(async (file: string) => {
-			if (!file.endsWith(".ts")) return;
-
-			const commandFile = (await import(dir + file)).default;
-
-			if (commandFile !instanceof Subcommand) return;
-
-			const command: Subcommand = new commandFile();
+			const command: Subcommand = new (await import(dir + file)).default();
 
 			this.subcommands.set(command.data.name, command);
 			this.data.options?.push(command.data);

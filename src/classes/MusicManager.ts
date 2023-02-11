@@ -105,7 +105,14 @@ export default class MusicManager
 		}
 		else
 		{
-			songsToReturn = typeof(option) == "string" ? await this.songFromURL(option, addedBy) : [this.songFromAttachment(option, addedBy)];
+			songsToReturn = typeof(option) == "string" ? await this.songFromURL(option, addedBy) : [
+				new Song(
+					option.name!,
+					null,
+					option.url,
+					addedBy
+				)
+			];
 		}
 
 		return songsToReturn;
@@ -124,7 +131,6 @@ export default class MusicManager
 				return [new Song(
 					info.videoDetails.title,
 					info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url,
-					info.videoDetails.lengthSeconds,
 					info.videoDetails.video_url,
 					addedBy
 				)];
@@ -146,17 +152,6 @@ export default class MusicManager
 			return songsToReturn;
 		}
 		else throw new Error('Invalid URL');
-	}
-
-	private songFromAttachment(attachment: Attachment, addedBy: User): Song
-	{
-		return new Song(
-			attachment.name!,
-			null,
-			"Unkown",
-			attachment.url,
-			addedBy
-		);
 	}
 
 	private async findVideo(search: string): Promise<string | null>
