@@ -19,13 +19,6 @@ export default class PlayingCommand extends Subcommand
 			.setTitle("Currently Playing")
 			.setDescription(`${queue.paused ? "(Paused)" : ""} [${song.title}](${song.url})`)
 			.setThumbnail(song.thumbnail)
-			.setFields([
-				{
-					name: "Duration",
-					value: song.formattedDuration,
-					inline: true
-				}
-			])
 			.setColor("Blurple")
 			.setFooter({
 				text: `Added by ${song.addedBy.tag}`,
