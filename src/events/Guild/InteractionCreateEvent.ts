@@ -4,11 +4,11 @@ import { CommandCategory } from "../../classes/Command";
 import Event from "../../interfaces/Event";
 import { simpleEmbed, errorEmbed } from "../../utils/Utils";
 
-export default class InteractionCreateEvent implements Event
+export default class InteractionCreateEvent extends Event
 {
 	public name = "interactionCreate";
 
-	public async run(client: Bot, interaction: Interaction): Promise<void>
+	public async execute(client: Bot, interaction: Interaction): Promise<void>
 	{
 		if (interaction.isChatInputCommand())
 		{

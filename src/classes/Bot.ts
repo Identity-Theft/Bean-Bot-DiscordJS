@@ -35,7 +35,10 @@ export default class Bot extends Client
 
 		commandsFiles.map(async (value: string) => {
 			const commandFolder = fs.readdirSync(dir + value);
-			commandFolder.map(async (file: string) => this.readCommandFile(`${dir}${value}/${file}`));
+			commandFolder.map(async (file: string) => {
+				const command: Command = new (await import(`${dir}${value}/${file}`)).default();
+				this.commands.set(command.data.name, command);
+			});
 		});
 
 		// Add events to collection
@@ -45,35 +48,27 @@ export default class Bot extends Client
 			const eventFolder = fs.readdirSync(`${__dirname}/../events/${value}`);
 
 			eventFolder.map(async (file: string) => {
-				const eventFile = (await import(`${__dirname}/../events/${value}/${file}`)).default;
-				const event: Event = new eventFile;
+				const event: Event = new (await import(`${__dirname}/../events/${value}/${file}`)).default();
 
 				this.events.set(event.name, event);
-				this.on(event.name, event.run.bind(null, this));
+				this.on(event.name, event.execute.bind(null, this));
 			});
 		});
 	}
 
-	private async readCommandFile(file: string): Promise<void>
-	{
-		const command: Command = new (await import(file)).default();
-
-		console.log(`Loading ${command.data.name}`);
-
-		this.commands.set(command.data.name, command);
-	}
-
-	public async generateCommands(): Promise<void>
+	public async createCommands(): Promise<void>
 	{
 		this.commands.forEach(async (command) => {
-			if (this.token == process.env.DEV && command.catergory != CommandCategory.Deprecated) this.application?.commands.create(command.data, "844081963324407848").then((registered: ApplicationCommand) => console.log(`${registered.name} registered`));
-			else if (command.catergory != CommandCategory.Debug && command.catergory != CommandCategory.Deprecated) this.application?.commands.create(command.data).then((registered: ApplicationCommand) => console.log(`${registered.name} registered`));
-			else if (command.catergory == CommandCategory.Deprecated)
+			if (command.catergory == CommandCategory.Deprecated)
 			{
 				const toRemove = (await this.application?.commands.fetch())?.filter(c => c.name == command.data.name).first();
 
 				if (toRemove) this.application?.commands.delete(toRemove.id).then(() => console.log(`${command.data.name} deleted`));
 			}
+			else if (this.token == process.env.DEV)
+				this.application?.commands.create(command.data, "844081963324407848").then((registered: ApplicationCommand) => console.log(`${registered.name} registered`));
+			else if (command.catergory != CommandCategory.Debug)
+				this.application?.commands.create(command.data).then((registered: ApplicationCommand) => console.log(`${registered.name} registered`));
 		});
 	}
 }

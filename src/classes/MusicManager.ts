@@ -91,7 +91,7 @@ export default class MusicManager
 
 		if (!url) throw new Error('Invalid Type');
 
-		if (!url.startsWith("https://"))
+		if (!url.startsWith("https://") && !url.startsWith("http://"))
 		{
 			// Find YouTube video with matching name
 			const newUrl = await this.findVideo(url);
@@ -144,17 +144,6 @@ export default class MusicManager
 			}
 
 			return songsToReturn;
-		}
-		else if (url.startsWith("https://cdn.discordapp.com/attachments/") && (url.endsWith(".mp4") || url.endsWith(".mp3")))
-		{
-			// Discord Attachment URL
-			return [new Song(
-				"Discord Attachment",
-				null,
-				"0",
-				url,
-				addedBy
-			)];
 		}
 		else throw new Error('Invalid URL');
 	}

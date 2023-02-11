@@ -3,10 +3,10 @@ import Bot from "../../classes/Bot";
 import Event from "../../interfaces/Event";
 import { simpleEmbed2 } from "../../utils/Utils";
 
-export default class VoiceStateUpdateEvent implements Event
+export default class VoiceStateUpdateEvent extends Event
 {
 	public name = "voiceStateUpdate";
-	public async run(client: Bot, oldState: VoiceState, newState: VoiceState): Promise<void>
+	public async execute(client: Bot, oldState: VoiceState, newState: VoiceState): Promise<void>
 	{
 		const queue = client.musicManager.queues.get(oldState.guild.id);
 

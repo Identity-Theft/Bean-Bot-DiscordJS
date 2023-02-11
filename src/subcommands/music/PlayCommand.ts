@@ -171,7 +171,7 @@ export default class PlayCommand extends Subcommand
 	{
 		function getResource()
 		{
-			if (song.url.startsWith("https://cdn.discordapp.com") || song.url.startsWith("https://media.discordapp.net")) {
+			if (song.url.startsWith("https://cdn.discordapp.com") || song.url.startsWith("https://media.discordapp.net") || song.url.startsWith("http://soggycat.duckdns.org/Items/")) {
 				return createAudioResource(song.url, { inputType: StreamType.Arbitrary });
 			}
 			else {

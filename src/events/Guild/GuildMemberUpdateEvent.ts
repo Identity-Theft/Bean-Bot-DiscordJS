@@ -2,11 +2,11 @@ import { GuildMember } from "discord.js";
 import Bot from "../../classes/Bot";
 import Event from "../../interfaces/Event";
 
-export default class GuildMemberUpdateEvent implements Event
+export default class GuildMemberUpdateEvent extends Event
 {
 	public name = "guildMemberUpdate";
 
-	public async run(client: Bot, oldMember: GuildMember, newMember: GuildMember): Promise<void>
+	public async execute(client: Bot, oldMember: GuildMember, newMember: GuildMember): Promise<void>
 	{
 		console.log(oldMember.user.tag);
 

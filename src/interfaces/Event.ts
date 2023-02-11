@@ -1,7 +1,7 @@
 import Bot from "../classes/Bot";
 
-export default interface Event
+export default abstract class Event
 {
-	name: string;
-	run(client: Bot, ...args: any[]): Promise<void>;
+	abstract name: string;
+	abstract execute(client: Bot, ...args: any[]): Promise<void>;
 }
