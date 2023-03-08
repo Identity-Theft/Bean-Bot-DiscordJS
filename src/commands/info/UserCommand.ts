@@ -1,9 +1,10 @@
-import { ApplicationCommandOptionType, CacheType, ChatInputApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder } from "discord.js";
-import { Command, CommandCategory } from "../../classes/Command";
+import { ApplicationCommandOptionType, ChatInputApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
+import { ICommand, CommandCategory } from "../../interfaces/ICommand";
 import moment from "moment";
-import Bot from "../../classes/Bot";
+import ExtendedClient from "../../structures/ExtendedClient";
+import { BotEmbed } from "../../structures/ExtendedEmbeds";
 
-export default class UserCommand extends Command
+export default class UserCommand implements ICommand
 {
 	public data: ChatInputApplicationCommandData = {
 		name: "user",
@@ -20,12 +21,12 @@ export default class UserCommand extends Command
 
 	public catergory: CommandCategory = CommandCategory.Info;
 
-	public async execute(client: Bot, interaction: CommandInteraction<CacheType>, args: CommandInteractionOptionResolver<CacheType>): Promise<void> {
+	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 		const user = args.getUser("user")!;
 		const guild = interaction.guild!;
 		const guildMember = await guild.members.fetch(user.id);
 
-		const embed = new EmbedBuilder()
+		const embed = new BotEmbed(client)
 			.setAuthor({
 				name: user.tag,
 				iconURL: user.avatarURL() as string | undefined
@@ -61,11 +62,7 @@ export default class UserCommand extends Command
 					name: `Roles [${guildMember.roles.cache.size}]`,
 					value: `${guildMember.roles.cache.map(r => r).join(" ")}`,
 				}
-			])
-			.setColor("Blurple")
-			.setFooter({
-				text: `User ID: ${user.id}`
-			});
+			]);
 
 		interaction.reply({ embeds: [embed] });
 	}

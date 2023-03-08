@@ -1,2 +1,2 @@
-import Bot from "./classes/Bot";
-new Bot().start();
+import ExtendedClient from "./structures/ExtendedClient";
+new ExtendedClient().start();

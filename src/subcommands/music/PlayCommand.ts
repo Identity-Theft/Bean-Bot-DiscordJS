@@ -1,14 +1,14 @@
 import { AudioPlayerError, AudioPlayerState, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, joinVoiceChannel, StreamType, VoiceConnection, VoiceConnectionStatus } from "@discordjs/voice";
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder, TextChannel } from "discord.js";
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver, TextChannel } from "discord.js";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
-import Queue from "../../classes/Queue";
-import Song from "../../classes/Song";
-import Bot from "../../classes/Bot";
-import { Subcommand } from "../../classes/Subcommand";
-import { errorEmbed, simpleEmbed2 } from "../../utils/Utils";
+import Queue from "../../structures/Queue";
+import Song from "../../structures/Song";
+import ExtendedClient from "../../structures/ExtendedClient";
+import ISubcommand from "../../interfaces/ISubcommand";
+import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
 
-export default class PlayCommand extends Subcommand
+export default class PlayCommand implements ISubcommand
 {
 	public data: ApplicationCommandOptionData = {
 		name: "play",
@@ -44,7 +44,7 @@ export default class PlayCommand extends Subcommand
 		]
 	};
 
-	public async execute(client: Bot, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
+	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 
 		const guildId = interaction.guildId!;
 		const member = await interaction.guild?.members.fetch(interaction.user.id);
@@ -90,7 +90,9 @@ export default class PlayCommand extends Subcommand
 					}
 				});
 
-				const embed = simpleEmbed2("Queue Created", "Succcessfuly joined the voice channel.");
+				const embed = new BotEmbed(client)
+					.setTitle("Queue Created")
+					.setDescription("Succcessfuly joined the voice channel.");
 				await interaction.followUp({ embeds: [embed] });
 			}
 
@@ -98,7 +100,7 @@ export default class PlayCommand extends Subcommand
 
 			for (let i = 0; i < songs.length; i++) {
 				const song = songs[i];
-				const inQueue = queue.isSongInQueue(song);
+				const inQueue = songs.includes(song);
 
 				if (!inQueue && queue.songs.length! < queue.maxSongs)
 				{
@@ -109,7 +111,7 @@ export default class PlayCommand extends Subcommand
 				}
 				if (inQueue)
 				{
-					const embed = errorEmbed("This song is already in the queue");
+					const embed = new ErrorEmbed("This song is already in the queue");
 					interaction.reply({ embeds: [embed] });
 					return;
 				}
@@ -137,15 +139,10 @@ export default class PlayCommand extends Subcommand
 					thumbnail = playlist.bestThumbnail.url;
 				}
 
-				const embed = new EmbedBuilder()
+				const embed = new BotEmbed(client)
 					.setTitle(title)
-					.setDescription(description)
-					.setThumbnail(thumbnail)
-					.setColor("Blurple")
-					.setFooter({
-						text: `Added by ${songs[0].addedBy.tag}`,
-						iconURL: songs[0].addedBy.avatarURL() as string | undefined
-					});
+					.setDescription(`${description}\nAdded by ${songs[0].addedBy}`)
+					.setThumbnail(thumbnail);
 
 				if (!interaction.replied)
 					await interaction.followUp({ embeds: [embed] });
@@ -157,21 +154,21 @@ export default class PlayCommand extends Subcommand
 			}
 			else
 			{
-				const embed = errorEmbed(queue.songs.length! == queue.maxSongs ? `The maximum amount songs allowed in a queue is ${queue.maxSongs}.` : "Could not add any songs to the queue.");
+				const embed = new ErrorEmbed(queue.songs.length! == queue.maxSongs ? `The maximum amount songs allowed in a queue is ${queue.maxSongs}.` : "Could not add any songs to the queue.");
 				await interaction.followUp({ embeds: [embed], ephemeral: true });
 			}
 
 			console.log(queue);
 		} catch(error) {
-			await interaction.followUp({ embeds: [errorEmbed("Could not play song: " + error)] });
+			await interaction.followUp({ embeds: [new ErrorEmbed("Could not play song: " + error)] });
 		}
 	}
 
-	private playSong(client: Bot, guildId: string, connection: VoiceConnection, queue: Queue, song: Song)
+	private playSong(client: ExtendedClient, guildId: string, connection: VoiceConnection, queue: Queue, song: Song)
 	{
 		function getResource()
 		{
-			if (song.url.startsWith("https://cdn.discordapp.com") || song.url.startsWith("https://media.discordapp.net") || song.url.startsWith("http://soggycat.duckdns.org/Items/")) {
+			if (song.url.startsWith("https://cdn.discordapp.com") || song.url.startsWith("https://media.discordapp.net")) {
 				return createAudioResource(song.url, { inputType: StreamType.Arbitrary });
 			}
 			else {
@@ -189,15 +186,10 @@ export default class PlayCommand extends Subcommand
 		player.play(resource);
 		connection.subscribe(player);
 
-		const embed = new EmbedBuilder()
+		const embed = new BotEmbed(client)
 			.setTitle("Now Playing")
-			.setDescription(`[${song.title}](${song.url})`)
-			.setThumbnail(song.thumbnail)
-			.setColor("Blurple")
-			.setFooter({
-				text: `Added by ${song.addedBy.tag}`,
-				iconURL: song.addedBy.avatarURL() as string | undefined
-			})
+			.setDescription(`[${song.title}](${song.url})\nAdded by ${song.addedBy}`)
+			.setThumbnail(song.thumbnail);
 
 		queue.textChannel.send({ embeds: [embed] });
 
@@ -206,18 +198,18 @@ export default class PlayCommand extends Subcommand
 
 			if(queue.loop == "song" && !queue.skipped)
 			{
-				this.playSong(client, guildId, connection, queue, queue.songs[queue.playing]);
+				this.playSong(client, guildId, connection, queue, queue.songs[queue.currentSong]);
 			}
 			else
 			{
-				if (queue.songs[queue.playing + 1] != undefined) {
-					this.playSong(client, guildId, connection, queue, queue.songs[queue.playing + 1]!,);
+				if (queue.songs[queue.currentSong + 1] != undefined) {
+					this.playSong(client, guildId, connection, queue, queue.songs[queue.currentSong + 1]!,);
 
-					queue.playing++;
+					queue.currentSong++;
 				}
 				else if (queue.loop == "queue") {
 					this.playSong(client, guildId, connection, queue, queue.songs[0]);
-					queue.playing = 0;
+					queue.currentSong = 0;
 				}
 				else {
 					client.musicManager.disconnect(guildId);

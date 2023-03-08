@@ -1,20 +1,20 @@
 import { CommandInteractionOptionResolver, Interaction } from "discord.js";
-import Bot from "../../classes/Bot";
-import { CommandCategory } from "../../classes/Command";
-import Event from "../../interfaces/Event";
-import { simpleEmbed, errorEmbed } from "../../utils/Utils";
+import ExtendedClient from "../../structures/ExtendedClient";
+import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
+import { CommandCategory } from "../../interfaces/ICommand";
+import IEvent from "../../interfaces/IEvent";
 
-export default class InteractionCreateEvent extends Event
+export default class InteractionCreateEvent implements IEvent
 {
 	public name = "interactionCreate";
 
-	public async execute(client: Bot, interaction: Interaction): Promise<void>
+	public async execute(client: ExtendedClient, interaction: Interaction): Promise<void>
 	{
 		if (interaction.isChatInputCommand())
 		{
 			if (!interaction.inGuild())
 			{
-				interaction.reply({ embeds: [errorEmbed("Bean Bot must be used in a server.")], ephemeral: true });
+				interaction.reply({ embeds: [new ErrorEmbed("Bean Bot must be used in a server.")], ephemeral: true });
 				return;
 			}
 
@@ -24,13 +24,13 @@ export default class InteractionCreateEvent extends Event
 
 			if (!cmd)
 			{
-				interaction.reply({ embeds: [errorEmbed(`Command \`/${commandName}\` doesn't exist or couldn't be loaded.`)], ephemeral: true });
+				interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${commandName}\` doesn't exist or couldn't be loaded.`)], ephemeral: true });
 				return;
 			}
 
 			if (cmd.catergory == CommandCategory.Deprecated)
 			{
-				interaction.reply({ embeds: [errorEmbed(`Command \`/${commandName}\` is depracted and will be replaced.`)], ephemeral: true });
+				interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${commandName}\` is depracted and will be replaced.`)], ephemeral: true });
 				return;
 			}
 
@@ -45,7 +45,7 @@ export default class InteractionCreateEvent extends Event
 			switch(interaction.customId)
 			{
 				case "ButtonTest1":
-					interaction.update({ embeds: [simpleEmbed(client, "Beans")] });
+					interaction.update({ embeds: [new BotEmbed(client).setDescription("Beans")] });
 					break;
 				case "FirstPage":
 					if (queue == undefined) return;
@@ -69,7 +69,7 @@ export default class InteractionCreateEvent extends Event
 					break;
 			}
 		}
-		else if (interaction.isSelectMenu())
+		else if (interaction.isChannelSelectMenu())
 		{
 			if (interaction.message.author.id != client.user?.id) return;
 
@@ -80,6 +80,19 @@ export default class InteractionCreateEvent extends Event
 			}
 
 			// Bot has no select menus yet
+		}
+		else if (interaction.isRoleSelectMenu())
+		{
+			if (interaction.message.author.id != client.user?.id) return;
+
+			switch (interaction.customId)
+			{
+				case "self-roles":
+					(await interaction.guild?.members.fetch(interaction.user.id))?.roles.add(interaction.roles.map(r => r.id));
+					interaction.reply({ content: `Successfully added ${interaction.roles.size} role`, ephemeral: true });
+					break;
+			}
+
 		}
 	}
 }

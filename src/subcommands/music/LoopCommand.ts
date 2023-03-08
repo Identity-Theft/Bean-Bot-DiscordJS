@@ -1,9 +1,9 @@
 import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
-import Bot from "../../classes/Bot";
-import { Subcommand } from "../../classes/Subcommand";
-import { simpleEmbed2 } from "../../utils/Utils";
+import ExtendedClient from "../../structures/ExtendedClient";
+import { BotEmbed } from "../../structures/ExtendedEmbeds";
+import ISubcommand from "../../interfaces/ISubcommand";
 
-export default class LoopCommand extends Subcommand
+export default class LoopCommand implements ISubcommand
 {
 	public data: ApplicationCommandOptionData = {
 		name: "loop",
@@ -28,9 +28,16 @@ export default class LoopCommand extends Subcommand
 		]
 	};
 
-	public async execute(client: Bot, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void>
+	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void>
 	{
-		client.musicManager.queues.get(interaction.guildId!)!.loop = args.getSubcommand() as "none" | "song" | "queue";
-		interaction.reply({ embeds: [simpleEmbed2("Loop", `Now Looping: \`${args.getSubcommand()!}\``)] });
+		const queue = client.musicManager.queues.get(interaction.guildId!)!;
+		const song = queue.songs[queue.currentSong];
+
+		queue.loop = args.getSubcommand() as "none" | "song" | "queue";
+
+		const embed = new BotEmbed(client)
+			.setDescription(`Now Looping ${args.getSubcommand() == "song" ? `(${song.title})[${song.url}]` : queue.loop}`)
+
+		interaction.reply({ embeds: [embed] });
 	}
 }

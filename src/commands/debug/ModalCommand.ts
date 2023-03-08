@@ -1,25 +1,25 @@
-import { CommandInteraction, CommandInteractionOptionResolver, Collection, ChatInputApplicationCommandData } from "discord.js";
-import fs from "fs";
+import { CacheType, ChatInputApplicationCommandData, Collection, CommandInteraction, CommandInteractionOptionResolver } from "discord.js"
 import ExtendedClient from "../../structures/ExtendedClient";
-import { ErrorEmbed } from "../../structures/ExtendedEmbeds";
-import { CommandCategory, ICommand } from "../../interfaces/ICommand";
+import fs from "fs";
+import { ICommand, CommandCategory } from "../../interfaces/ICommand";
 import ISubcommand from "../../interfaces/ISubcommand";
+import { ErrorEmbed } from "../../structures/ExtendedEmbeds";
 
-export default class MusicCommand implements ICommand
+export default class ModalCommand implements ICommand
 {
 	public data: ChatInputApplicationCommandData = {
-		name: "music",
-		description: "Play music in vc",
+		name: "modal",
+		description: "modal deez nuts",
 		options: []
-	}
+	};
 
-	public catergory = CommandCategory.Music;
+	public catergory: CommandCategory = CommandCategory.Debug;
 
 	private subcommands: Collection<string, ISubcommand> = new Collection();
 
 	public constructor()
 	{
-		const dir = `${__dirname}/../../subcommands/music/`;
+		const dir = `${__dirname}/../../subcommands/debug/`;
 		const commandFiles = fs.readdirSync(dir);
 
 		commandFiles.map(async (file: string) => {
@@ -30,14 +30,14 @@ export default class MusicCommand implements ICommand
 		});
 	}
 
-	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
+	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver<CacheType>): Promise<void>
+	{
 		const subcommand = args.getSubcommandGroup() || args.getSubcommand();
-
-		if (!await client.musicManager.canUseCommand(interaction, subcommand)) return;
 
 		const command = this.subcommands.get(subcommand);
 
-		if (!command) {
+		if (!command)
+		{
 			interaction.reply({ embeds: [new ErrorEmbed("XD")] });
 			return;
 		}

@@ -1,4 +1,6 @@
 import { ButtonInteraction, Message, ActionRowBuilder, ButtonBuilder, EmbedBuilder, StageChannel, TextBasedChannel, User, VoiceChannel, ButtonStyle, CommandInteraction } from "discord.js";
+import ExtendedClient from "./ExtendedClient";
+import { BotEmbed } from "./ExtendedEmbeds";
 import Song from "./Song";
 
 export default class Queue
@@ -14,19 +16,19 @@ export default class Queue
 	public paused = false;
 	public loop: "none" | "song" | "queue" = "none"
 	public skipped = false;
-	public playing = 0;
 
 	public songs: Array<Song> = [];
-	public readonly maxSongs = 100;
+	public currentSong = 0;
+	public readonly maxSongs = 50;
 
 	public constructor(voiceChannel: VoiceChannel | StageChannel, textChannel: TextBasedChannel, startedBy: User)
 	{
-		this.voiceChannel = voiceChannel,
-		this.textChannel = textChannel,
-		this.startedBy = startedBy
+		this.voiceChannel = voiceChannel;
+		this.textChannel = textChannel;
+		this.startedBy = startedBy;
 	}
 
-	public async generateQueueEmbed(interaction: CommandInteraction): Promise<void>
+	public async generateQueueEmbed(client: ExtendedClient, interaction: CommandInteraction): Promise<void>
 	{
 		const embeds: Array<EmbedBuilder> = [];
 		let k = 10;
@@ -39,34 +41,31 @@ export default class Queue
 
 			const info = current.map(track => `${++j}) [${track.title}](${track.url}) - Added by ${track.addedBy}`).join("\n");
 
-			embeds.push(new EmbedBuilder()
-				.setDescription(info)
-				.setColor("Blurple")
-			);
+			embeds.push(new BotEmbed(client).setDescription(info));
 		}
 
 		const row = new ActionRowBuilder<any>()
 			.setComponents(
 				new ButtonBuilder()
 					.setCustomId("FirstPage")
-					.setLabel("First Page")
+					.setEmoji("⏪")
 					.setStyle(ButtonStyle.Primary),
 				new ButtonBuilder()
 					.setCustomId("PrevPage")
-					.setLabel("Previous Page")
+					.setEmoji("◀️")
 					.setStyle(ButtonStyle.Primary),
 				new ButtonBuilder()
 					.setCustomId("NextPage")
-					.setLabel("Next Page")
+					.setEmoji("▶️")
 					.setStyle(ButtonStyle.Primary),
 				new ButtonBuilder()
 					.setCustomId("LastPage")
-					.setLabel("Last Page")
+					.setEmoji("⏩")
 					.setStyle(ButtonStyle.Primary),
 			);
 
 		const embed = embeds[0];
-		embed.setFooter({ text: `Page ${1}/${embeds.length}` });
+		embed.setDescription(`${embed.data.description}\nPage 1/${embeds.length}`);
 
 		if (embeds.length > 1)
 			await interaction.reply({ embeds: [embed], components: [row] });
@@ -89,14 +88,9 @@ export default class Queue
 		}
 
 		const embed = this.embedPages[page];
-		embed.setFooter({ text: `Page ${page + 1}/${this.embedPages.length}` });
+		embed.setDescription(`${embed.data.description}\nPage ${page + 1}/${this.embedPages.length}`);
 		this.currentPage = page;
 
 		interaction.update({ embeds: [embed] });
-	}
-
-	public isSongInQueue(song: Song): boolean
-	{
-		return (this.songs.includes(song));
 	}
 }

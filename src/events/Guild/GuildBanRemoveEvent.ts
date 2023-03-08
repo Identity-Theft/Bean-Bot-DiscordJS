@@ -1,12 +1,12 @@
 import { GuildBan } from "discord.js";
-import Bot from "../../classes/Bot";
-import Event from "../../interfaces/Event";
+import ExtendedClient from "../../structures/ExtendedClient";
+import IEvent from "../../interfaces/IEvent";
 
-export default class GuildBanRemoveEvent extends Event
+export default class GuildBanRemoveEvent implements IEvent
 {
 	public name = "guildBanRemove";
 
-	public async execute(client: Bot, ban: GuildBan): Promise<void>
+	public async execute(client: ExtendedClient, ban: GuildBan): Promise<void>
 	{
 		console.log(`Unbanned ${ban.user.username} from ${ban.guild.name}`)
 		ban.user.send({

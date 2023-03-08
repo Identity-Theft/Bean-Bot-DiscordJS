@@ -1,8 +1,9 @@
-import { EmbedBuilder, CommandInteraction, CommandInteractionOptionResolver, ApplicationCommandOptionType, ChatInputApplicationCommandData } from "discord.js";
-import Bot from "../../classes/Bot";
-import { Command, CommandCategory } from "../../classes/Command";
+import { CommandInteraction, CommandInteractionOptionResolver, ApplicationCommandOptionType, ChatInputApplicationCommandData } from "discord.js";
+import ExtendedClient from "../../structures/ExtendedClient";
+import { BotEmbed } from "../../structures/ExtendedEmbeds";
+import { ICommand, CommandCategory } from "../../interfaces/ICommand";
 
-export default class AvatarCommand extends Command
+export default class AvatarCommand implements ICommand
 {
 	data: ChatInputApplicationCommandData = {
 		name: "avatar",
@@ -19,15 +20,14 @@ export default class AvatarCommand extends Command
 
 	catergory = CommandCategory.Info;
 
-	public async execute(client: Bot, interaction: CommandInteraction, options: CommandInteractionOptionResolver): Promise<void>
+	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void>
 	{
-		const user = options.getUser("user")!;
+		const user = args.getUser("user")!;
 
 		interaction.reply({ embeds: [
-			new EmbedBuilder()
+			new BotEmbed(client)
 				.setTitle(user.tag)
 				.setImage(user.avatarURL())
-				.setColor("Blurple")
 		]});
 	}
 }

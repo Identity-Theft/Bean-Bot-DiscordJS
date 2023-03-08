@@ -1,9 +1,9 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
-import Bot from "../../classes/Bot";
-import { Subcommand } from "../../classes/Subcommand";
-import { errorEmbed, simpleEmbed2 } from "../../utils/Utils";
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import ExtendedClient from "../../structures/ExtendedClient";
+import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
+import ISubcommand from "../../interfaces/ISubcommand";
 
-export default class PreviousCommand extends Subcommand
+export default class PreviousCommand implements ISubcommand
 {
 	public data: ApplicationCommandOptionData = {
 		name: "previous",
@@ -11,20 +11,22 @@ export default class PreviousCommand extends Subcommand
 		type: ApplicationCommandOptionType.Subcommand
 	};
 
-	public async execute(client: Bot, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
+	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		const queue = client.musicManager.queues.get(interaction.guildId!)!;
 
-		if (!queue.songs[queue.playing - 1])
+		if (!queue.songs[queue.currentSong - 1])
 		{
-			const embed = errorEmbed("There is no previous song.");
+			const embed = new ErrorEmbed("There is no previous song.");
 			interaction.reply({ embeds: [embed], ephemeral: true});
 		}
 		else
 		{
-			queue.playing -= 2;
+			queue.currentSong -= 2;
 			client.musicManager.audioPlayers.get(interaction.guildId!)?.stop();
 
-			const embed = simpleEmbed2("Song Skipped", `Song skipped by ${interaction.user}`);
+			const embed = new BotEmbed(client)
+				.setTitle("Song Skipped")
+				.setDescription(`Song skipped by ${interaction.user}`);
 			interaction.reply({ embeds: [embed] });
 		}
 	}

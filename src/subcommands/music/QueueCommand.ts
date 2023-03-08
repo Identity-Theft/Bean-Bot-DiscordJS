@@ -1,8 +1,8 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
-import Bot from "../../classes/Bot";
-import { Subcommand } from "../../classes/Subcommand";
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import ExtendedClient from "../../structures/ExtendedClient";
+import ISubcommand from "../../interfaces/ISubcommand";
 
-export default class QueueCommand extends Subcommand
+export default class QueueCommand implements ISubcommand
 {
 	public data: ApplicationCommandOptionData= {
 		name: "queue",
@@ -10,9 +10,9 @@ export default class QueueCommand extends Subcommand
 		type: ApplicationCommandOptionType.Subcommand
 	};
 
-	public async execute(client: Bot, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
+	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		const queue = client.musicManager.queues.get(interaction.guildId!)!;
 
-		queue.generateQueueEmbed(interaction);
+		queue.generateQueueEmbed(client, interaction);
 	}
 }

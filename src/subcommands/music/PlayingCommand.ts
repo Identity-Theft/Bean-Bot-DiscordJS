@@ -1,8 +1,9 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder } from "discord.js";
-import Bot from "../../classes/Bot";
-import { Subcommand } from "../../classes/Subcommand";
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import ExtendedClient from "../../structures/ExtendedClient";
+import { BotEmbed } from "../../structures/ExtendedEmbeds";
+import ISubcommand from "../../interfaces/ISubcommand";
 
-export default class PlayingCommand extends Subcommand
+export default class PlayingCommand implements ISubcommand
 {
 	public data: ApplicationCommandOptionData = {
 		name: "playing",
@@ -10,20 +11,15 @@ export default class PlayingCommand extends Subcommand
 		type: ApplicationCommandOptionType.Subcommand
 	};
 
-	public async execute(client: Bot, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void>
+	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void>
 	{
 		const queue = client.musicManager.queues.get(interaction.guildId!)!;
-		const song = queue.songs[queue.playing];
+		const song = queue.songs[queue.currentSong];
 
-		const embed = new EmbedBuilder()
+		const embed = new BotEmbed(client)
 			.setTitle("Currently Playing")
-			.setDescription(`${queue.paused ? "(Paused)" : ""} [${song.title}](${song.url})`)
-			.setThumbnail(song.thumbnail)
-			.setColor("Blurple")
-			.setFooter({
-				text: `Added by ${song.addedBy.tag}`,
-				iconURL: song.addedBy.avatarURL() as string | undefined
-			});
+			.setDescription(`${queue.paused ? "(Paused)" : ""} [${song.title}](${song.url})\nAdded by ${song.addedBy}`)
+			.setThumbnail(song.thumbnail);
 
 		interaction.reply({ embeds: [embed] });
 	}

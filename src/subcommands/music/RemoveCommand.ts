@@ -1,9 +1,9 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder } from "discord.js";
-import Bot from "../../classes/Bot";
-import { Subcommand } from "../../classes/Subcommand";
-import { errorEmbed } from "../../utils/Utils";
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
+import ExtendedClient from "../../structures/ExtendedClient";
+import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
+import ISubcommand from "../../interfaces/ISubcommand";
 
-export default class RemoveCommand extends Subcommand
+export default class RemoveCommand implements ISubcommand
 {
 	public data: ApplicationCommandOptionData= {
 		name: "remove",
@@ -19,39 +19,34 @@ export default class RemoveCommand extends Subcommand
 		]
 	};
 
-	public async execute(client: Bot, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
+	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 		const guildId = interaction.guildId!;
 		const queue = client.musicManager.queues.get(guildId)!;
 		const position = args.getInteger("song")! - 1;
 
 		if (queue.songs[position] == null)
 		{
-			const embed = errorEmbed(`Song \`${position + 1}\` does not exist.`);
+			const embed = new ErrorEmbed(`Song \`${position + 1}\` does not exist.`);
 			interaction.reply({ embeds: [embed], ephemeral: true});
 			return;
 		}
 
 		const song = queue.songs[position];
 
-		const embed = new EmbedBuilder()
+		const embed = new BotEmbed(client)
 			.setTitle("Song Removed")
-			.setDescription(`[${song.title}](${song.url})`)
-			.setThumbnail(song.thumbnail)
-			.setColor("Blurple")
-			.setFooter({
-				text: `Removed by ${interaction.user.tag}`,
-				iconURL: interaction.user.avatarURL() as string | undefined
-			});
+			.setDescription(`[${song.title}](${song.url})\nRemoved by ${interaction.user}`)
+			.setThumbnail(song.thumbnail);
 
 		interaction.reply({ embeds: [embed] });
 
-		if (position == queue.playing)
+		if (position == queue.currentSong)
 		{
-			queue.playing -= 1;
+			queue.currentSong -= 1;
 		client.musicManager.audioPlayers.get(guildId)!.stop();
 		}
-		else if (position < queue.playing)
-			queue.playing -= 1;
+		else if (position < queue.currentSong)
+			queue.currentSong -= 1;
 
 		queue.songs.splice(position, 1);
 	}

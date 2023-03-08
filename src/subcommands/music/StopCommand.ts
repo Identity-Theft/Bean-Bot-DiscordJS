@@ -1,9 +1,9 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
-import Bot from "../../classes/Bot";
-import { Subcommand } from "../../classes/Subcommand";
-import { simpleEmbed2 } from "../../utils/Utils";
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import ExtendedClient from "../../structures/ExtendedClient";
+import { BotEmbed } from "../../structures/ExtendedEmbeds";
+import ISubcommand from "../../interfaces/ISubcommand";
 
-export default class StopCommand extends Subcommand
+export default class StopCommand implements ISubcommand
 {
 	public data: ApplicationCommandOptionData= {
 		name: "stop",
@@ -11,12 +11,15 @@ export default class StopCommand extends Subcommand
 		type: ApplicationCommandOptionType.Subcommand
 	};
 
-	public async execute(client: Bot, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
+	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		if (await client.musicManager.canUseCommand(interaction, "") == false) return;
 
 		client.musicManager.disconnect(interaction.guildId!);
 
-		const embed = simpleEmbed2("Disconnected", `${client.user?.username} was disconnected by ${interaction.user}`);
+		const embed = new BotEmbed(client)
+			.setTitle("Disconnected")
+			.setDescription(`${client.user?.username} was disconnected by ${interaction.user}`);
+
 		interaction.reply({ embeds: [embed] });
 	}
 }

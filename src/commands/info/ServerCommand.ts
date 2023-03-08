@@ -1,9 +1,10 @@
-import { CacheType, ChannelType, ChatInputApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder } from "discord.js";
-import { Command, CommandCategory } from "../../classes/Command";
+import { ChannelType, ChatInputApplicationCommandData, CommandInteraction } from "discord.js";
+import { ICommand, CommandCategory } from "../../interfaces/ICommand";
 import moment from "moment";
-import Bot from "../../classes/Bot";
+import ExtendedClient from "../../structures/ExtendedClient";
+import { BotEmbed } from "../../structures/ExtendedEmbeds";
 
-export default class ServerCommand extends Command
+export default class ServerCommand implements ICommand
 {
 	public data: ChatInputApplicationCommandData = {
 		name: "server",
@@ -13,13 +14,13 @@ export default class ServerCommand extends Command
 
 	public catergory: CommandCategory = CommandCategory.Info;
 
-	public async execute(client: Bot, interaction: CommandInteraction<CacheType>, args: CommandInteractionOptionResolver<CacheType>): Promise<void> {
+	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		const guild = interaction.guild!;
 		if(!guild.available) return;
 
 		const sOwner = await guild.members.fetch(guild.ownerId);
 
-		const embed = new EmbedBuilder()
+		const embed = new BotEmbed(client)
 			.setAuthor({
 				name: guild.name,
 				iconURL: guild.iconURL() as string | undefined
@@ -36,7 +37,7 @@ export default class ServerCommand extends Command
 					inline: true
 				},
 				{
-					name: "Partnerd",
+					name: "Partnered",
 					value: guild.partnered ? "True" : "False",
 					inline: true
 				},
@@ -91,11 +92,7 @@ export default class ServerCommand extends Command
 					inline: true
 				}
 			])
-			.setThumbnail(guild.iconURL())
-			.setColor("Blurple")
-			.setFooter({
-				text: `Server ID: ${guild.id}`
-			});
+			.setThumbnail(guild.iconURL());
 
 
 		interaction.reply({ embeds: [embed] });

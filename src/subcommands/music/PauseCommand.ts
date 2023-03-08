@@ -1,8 +1,9 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder } from "discord.js";
-import { Subcommand } from "../../classes/Subcommand";
-import Bot from "../../classes/Bot";
+import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import ExtendedClient from "../../structures/ExtendedClient";
+import { BotEmbed } from "../../structures/ExtendedEmbeds";
+import ISubcommand from "../../interfaces/ISubcommand";
 
-export default class PauseCommand extends Subcommand
+export default class PauseCommand implements ISubcommand
 {
 	public data: ApplicationCommandOptionData = {
 		name: "pause",
@@ -10,7 +11,7 @@ export default class PauseCommand extends Subcommand
 		type: ApplicationCommandOptionType.Subcommand
 	};
 
-	public async execute(client: Bot, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
+	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		const guildId = interaction.guildId!;
 
 		const queue = client.musicManager.queues.get(guildId)!;
@@ -21,17 +22,12 @@ export default class PauseCommand extends Subcommand
 
 		queue.paused = !queue.paused;
 
-		const song = queue.songs[queue.playing];
+		const song = queue.songs[queue.currentSong];
 
-		const embed = new EmbedBuilder()
+		const embed = new BotEmbed(client)
 			.setTitle(`Song ${queue.paused == true ? "Paused" : "Unpaused"}`)
-			.setDescription(`[${song.title}](${song.url})`)
-			.setThumbnail(song.thumbnail)
-			.setColor("Blurple")
-			.setFooter({
-				text: `${queue.paused == true ? "Paused" : "Unpaused"} by ${interaction.user.tag}`,
-				iconURL: interaction.user.avatarURL() as string | undefined
-			})
+			.setDescription(`[${song.title}](${song.url})\n${queue.paused == true ? "Paused" : "Unpaused"} by ${interaction.user}`)
+			.setThumbnail(song.thumbnail);
 
 		interaction.reply({ embeds: [embed] });
 	}

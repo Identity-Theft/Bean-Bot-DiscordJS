@@ -1,12 +1,12 @@
 import { ActivityType } from "discord.js";
-import Bot from "../../classes/Bot";
-import Event from "../../interfaces/Event";
+import ExtendedClient from "../../structures/ExtendedClient";
+import IEvent from "../../interfaces/IEvent";
 
-export default class ReadyEvent extends Event
+export default class ReadyEvent implements IEvent
 {
 	public name = "ready";
 
-	public async execute(client: Bot): Promise<void>
+	public async execute(client: ExtendedClient): Promise<void>
 	{
 		client.user?.setPresence({ activities: [{ name: "Beans", type: ActivityType.Competing }] });
 		console.log(`${client.user?.tag} is now online!`);

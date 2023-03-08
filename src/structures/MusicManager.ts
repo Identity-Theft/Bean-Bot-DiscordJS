@@ -3,9 +3,9 @@ import { Attachment, ChannelType, CommandInteraction, Snowflake, User } from "di
 import ytSearch from "yt-search";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
+import { ErrorEmbed } from "./ExtendedEmbeds";
 import Queue from "./Queue";
 import Song from "./Song";
-import { errorEmbed } from "../utils/Utils";
 
 export default class MusicManager
 {
@@ -21,19 +21,19 @@ export default class MusicManager
 
 		if (channel == null)
 		{
-			interaction.reply({ embeds: [errorEmbed("You are not in a voice channel")], ephemeral: true });
+			interaction.reply({ embeds: [new ErrorEmbed("You are not in a voice channel")], ephemeral: true });
 			return false;
 		}
 
 		if (this.queues.get(guildId)?.voiceChannel.type == ChannelType.GuildStageVoice && !member?.permissions.has("Administrator"))
 		{
-			interaction.reply({ embeds: [errorEmbed("Only admins can use music commands when Bean Bot is in a Stage Channel.")] });
+			interaction.reply({ embeds: [new ErrorEmbed("Only admins can use music commands when Bean Bot is in a Stage Channel.")] });
 			return false;
 		}
 
 		if (this.queues.get(guildId) != undefined && this.queues.get(guildId)!.voiceChannel != channel)
 		{
-			interaction.reply({ embeds: [errorEmbed("You are not in a voice channel with Bean Bot.")], ephemeral: true});
+			interaction.reply({ embeds: [new ErrorEmbed("You are not in a voice channel with Bean Bot.")], ephemeral: true});
 			return false;
 		}
 
@@ -41,7 +41,7 @@ export default class MusicManager
 		{
 			if (this.queues.get(guildId) == undefined)
 			{
-				interaction.reply({ embeds: [errorEmbed("Bean Bot is not in a Voice Channel.")] });
+				interaction.reply({ embeds: [new ErrorEmbed("Bean Bot is not in a Voice Channel.")] });
 				return false;
 			}
 		}
@@ -49,7 +49,7 @@ export default class MusicManager
 		{
 			if (channel.type == ChannelType.GuildStageVoice && !interaction.memberPermissions?.has("Administrator"))
 			{
-				interaction.reply({ embeds: [errorEmbed(`Only admins can add Bean Bot to Stage Channels. ${channel}`)], ephemeral: true });
+				interaction.reply({ embeds: [new ErrorEmbed(`Only admins can add Bean Bot to Stage Channels. ${channel}`)], ephemeral: true });
 				return false;
 			}
 		}

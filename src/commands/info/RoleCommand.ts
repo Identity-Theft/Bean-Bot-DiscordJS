@@ -1,9 +1,10 @@
-import { ApplicationCommandOptionType, CacheType, ChatInputApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder, Snowflake } from "discord.js";
+import { ApplicationCommandOptionType, ChatInputApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, Snowflake } from "discord.js";
 import moment from "moment";
-import Bot from "../../classes/Bot";
-import { Command, CommandCategory } from "../../classes/Command";
+import ExtendedClient from "../../structures/ExtendedClient";
+import { BotEmbed } from "../../structures/ExtendedEmbeds";
+import { ICommand, CommandCategory } from "../../interfaces/ICommand";
 
-export default class RoleCommand extends Command
+export default class RoleCommand implements ICommand
 {
 	public data: ChatInputApplicationCommandData = {
 		name: "role",
@@ -20,7 +21,7 @@ export default class RoleCommand extends Command
 
 	public catergory: CommandCategory = CommandCategory.Info;
 
-	public async execute(client: Bot, interaction: CommandInteraction<CacheType>, args: CommandInteractionOptionResolver<CacheType>): Promise<void> {
+	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 		const guild = interaction.guild!;
 		const roleId: Snowflake = args.getRole("role")!.id;
 		const role = await guild.roles.fetch(roleId)!;
@@ -28,7 +29,7 @@ export default class RoleCommand extends Command
 		if (!role) return;
 
 		interaction.reply({ embeds: [
-			new EmbedBuilder()
+			new BotEmbed(client)
 				.setTitle(role.name)
 				.addFields([
 					{
@@ -62,7 +63,6 @@ export default class RoleCommand extends Command
 					}
 				])
 				.setColor(role.color)
-				.setFooter({text: `Role ID: ${roleId}`})
 		] });
 	}
 }

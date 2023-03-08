@@ -1,15 +1,15 @@
 import { ApplicationCommand, Client, Collection } from "discord.js";
-import { Command, CommandCategory } from "./Command";
-import Event from "../interfaces/Event";
+import { ICommand, CommandCategory } from "../interfaces/ICommand";
+import IEvent from "../interfaces/IEvent";
 import fs from "fs";
 import dotenv from "dotenv";
 import MusicManager from "./MusicManager";
 dotenv.config();
 
-export default class Bot extends Client
+export default class ExtendedClient extends Client
 {
-	public commands: Collection<string, Command> = new Collection();
-	public events: Collection<string, Event> = new Collection();
+	public commands: Collection<string, ICommand> = new Collection();
+	public events: Collection<string, IEvent> = new Collection();
 	public musicManager = new MusicManager();
 
 	public constructor()
@@ -19,7 +19,7 @@ export default class Bot extends Client
 
 	public start(): void
 	{
-		this.login(process.env.TOKEN).catch(err => {
+		this.login(process.env.DEV).catch(err => {
 			console.log(err);
 			return;
 		});
@@ -36,7 +36,7 @@ export default class Bot extends Client
 		commandsFiles.map(async (value: string) => {
 			const commandFolder = fs.readdirSync(dir + value);
 			commandFolder.map(async (file: string) => {
-				const command: Command = new (await import(`${dir}${value}/${file}`)).default();
+				const command: ICommand = new (await import(`${dir}${value}/${file}`)).default();
 				this.commands.set(command.data.name, command);
 			});
 		});
@@ -48,7 +48,7 @@ export default class Bot extends Client
 			const eventFolder = fs.readdirSync(`${__dirname}/../events/${value}`);
 
 			eventFolder.map(async (file: string) => {
-				const event: Event = new (await import(`${__dirname}/../events/${value}/${file}`)).default();
+				const event: IEvent = new (await import(`${__dirname}/../events/${value}/${file}`)).default();
 
 				this.events.set(event.name, event);
 				this.on(event.name, event.execute.bind(null, this));

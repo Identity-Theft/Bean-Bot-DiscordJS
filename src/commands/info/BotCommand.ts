@@ -1,8 +1,9 @@
-import { ChatInputApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder } from "discord.js";
-import Bot from "../../classes/Bot";
-import { Command, CommandCategory } from "../../classes/Command";
+import { ChatInputApplicationCommandData, CommandInteraction } from "discord.js";
+import ExtendedClient from "../../structures/ExtendedClient";
+import { BotEmbed } from "../../structures/ExtendedEmbeds";
+import { ICommand, CommandCategory } from "../../interfaces/ICommand";
 
-export default class BotCommand extends Command
+export default class BotCommand implements ICommand
 {
 	public data: ChatInputApplicationCommandData = {
 		name: "bot",
@@ -12,7 +13,7 @@ export default class BotCommand extends Command
 
 	public catergory: CommandCategory = CommandCategory.Info;
 
-	public async execute(client: Bot, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
+	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		const user = client.user!;
 
 		const days = Math.floor(client.uptime! / 86400000);
@@ -21,8 +22,9 @@ export default class BotCommand extends Command
 		const seconds = Math.floor(client.uptime! / 1000) % 60;
 
 		interaction.reply({ embeds: [
-			new EmbedBuilder()
+			new BotEmbed(client)
 				.setTitle(user.username)
+				.setThumbnail(user.avatarURL())
 				.addFields([
 					{
 						name: "Ping",
@@ -37,8 +39,6 @@ export default class BotCommand extends Command
 				// 	value: client.shard
 				// }
 				])
-				.setColor("Blurple")
-				.setFooter({text: `User ID: ${user.id}`})
 		]});
 	}
 }
