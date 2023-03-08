@@ -73,7 +73,7 @@ export default class PlayCommand implements ISubcommand
 				client.musicManager.queues.set(guildId, newQueue);
 
 				connection.on(VoiceConnectionStatus.Ready, async () => {
-					this.playSong(client, guildId, connection, newQueue, songs[0]!);
+					this.playSong(client, guildId, connection, newQueue, songs[0]!, interaction);
 				});
 
 				connection.on(VoiceConnectionStatus.Disconnected, async () => {
@@ -89,18 +89,20 @@ export default class PlayCommand implements ISubcommand
 						client.musicManager.disconnect(guildId);
 					}
 				});
-
-				const embed = new BotEmbed(client)
-					.setTitle("Queue Created")
-					.setDescription("Succcessfuly joined the voice channel.");
-				await interaction.followUp({ embeds: [embed] });
 			}
 
 			const addedToQueue: Array<Song> = [];
 
 			for (let i = 0; i < songs.length; i++) {
 				const song = songs[i];
-				const inQueue = songs.includes(song);
+				let inQueue = false
+
+				queue.songs.every(s => {
+					if (song.url == s.url)
+						inQueue = true;
+
+					return !inQueue;
+				});
 
 				if (!inQueue && queue.songs.length! < queue.maxSongs)
 				{
@@ -109,10 +111,11 @@ export default class PlayCommand implements ISubcommand
 
 					if (queue.songs.length == 1 && songs.length == 1) return;
 				}
+
 				if (inQueue)
 				{
 					const embed = new ErrorEmbed("This song is already in the queue");
-					interaction.reply({ embeds: [embed] });
+					interaction.followUp({ embeds: [embed] });
 					return;
 				}
 			}
@@ -157,14 +160,12 @@ export default class PlayCommand implements ISubcommand
 				const embed = new ErrorEmbed(queue.songs.length! == queue.maxSongs ? `The maximum amount songs allowed in a queue is ${queue.maxSongs}.` : "Could not add any songs to the queue.");
 				await interaction.followUp({ embeds: [embed], ephemeral: true });
 			}
-
-			console.log(queue);
 		} catch(error) {
 			await interaction.followUp({ embeds: [new ErrorEmbed("Could not play song: " + error)] });
 		}
 	}
 
-	private playSong(client: ExtendedClient, guildId: string, connection: VoiceConnection, queue: Queue, song: Song)
+	private playSong(client: ExtendedClient, guildId: string, connection: VoiceConnection, queue: Queue, song: Song, interaction: CommandInteraction | null = null)
 	{
 		function getResource()
 		{
@@ -191,7 +192,10 @@ export default class PlayCommand implements ISubcommand
 			.setDescription(`[${song.title}](${song.url})\nAdded by ${song.addedBy}`)
 			.setThumbnail(song.thumbnail);
 
-		queue.textChannel.send({ embeds: [embed] });
+		if (interaction != null)
+			interaction.followUp({ embeds: [embed] });
+		else
+			queue.textChannel.send({ embeds: [embed] });
 
 		player.on(AudioPlayerStatus.Idle, (oldState: AudioPlayerState) => {
 			if (oldState.status != AudioPlayerStatus.Playing) return;

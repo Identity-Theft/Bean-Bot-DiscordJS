@@ -19,7 +19,7 @@ export default class ExtendedClient extends Client
 
 	public start(): void
 	{
-		this.login(process.env.TOKEN).catch(err => {
+		this.login(process.env.DEV).catch(err => {
 			console.log(err);
 			return;
 		});

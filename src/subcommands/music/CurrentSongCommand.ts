@@ -6,7 +6,7 @@ import ISubcommand from "../../interfaces/ISubcommand";
 export default class PlayingCommand implements ISubcommand
 {
 	public data: ApplicationCommandOptionData = {
-		name: "playing",
+		name: "current-song",
 		description: "Get info about the current song.",
 		type: ApplicationCommandOptionType.Subcommand
 	};
@@ -18,7 +18,7 @@ export default class PlayingCommand implements ISubcommand
 
 		const embed = new BotEmbed(client)
 			.setTitle("Currently Playing")
-			.setDescription(`${queue.paused ? "(Paused)" : ""} [${song.title}](${song.url})\nAdded by ${song.addedBy}`)
+			.setDescription(`${queue.paused ? "(Paused)" : ""} [${song.title}](${song.url})\nPosition in Queue: ${queue.currentSong + 1}/${queue.songs.length}\nAdded by ${song.addedBy}`)
 			.setThumbnail(song.thumbnail);
 
 		interaction.reply({ embeds: [embed] });

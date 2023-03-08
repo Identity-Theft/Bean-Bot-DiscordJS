@@ -22,4 +22,9 @@ export class BotEmbed extends EmbedBuilder
 		this.setFooter({text: client.user?.username as string, iconURL: client.user?.avatarURL() as string | undefined});
 		this.setColor("Blurple");
 	}
+
+	public addFooter(text: string): this {
+		this.setFooter({ text: `${this.data.footer?.text} - ${text}`, iconURL: this.data.footer?.icon_url})
+		return this;
+	}
 }
