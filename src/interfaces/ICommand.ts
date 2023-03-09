@@ -6,7 +6,8 @@ export enum CommandCategory {
 	General = 2,
 	Music = 3,
 	Info = 4,
-	Deprecated = 5
+	Deprecated = 5,
+	Fun = 6
 }
 
 export interface ICommand
