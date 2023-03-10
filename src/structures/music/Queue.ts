@@ -1,4 +1,4 @@
-import { ButtonInteraction, Message, ActionRowBuilder, ButtonBuilder, EmbedBuilder, StageChannel, TextBasedChannel, User, VoiceChannel, ButtonStyle, CommandInteraction } from "discord.js";
+import { ButtonInteraction, Message, ActionRowBuilder, ButtonBuilder, EmbedBuilder, StageChannel, User, VoiceChannel, ButtonStyle, CommandInteraction, TextChannel } from "discord.js";
 import ExtendedClient from "../ExtendedClient";
 import { BotEmbed } from "../ExtendedEmbeds";
 import Song from "./Song";
@@ -6,7 +6,7 @@ import Song from "./Song";
 export default class Queue
 {
 	public voiceChannel: VoiceChannel | StageChannel;
-	public textChannel: TextBasedChannel;
+	public textChannel: TextChannel;
 	public startedBy: User;
 
 	private queueMessage: Message | null = null;
@@ -21,7 +21,7 @@ export default class Queue
 	public currentSong = 0;
 	public readonly maxSongs = 50;
 
-	public constructor(voiceChannel: VoiceChannel | StageChannel, textChannel: TextBasedChannel, startedBy: User)
+	public constructor(voiceChannel: VoiceChannel | StageChannel, textChannel: TextChannel, startedBy: User)
 	{
 		this.voiceChannel = voiceChannel;
 		this.textChannel = textChannel;

@@ -1,7 +1,7 @@
 import { ApplicationCommand, Client, Collection } from "discord.js";
 import { ICommand, CommandCategory } from "../interfaces/ICommand";
-import fetch from "node-fetch";
-import { RequestInit } from "node-fetch";
+// import fetch from 'node-fetch';
+import { RequestInit } from 'node-fetch';
 import IEvent from "../interfaces/IEvent";
 import fs from "fs";
 import dotenv from "dotenv";
@@ -21,7 +21,7 @@ export default class ExtendedClient extends Client
 
 	public start(): void
 	{
-		this.login(process.env.TOKEN).catch(err => {
+		this.login(process.env.DEV).catch(err => {
 			console.log(err);
 			return;
 		});
@@ -76,6 +76,15 @@ export default class ExtendedClient extends Client
 
 	public async apiRequest(url: string, options: RequestInit = {}): Promise<any>
 	{
+
+		// eslint-disable-next-line no-new-func
+		const importDynamic = new Function('modulePath', 'return import(modulePath)');
+
+		const fetch = async (url: string, options: RequestInit) => {
+			const module = await importDynamic('node-fetch');
+			return module.default(url, options);
+		};
+
 		let data;
 
 		await fetch(url, options)
