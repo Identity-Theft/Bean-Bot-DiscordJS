@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionData, CommandInteraction, ApplicationCommandOptionType } from "discord.js";
 import ISubcommand from "../../interfaces/ISubcommand";
-import { RandomCat } from "../../structures/ApiRequests";
+import { RandomCat } from "../../structures/data/RandomAnimal";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed } from "../../structures/ExtendedEmbeds";
 
@@ -15,13 +15,13 @@ export default class CatCommand implements ISubcommand
 	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		interaction.deferReply();
 
-		fetch("https://aws.random.cat/meow")
-			.then((response) => response.json())
-			.then((data: RandomCat) => interaction.followUp({ embeds: [
-				new BotEmbed(client)
-					.setTitle("Random Cat")
-					.setDescription(`${client.user?.username} uses the [Random Cat API](https://aws.random.cat/).`)
-					.setImage(data.file)]
-			}));
+		const data: RandomCat = await client.apiRequest("https://aws.random.cat/meow");
+
+		interaction.followUp({ embeds: [
+			new BotEmbed(client)
+				.setTitle("Random Cat")
+				.setDescription(`${client.user?.username} uses the [Random Cat API](https://aws.random.cat/).`)
+				.setImage(data.file)]
+		});
 	}
 }

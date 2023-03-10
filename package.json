@@ -23,6 +23,7 @@
     "dotenv": "^10.0.0",
     "got": "^11.8.2",
     "moment": "^2.29.1",
+    "node-fetch": "^3.3.0",
     "nodemon": "^2.0.13",
     "ts-node": "^10.9.1",
     "tweetnacl": "^1.0.3",
@@ -40,6 +41,6 @@
   },
   "description": "",
   "engines": {
-    "node": "17.0.1"
+    "node": "^17.0.1"
   }
 }

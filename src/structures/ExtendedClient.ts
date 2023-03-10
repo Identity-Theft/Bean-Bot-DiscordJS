@@ -1,9 +1,11 @@
 import { ApplicationCommand, Client, Collection } from "discord.js";
 import { ICommand, CommandCategory } from "../interfaces/ICommand";
+import fetch from "node-fetch";
+import { RequestInit } from "node-fetch";
 import IEvent from "../interfaces/IEvent";
 import fs from "fs";
 import dotenv from "dotenv";
-import MusicManager from "./MusicManager";
+import MusicManager from "./music/MusicManager";
 dotenv.config();
 
 export default class ExtendedClient extends Client
@@ -70,5 +72,17 @@ export default class ExtendedClient extends Client
 			else if (command.catergory != CommandCategory.Debug)
 				this.application?.commands.create(command.data).then((registered: ApplicationCommand) => console.log(`${registered.name} registered`));
 		});
+	}
+
+	public async apiRequest(url: string, options: RequestInit = {}): Promise<any>
+	{
+		let data;
+
+		await fetch(url, options)
+			.then((response) => response.json())
+			.then((json) => data = json)
+			.catch((err) => console.log(err));
+
+		return data;
 	}
 }

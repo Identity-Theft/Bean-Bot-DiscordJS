@@ -7,7 +7,7 @@ export default class Song
 	public url: string;
 	public addedBy: User;
 
-	public constructor(title: string, thumbnail: string | null, url: string, addedBy: User, )
+	public constructor(title: string, thumbnail: string | null, url: string, addedBy: User)
 	{
 		this.title = title;
 		this.thumbnail = thumbnail;

@@ -18,7 +18,7 @@ export default class GayCommand implements ICommand
 		]
 	};
 
-	public catergory: CommandCategory = CommandCategory.Info;
+	public catergory: CommandCategory = CommandCategory.Fun;
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction<CacheType>, args: CommandInteractionOptionResolver<CacheType>): Promise<void> {
 		const user = args.getUser("user");

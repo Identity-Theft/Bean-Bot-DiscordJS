@@ -3,7 +3,7 @@ import { Attachment, ChannelType, CommandInteraction, Snowflake, User } from "di
 import ytSearch from "yt-search";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
-import { ErrorEmbed } from "./ExtendedEmbeds";
+import { ErrorEmbed } from "../ExtendedEmbeds";
 import Queue from "./Queue";
 import Song from "./Song";
 

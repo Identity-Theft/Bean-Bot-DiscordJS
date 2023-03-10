@@ -2,8 +2,8 @@ import { AudioPlayerError, AudioPlayerState, AudioPlayerStatus, createAudioPlaye
 import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver, TextChannel } from "discord.js";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
-import Queue from "../../structures/Queue";
-import Song from "../../structures/Song";
+import Queue from "../../structures/music/Queue";
+import Song from "../../structures/music/Song";
 import ExtendedClient from "../../structures/ExtendedClient";
 import ISubcommand from "../../interfaces/ISubcommand";
 import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";

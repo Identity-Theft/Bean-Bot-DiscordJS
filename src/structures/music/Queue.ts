@@ -1,6 +1,6 @@
 import { ButtonInteraction, Message, ActionRowBuilder, ButtonBuilder, EmbedBuilder, StageChannel, TextBasedChannel, User, VoiceChannel, ButtonStyle, CommandInteraction } from "discord.js";
-import ExtendedClient from "./ExtendedClient";
-import { BotEmbed } from "./ExtendedEmbeds";
+import ExtendedClient from "../ExtendedClient";
+import { BotEmbed } from "../ExtendedEmbeds";
 import Song from "./Song";
 
 export default class Queue
