@@ -77,7 +77,7 @@ export default class ImdbCommand implements ICommand
 				},
 				{
 					name: "Rating",
-					value: metaData.ratings.rating.toString(),
+					value: metaData.ratings.rating != null ? `${metaData.ratings.rating.toString()}/10` : "No Ratings",
 					inline: true
 				},
 				{
@@ -87,13 +87,13 @@ export default class ImdbCommand implements ICommand
 				},
 				{
 					name: "Release Date",
-					value: `<t:${Date.parse(metaData.releaseDate) / 1000}:R>`,
+					value: `<t:${Date.parse(metaData.releaseDate) / 1000}:D>`,
 					inline: true
 				},
 				{
 					name: "Generes",
 					value: metaData.genres.map(g => g).join(", "),
-					inline: metaData.genres.length == 1
+					inline: true
 				},
 				{
 					name: "Sources",
