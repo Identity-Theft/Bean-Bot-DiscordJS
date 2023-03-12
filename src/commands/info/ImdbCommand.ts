@@ -2,7 +2,7 @@ import { CommandInteraction, CommandInteractionOptionResolver, ApplicationComman
 import { CommandCategory, ICommand } from "../../interfaces/ICommand";
 import { ImdbAutoComplete, ImdbAutoCompleteQuery, ImdbMetaData } from "../../structures/data/Imdb";
 import ExtendedClient from "../../structures/ExtendedClient";
-import { BotEmbed } from "../../structures/ExtendedEmbeds";
+import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
 
 export default class ImdbCommand implements ICommand
 {
@@ -12,7 +12,7 @@ export default class ImdbCommand implements ICommand
 		options: [
 			{
 				name: "movie",
-				description: "Movie title.",
+				description: "Get info about a movie.",
 				type: ApplicationCommandOptionType.Subcommand,
 				options: [
 					{
@@ -24,13 +24,13 @@ export default class ImdbCommand implements ICommand
 				]
 			},
 			{
-				name: "tv-show",
-				description: "TV show title.",
+				name: "series",
+				description: "Get info about a TV series.",
 				type: ApplicationCommandOptionType.Subcommand,
 				options: [
 					{
 						name: "title",
-						description: "TV show title.",
+						description: "TV series title.",
 						type: ApplicationCommandOptionType.String,
 						required: true
 					}
@@ -44,7 +44,9 @@ export default class ImdbCommand implements ICommand
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 		await interaction.deferReply();
 
-		const search = args.getString("title")!.replace(" ", "%20");
+		const subcommand = args.getSubcommand();
+
+		const search = args.getString("title")!.replace(" ", "%20").toLowerCase();
 
 		const autoCompleteQuery: ImdbAutoCompleteQuery = await client.apiRequest(`https://imdb8.p.rapidapi.com/auto-complete?q=${search}`, {
 			method: 'GET',
@@ -54,7 +56,15 @@ export default class ImdbCommand implements ICommand
 			}
 		});
 
-		const autoComplete: ImdbAutoComplete = autoCompleteQuery.d.filter(d => d.id.startsWith("tt") && d.qid == (args.getSubcommand() == "tv-show" ? "tvSeries" : "movie"))[0];
+		autoCompleteQuery.d = autoCompleteQuery.d.filter(d => d.id.startsWith("tt") && d.qid == (subcommand != "movie" ? `tv${subcommand.charAt(0).toUpperCase() + subcommand.slice(1)}` : "movie"));
+
+		if (autoCompleteQuery.d.length == 0)
+		{
+			interaction.followUp({ embeds: [new ErrorEmbed(`Could not find ${subcommand} \`${search.replace("%20", " ")}\`.`)]});
+			return;
+		}
+
+		const autoComplete: ImdbAutoComplete = autoCompleteQuery.d[0];
 
 		const metaData: ImdbMetaData = (await client.apiRequest(`https://imdb8.p.rapidapi.com/title/get-meta-data?ids=${autoComplete.id}&region=AU`, {
 			method: 'GET',
@@ -64,7 +74,7 @@ export default class ImdbCommand implements ICommand
 			}
 		}))[autoComplete.id];
 
-		const year = `${metaData.title.seriesStartYear != null ? `${metaData.title.seriesStartYear}-${metaData.title.seriesEndYear != null ? metaData.title.seriesEndYear : "Present"}` : metaData.title.year}`
+		const year = `${metaData.title.seriesStartYear != null && metaData.title.seriesStartYear != metaData.title.seriesEndYear ? `${metaData.title.seriesStartYear}-${metaData.title.seriesEndYear != null ? metaData.title.seriesEndYear : "Present"}` : metaData.title.year}`
 
 		const embed = new BotEmbed(client)
 			.setTitle(`${metaData.title.title} (${year})`)
