@@ -1,23 +1,19 @@
-import { ApplicationCommandOptionType, ChatInputApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
-import { ICommand, CommandCategory } from "../../interfaces/ICommand";
+import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder, SlashCommandUserOption } from "discord.js";
+import { ICommand, CommandCategory } from "../../structures/interfaces/ICommand";
 import moment from "moment";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed } from "../../structures/ExtendedEmbeds";
 
 export default class UserCommand implements ICommand
 {
-	public data: ChatInputApplicationCommandData = {
-		name: "user",
-		description: "Replies with info about a user.",
-		options: [
-			{
-				type: ApplicationCommandOptionType.User,
-				name: "user",
-				description: "User to get info from.",
-				required: true,
-			}
-		]
-	};
+	public data = new SlashCommandBuilder()
+		.setName("user")
+		.setDescription("Replies with info about a user.")
+		.addUserOption(new SlashCommandUserOption()
+			.setName("user")
+			.setDescription("User to get info from.")
+			.setRequired(true)
+		) as SlashCommandBuilder;
 
 	public catergory: CommandCategory = CommandCategory.Info;
 

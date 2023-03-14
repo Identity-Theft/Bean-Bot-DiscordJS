@@ -1,15 +1,13 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
-import ISubcommand from "../../interfaces/ISubcommand";
+import ISubcommand from "../../structures/interfaces/ISubcommand";
 
 export default class PreviousCommand implements ISubcommand
 {
-	public data: ApplicationCommandOptionData = {
-		name: "previous",
-		description: "Play the previous song in the queue.",
-		type: ApplicationCommandOptionType.Subcommand
-	};
+	public data = new SlashCommandSubcommandBuilder()
+		.setName("previous")
+		.setDescription("Play the previous song in the queue.");
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		const queue = client.musicManager.queues.get(interaction.guildId!)!;

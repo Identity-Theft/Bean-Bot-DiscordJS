@@ -1,43 +1,32 @@
-import { CommandInteraction, CommandInteractionOptionResolver, ApplicationCommandOptionType, ChatInputApplicationCommandData } from "discord.js";
-import { CommandCategory, ICommand } from "../../interfaces/ICommand";
-import { ImdbAutoComplete, ImdbAutoCompleteQuery, ImdbMetaData } from "../../structures/data/Imdb";
+import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder, SlashCommandSubcommandBuilder, SlashCommandStringOption } from "discord.js";
+import { CommandCategory, ICommand } from "../../structures/interfaces/ICommand";
+import { ImdbAutoComplete, ImdbAutoCompleteQuery, ImdbMetaData } from "../../structures/interfaces/Imdb";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
 
 export default class ImdbCommand implements ICommand
 {
-	public data: ChatInputApplicationCommandData = {
-		name: "imdb",
-		description: "Gets info about a movie or TV show from IMDB.",
-		options: [
-			{
-				name: "movie",
-				description: "Get info about a movie.",
-				type: ApplicationCommandOptionType.Subcommand,
-				options: [
-					{
-						name: "title",
-						description: "Movie title.",
-						type: ApplicationCommandOptionType.String,
-						required: true
-					}
-				]
-			},
-			{
-				name: "series",
-				description: "Get info about a TV series.",
-				type: ApplicationCommandOptionType.Subcommand,
-				options: [
-					{
-						name: "title",
-						description: "TV series title.",
-						type: ApplicationCommandOptionType.String,
-						required: true
-					}
-				]
-			}
-		]
-	};
+	public data = new SlashCommandBuilder()
+		.setName("imdb")
+		.setDescription("Gets info about a movie or TV show from IMDB.")
+		.addSubcommand(new SlashCommandSubcommandBuilder()
+			.setName("movie")
+			.setDescription("Get info about a Movie from IMDB.")
+			.addStringOption(new SlashCommandStringOption()
+				.setName("title")
+				.setDescription("Movie title.")
+				.setRequired(true)
+			)
+		)
+		.addSubcommand(new SlashCommandSubcommandBuilder()
+			.setName("series")
+			.setDescription("Get info about a TV Series from IMDB.")
+			.addStringOption(new SlashCommandStringOption()
+				.setName("title")
+				.setDescription("TV Series title.")
+				.setRequired(true)
+			)
+		)
 
 	public catergory: CommandCategory = CommandCategory.Info;
 

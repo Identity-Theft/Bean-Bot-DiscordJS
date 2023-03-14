@@ -1,5 +1,5 @@
-import ExtendedClient from "../structures/ExtendedClient";
-import { ChatInputApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
+import ExtendedClient from "../ExtendedClient";
+import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
 
 export enum CommandCategory {
 	Debug = 1,
@@ -12,7 +12,7 @@ export enum CommandCategory {
 
 export interface ICommand
 {
-	data: ChatInputApplicationCommandData;
+	data: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder;
 	catergory: CommandCategory;
 	execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void>;
 }

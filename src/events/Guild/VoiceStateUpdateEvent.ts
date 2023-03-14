@@ -1,7 +1,7 @@
 import { VoiceState } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed } from "../../structures/ExtendedEmbeds";
-import IEvent from "../../interfaces/IEvent";
+import IEvent from "../../structures/interfaces/IEvent";
 
 export default class VoiceStateUpdateEvent implements IEvent
 {

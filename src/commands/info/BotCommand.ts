@@ -1,15 +1,13 @@
-import { ChatInputApplicationCommandData, CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed } from "../../structures/ExtendedEmbeds";
-import { ICommand, CommandCategory } from "../../interfaces/ICommand";
+import { ICommand, CommandCategory } from "../../structures/interfaces/ICommand";
 
 export default class BotCommand implements ICommand
 {
-	public data: ChatInputApplicationCommandData = {
-		name: "bot",
-		description: "Replies with info about Bean Bot.",
-		options: []
-	};
+	public data = new SlashCommandBuilder()
+		.setName("bot")
+		.setDescription("Replies with info about Bean Bot.");
 
 	public catergory: CommandCategory = CommandCategory.Info;
 

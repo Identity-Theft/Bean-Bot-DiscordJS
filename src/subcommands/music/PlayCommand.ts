@@ -1,48 +1,36 @@
 import { AudioPlayerError, AudioPlayerState, AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, joinVoiceChannel, StreamType, VoiceConnection, VoiceConnectionStatus } from "@discordjs/voice";
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver, TextChannel } from "discord.js";
+import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandAttachmentOption, SlashCommandStringOption, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder, TextChannel } from "discord.js";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
 import Queue from "../../structures/music/Queue";
 import Song from "../../structures/music/Song";
 import ExtendedClient from "../../structures/ExtendedClient";
-import ISubcommand from "../../interfaces/ISubcommand";
+import ISubcommand from "../../structures/interfaces/ISubcommand";
 import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
 
 export default class PlayCommand implements ISubcommand
 {
-	public data: ApplicationCommandOptionData = {
-		name: "play",
-		description: "Add a song to the queue.",
-		type: ApplicationCommandOptionType.SubcommandGroup,
-		options: [
-			{
-				type: ApplicationCommandOptionType.Subcommand,
-				name: "file",
-				description: "Upload a audio or video file to add to the queue.",
-				options: [
-					{
-						type: ApplicationCommandOptionType.Attachment,
-						name: "song",
-						description: "Video or Audio file.",
-						required: true
-					}
-				]
-			},
-			{
-				type: ApplicationCommandOptionType.Subcommand,
-				name: "name-url",
-				description: "Name or url of the song to add to the queue..",
-				options: [
-					{
-						type: ApplicationCommandOptionType.String,
-						name: "song",
-						description: "Name or url.",
-						required: true
-					}
-				]
-			}
-		]
-	};
+	public data = new SlashCommandSubcommandGroupBuilder()
+		.setName("play")
+		.setDescription("Add a song to the queue.")
+		.addSubcommand(new SlashCommandSubcommandBuilder()
+			.setName("file")
+			.setDescription("Upload a audio or video file to add to the queue.")
+			.addAttachmentOption(new SlashCommandAttachmentOption()
+				.setName("song")
+				.setDescription("Video or Audio file.")
+				.setRequired(true)
+			)
+		)
+		.addSubcommand(new SlashCommandSubcommandBuilder()
+			.setName("name-url")
+			.setDescription("Name or url of the song to add to the queue.")
+			.addStringOption(new SlashCommandStringOption()
+				.setName("song")
+				.setDescription("Name or url.")
+				.setRequired(true)
+			)
+		)
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 

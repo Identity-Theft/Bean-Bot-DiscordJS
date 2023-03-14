@@ -1,17 +1,15 @@
-import { CacheType, ChatInputApplicationCommandData, Collection, CommandInteraction, CommandInteractionOptionResolver } from "discord.js"
+import { CacheType, Collection, CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder, SlashCommandSubcommandBuilder } from "discord.js"
 import ExtendedClient from "../../structures/ExtendedClient";
 import fs from "fs";
-import { ICommand, CommandCategory } from "../../interfaces/ICommand";
-import ISubcommand from "../../interfaces/ISubcommand";
+import { ICommand, CommandCategory } from "../../structures/interfaces/ICommand";
+import ISubcommand from "../../structures/interfaces/ISubcommand";
 import { ErrorEmbed } from "../../structures/ExtendedEmbeds";
 
 export default class ModalCommand implements ICommand
 {
-	public data: ChatInputApplicationCommandData = {
-		name: "modal",
-		description: "modal deez nuts",
-		options: []
-	};
+	public data = new SlashCommandBuilder()
+		.setName("modal")
+		.setDescription("modal deez nuts");
 
 	public catergory: CommandCategory = CommandCategory.Debug;
 
@@ -26,7 +24,11 @@ export default class ModalCommand implements ICommand
 			const command: ISubcommand = new (await import(dir + file)).default();
 
 			this.subcommands.set(command.data.name, command);
-			this.data.options?.push(command.data);
+
+			if (command.data instanceof SlashCommandSubcommandBuilder)
+				this.data.addSubcommand(command.data);
+			else
+				this.data.addSubcommandGroup(command.data);
 		});
 	}
 

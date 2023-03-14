@@ -1,23 +1,18 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
+import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandIntegerOption, SlashCommandSubcommandBuilder } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
-import ISubcommand from "../../interfaces/ISubcommand";
+import ISubcommand from "../../structures/interfaces/ISubcommand";
 
 export default class JumpCommand implements ISubcommand
 {
-	public data: ApplicationCommandOptionData = {
-		name: "jump",
-		description: "Jump to song in the queue.",
-		type: ApplicationCommandOptionType.Subcommand,
-		options: [
-			{
-				name: "song",
-				description: "Song's position in the queue",
-				type: ApplicationCommandOptionType.Integer,
-				required: true
-			}
-		]
-	};
+	public data = new SlashCommandSubcommandBuilder()
+		.setName("jump")
+		.setDescription("Jump to song in the queue.")
+		.addIntegerOption(new SlashCommandIntegerOption()
+			.setName("song")
+			.setDescription("Song's position in the queue")
+			.setRequired(true)
+		);
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void>
 	{

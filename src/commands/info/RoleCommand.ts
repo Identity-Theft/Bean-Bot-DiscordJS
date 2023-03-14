@@ -1,23 +1,19 @@
-import { ApplicationCommandOptionType, ChatInputApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, Snowflake } from "discord.js";
+import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder, SlashCommandUserOption, Snowflake } from "discord.js";
 import moment from "moment";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed } from "../../structures/ExtendedEmbeds";
-import { ICommand, CommandCategory } from "../../interfaces/ICommand";
+import { ICommand, CommandCategory } from "../../structures/interfaces/ICommand";
 
 export default class RoleCommand implements ICommand
 {
-	public data: ChatInputApplicationCommandData = {
-		name: "role",
-		description: "Replies with info about a role.",
-		options: [
-			{
-				type: ApplicationCommandOptionType.Role,
-				name: "role",
-				description: "Role to get info from.",
-				required: true
-			}
-		]
-	};
+	public data = new SlashCommandBuilder()
+		.setName("role")
+		.setDescription("Replies with info about a role.")
+		.addUserOption(new SlashCommandUserOption()
+			.setName("role")
+			.setDescription("Role to get info from.")
+			.setRequired(true)
+		) as SlashCommandBuilder;
 
 	public catergory: CommandCategory = CommandCategory.Info;
 

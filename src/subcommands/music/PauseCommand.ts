@@ -1,15 +1,13 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed } from "../../structures/ExtendedEmbeds";
-import ISubcommand from "../../interfaces/ISubcommand";
+import ISubcommand from "../../structures/interfaces/ISubcommand";
 
 export default class PauseCommand implements ISubcommand
 {
-	public data: ApplicationCommandOptionData = {
-		name: "pause",
-		description: "Pause or resume the current song.",
-		type: ApplicationCommandOptionType.Subcommand
-	};
+	public data = new SlashCommandSubcommandBuilder()
+		.setName("pause")
+		.setDescription("Pause or resume the current song.");
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		const guildId = interaction.guildId!;

@@ -1,14 +1,12 @@
-import { ApplicationCommandOptionData, CommandInteraction, ApplicationCommandOptionType, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } from "discord.js";
+import { CommandInteraction, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, SlashCommandSubcommandBuilder } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
-import ISubcommand from "../../interfaces/ISubcommand";
+import ISubcommand from "../../structures/interfaces/ISubcommand";
 
 export default class PopupCommand implements ISubcommand
 {
-	public data: ApplicationCommandOptionData = {
-		name: "popup",
-		description: "hehe haha funny balls",
-		type: ApplicationCommandOptionType.Subcommand
-	};
+	public data = new SlashCommandSubcommandBuilder()
+		.setName("popup")
+		.setDescription("hehe haha funny balls");
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		const field1 = new TextInputBuilder()

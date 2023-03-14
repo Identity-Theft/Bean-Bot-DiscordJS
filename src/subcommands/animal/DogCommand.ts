@@ -1,16 +1,14 @@
-import { ApplicationCommandOptionData, CommandInteraction, ApplicationCommandOptionType } from "discord.js";
-import ISubcommand from "../../interfaces/ISubcommand";
-import { RandomDog } from "../../structures/data/RandomAnimal";
+import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
+import ISubcommand from "../../structures/interfaces/ISubcommand";
+import { RandomDog } from "../../structures/interfaces/RandomAnimal";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed } from "../../structures/ExtendedEmbeds";
 
 export default class DogCommand implements ISubcommand
 {
-	public data: ApplicationCommandOptionData = {
-		name: "dog",
-		description: "Replies with a random picture of a Dog.",
-		type: ApplicationCommandOptionType.Subcommand
-	};
+	public data = new SlashCommandSubcommandBuilder()
+		.setName("dog")
+		.setDescription("Replies with a random picture of a Dog.");
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		interaction.deferReply();

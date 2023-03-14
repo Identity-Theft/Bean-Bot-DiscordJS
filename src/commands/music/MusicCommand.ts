@@ -1,17 +1,15 @@
-import { CommandInteraction, CommandInteractionOptionResolver, Collection, ChatInputApplicationCommandData } from "discord.js";
+import { CommandInteraction, CommandInteractionOptionResolver, Collection, SlashCommandBuilder, SlashCommandSubcommandBuilder } from "discord.js";
 import fs from "fs";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { ErrorEmbed } from "../../structures/ExtendedEmbeds";
-import { CommandCategory, ICommand } from "../../interfaces/ICommand";
-import ISubcommand from "../../interfaces/ISubcommand";
+import { CommandCategory, ICommand } from "../../structures/interfaces/ICommand";
+import ISubcommand from "../../structures/interfaces/ISubcommand";
 
 export default class MusicCommand implements ICommand
 {
-	public data: ChatInputApplicationCommandData = {
-		name: "music",
-		description: "Play music in vc",
-		options: []
-	}
+	public data = new SlashCommandBuilder()
+		.setName("music")
+		.setDescription("Play music in vc");
 
 	public catergory = CommandCategory.Music;
 
@@ -26,7 +24,11 @@ export default class MusicCommand implements ICommand
 			const command: ISubcommand = new (await import(dir + file)).default();
 
 			this.subcommands.set(command.data.name, command);
-			this.data.options?.push(command.data);
+
+			if (command.data instanceof SlashCommandSubcommandBuilder)
+				this.data.addSubcommand(command.data);
+			else
+				this.data.addSubcommandGroup(command.data);
 		});
 	}
 

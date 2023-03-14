@@ -1,22 +1,18 @@
-import { CommandInteraction, CommandInteractionOptionResolver, ApplicationCommandOptionType, ChatInputApplicationCommandData, CacheType } from "discord.js";
+import { CommandInteraction, CommandInteractionOptionResolver, CacheType, SlashCommandBuilder, SlashCommandUserOption } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed } from "../../structures/ExtendedEmbeds";
-import { ICommand, CommandCategory } from "../../interfaces/ICommand";
+import { ICommand, CommandCategory } from "../../structures/interfaces/ICommand";
 
 export default class GayCommand implements ICommand
 {
-	public data: ChatInputApplicationCommandData = {
-		name: "gay",
-		description: "Determines how gay a user is.",
-		options: [
-			{
-				name: "user",
-				description: "User.",
-				type: ApplicationCommandOptionType.User,
-				required: true
-			}
-		]
-	};
+	public data = new SlashCommandBuilder()
+		.setName("gay")
+		.setDescription("Replies with how gay a user is.")
+		.addUserOption(new SlashCommandUserOption()
+			.setName("user")
+			.setDescription("User.")
+			.setRequired(true)
+		) as SlashCommandBuilder;
 
 	public catergory: CommandCategory = CommandCategory.Fun;
 

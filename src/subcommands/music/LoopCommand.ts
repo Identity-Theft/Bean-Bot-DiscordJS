@@ -1,32 +1,25 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
+import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed } from "../../structures/ExtendedEmbeds";
-import ISubcommand from "../../interfaces/ISubcommand";
+import ISubcommand from "../../structures/interfaces/ISubcommand";
 
 export default class LoopCommand implements ISubcommand
 {
-	public data: ApplicationCommandOptionData = {
-		name: "loop",
-		description: "Loop the current song or the queue.",
-		type: ApplicationCommandOptionType.SubcommandGroup,
-		options: [
-			{
-				type: ApplicationCommandOptionType.Subcommand,
-				name: "none",
-				description: "Do not loop."
-			},
-			{
-				type: ApplicationCommandOptionType.Subcommand,
-				name: "song",
-				description: "Loop the current song."
-			},
-			{
-				type: ApplicationCommandOptionType.Subcommand,
-				name: "queue",
-				description: "Loop the queue."
-			}
-		]
-	};
+	public data = new SlashCommandSubcommandGroupBuilder()
+		.setName("loop")
+		.setDescription("Loop the current song or the queue.")
+		.addSubcommand(new SlashCommandSubcommandBuilder()
+			.setName("none")
+			.setDescription("Do not loop.")
+		)
+		.addSubcommand(new SlashCommandSubcommandBuilder()
+			.setName("song")
+			.setDescription("Loop the current song.")
+		)
+		.addSubcommand(new SlashCommandSubcommandBuilder()
+			.setName("queue")
+			.setDescription("Loop the queue.")
+		);
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void>
 	{

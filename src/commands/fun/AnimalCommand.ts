@@ -1,19 +1,17 @@
-import { ChatInputApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, Collection } from "discord.js";
+import { CommandInteraction, CommandInteractionOptionResolver, Collection, SlashCommandBuilder, SlashCommandSubcommandBuilder } from "discord.js";
 import fs from "fs";
-import { CommandCategory, ICommand } from "../../interfaces/ICommand";
-import ISubcommand from "../../interfaces/ISubcommand";
+import { CommandCategory, ICommand } from "../../structures/interfaces/ICommand";
+import ISubcommand from "../../structures/interfaces/ISubcommand";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { ErrorEmbed } from "../../structures/ExtendedEmbeds";
 
 export default class AnimalCommand implements ICommand
 {
-	public data: ChatInputApplicationCommandData = {
-		name: "random-animal",
-		description: "Gets a random image of the selected animal.",
-		options: []
-	};
+	public data = new SlashCommandBuilder()
+		.setName("random-animal")
+		.setDescription("Gets a random image of the selected animal.");
 
-	public catergory: CommandCategory = CommandCategory.Fun;
+	public catergory = CommandCategory.Fun;
 	private subcommands: Collection<string, ISubcommand> = new Collection();
 
 	public constructor()
@@ -25,7 +23,11 @@ export default class AnimalCommand implements ICommand
 			const command: ISubcommand = new (await import(dir + file)).default();
 
 			this.subcommands.set(command.data.name, command);
-			this.data.options?.push(command.data);
+
+			if (command.data instanceof SlashCommandSubcommandBuilder)
+				this.data.addSubcommand(command.data);
+			else
+				this.data.addSubcommandGroup(command.data);
 		});
 	}
 

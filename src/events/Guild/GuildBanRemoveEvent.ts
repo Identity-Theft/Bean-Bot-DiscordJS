@@ -1,6 +1,6 @@
 import { GuildBan } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
-import IEvent from "../../interfaces/IEvent";
+import IEvent from "../../structures/interfaces/IEvent";
 
 export default class GuildBanRemoveEvent implements IEvent
 {

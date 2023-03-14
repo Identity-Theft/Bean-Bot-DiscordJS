@@ -1,4 +1,4 @@
-import ExtendedClient from "../structures/ExtendedClient";
+import ExtendedClient from "../ExtendedClient";
 
 export default interface IEvent
 {

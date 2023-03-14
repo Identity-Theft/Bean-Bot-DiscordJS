@@ -1,8 +1,8 @@
 import { CommandInteractionOptionResolver, Interaction } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
-import { CommandCategory } from "../../interfaces/ICommand";
-import IEvent from "../../interfaces/IEvent";
+import { CommandCategory } from "../../structures/interfaces/ICommand";
+import IEvent from "../../structures/interfaces/IEvent";
 
 export default class InteractionCreateEvent implements IEvent
 {

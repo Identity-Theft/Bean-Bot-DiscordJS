@@ -1,16 +1,14 @@
-import { ApplicationCommandOptionData, CommandInteraction, ApplicationCommandOptionType } from "discord.js";
-import ISubcommand from "../../interfaces/ISubcommand";
-import { RandomCat } from "../../structures/data/RandomAnimal";
+import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
+import ISubcommand from "../../structures/interfaces/ISubcommand";
+import { RandomCat } from "../../structures/interfaces/RandomAnimal";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed } from "../../structures/ExtendedEmbeds";
 
 export default class CatCommand implements ISubcommand
 {
-	public data: ApplicationCommandOptionData = {
-		name: "cat",
-		description: "Replies with a random picture of a Cat.",
-		type: ApplicationCommandOptionType.Subcommand
-	};
+	public data = new SlashCommandSubcommandBuilder()
+		.setName("cat")
+		.setDescription("Replies with a random picture of a Cat.");
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		interaction.deferReply();

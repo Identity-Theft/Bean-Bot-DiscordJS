@@ -1,15 +1,13 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
-import ISubcommand from "../../interfaces/ISubcommand";
+import ISubcommand from "../../structures/interfaces/ISubcommand";
 
 export default class SkipCommand implements ISubcommand
 {
-	public data: ApplicationCommandOptionData = {
-		name: "skip",
-		description: "Plays the next song in the queue.",
-		type: ApplicationCommandOptionType.Subcommand
-	};
+	public data = new SlashCommandSubcommandBuilder()
+		.setName("skip")
+		.setDescription("Plays the next song in the queue.");
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction,): Promise<void>
 	{

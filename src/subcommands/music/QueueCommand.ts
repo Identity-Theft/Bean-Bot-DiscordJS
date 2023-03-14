@@ -1,14 +1,12 @@
-import { ApplicationCommandOptionData, ApplicationCommandOptionType, CommandInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
-import ISubcommand from "../../interfaces/ISubcommand";
+import ISubcommand from "../../structures/interfaces/ISubcommand";
 
 export default class QueueCommand implements ISubcommand
 {
-	public data: ApplicationCommandOptionData= {
-		name: "queue",
-		description: "Replies with all the songs in to the queue",
-		type: ApplicationCommandOptionType.Subcommand
-	};
+	public data = new SlashCommandSubcommandBuilder()
+		.setName("queue")
+		.setDescription("Replies with all the songs in to the queue");
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		const queue = client.musicManager.queues.get(interaction.guildId!)!;

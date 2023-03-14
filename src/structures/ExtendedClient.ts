@@ -1,8 +1,8 @@
 import { ApplicationCommand, Client, Collection } from "discord.js";
-import { ICommand, CommandCategory } from "../interfaces/ICommand";
+import { ICommand, CommandCategory } from "./interfaces/ICommand";
 // import fetch from 'node-fetch';
 import { RequestInit } from 'node-fetch';
-import IEvent from "../interfaces/IEvent";
+import IEvent from "./interfaces/IEvent";
 import fs from "fs";
 import dotenv from "dotenv";
 import MusicManager from "./music/MusicManager";
@@ -21,7 +21,7 @@ export default class ExtendedClient extends Client
 
 	public start(): void
 	{
-		this.login(process.env.TOKEN).catch(err => {
+		this.login(process.env.DEV).catch(err => {
 			console.log(err);
 			return;
 		});
@@ -68,7 +68,7 @@ export default class ExtendedClient extends Client
 				if (toRemove) this.application?.commands.delete(toRemove.id).then(() => console.log(`${command.data.name} deleted`));
 			}
 			else if (this.token == process.env.DEV)
-				this.application?.commands.create(command.data, "844081963324407848").then((registered: ApplicationCommand) => console.log(`${registered.name} registered`));
+				this.application?.commands.create(command.data).then((registered: ApplicationCommand) => console.log(`${registered.name} registered`));
 			else if (command.catergory != CommandCategory.Debug)
 				this.application?.commands.create(command.data).then((registered: ApplicationCommand) => console.log(`${registered.name} registered`));
 		});

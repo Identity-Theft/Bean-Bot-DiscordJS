@@ -1,16 +1,14 @@
-import { ChannelType, ChatInputApplicationCommandData, CommandInteraction } from "discord.js";
-import { ICommand, CommandCategory } from "../../interfaces/ICommand";
+import { ChannelType, CommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ICommand, CommandCategory } from "../../structures/interfaces/ICommand";
 import moment from "moment";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed } from "../../structures/ExtendedEmbeds";
 
 export default class ServerCommand implements ICommand
 {
-	public data: ChatInputApplicationCommandData = {
-		name: "server",
-		description: "Replies with info about the server.",
-		options: [],
-	};
+	public data = new SlashCommandBuilder()
+		.setName("server")
+		.setDescription("Replies with info about the server.");
 
 	public catergory: CommandCategory = CommandCategory.Info;
 

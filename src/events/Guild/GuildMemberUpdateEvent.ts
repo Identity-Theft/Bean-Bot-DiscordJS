@@ -1,6 +1,6 @@
 import { GuildMember } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
-import IEvent from "../../interfaces/IEvent";
+import IEvent from "../../structures/interfaces/IEvent";
 
 export default class GuildMemberUpdateEvent implements IEvent
 {
