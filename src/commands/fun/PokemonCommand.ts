@@ -15,7 +15,7 @@ export default class PokemonCommand implements ICommand
 			.setRequired(true)
 		) as SlashCommandBuilder;
 
-	public catergory = CommandCategory.Debug;
+	public catergory = CommandCategory.Fun;
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 		const name = args.getString("name")?.toLowerCase();
