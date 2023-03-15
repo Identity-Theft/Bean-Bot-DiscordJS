@@ -2,7 +2,7 @@ import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
 import ISubcommand from "../../structures/interfaces/ISubcommand";
 import { RandomCat } from "../../structures/interfaces/RandomAnimal";
 import ExtendedClient from "../../structures/ExtendedClient";
-import { BotEmbed } from "../../structures/ExtendedEmbeds";
+import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
 
 export default class CatCommand implements ISubcommand
 {
@@ -14,6 +14,12 @@ export default class CatCommand implements ISubcommand
 		interaction.deferReply();
 
 		const data: RandomCat = await client.apiRequest("https://aws.random.cat/meow");
+
+		if (data == null)
+		{
+			interaction.followUp({ embeds: [new ErrorEmbed("Unkown error occured")]});
+			return;
+		}
 
 		interaction.followUp({ embeds: [
 			new BotEmbed(client)

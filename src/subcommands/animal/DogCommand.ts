@@ -2,7 +2,7 @@ import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
 import ISubcommand from "../../structures/interfaces/ISubcommand";
 import { RandomDog } from "../../structures/interfaces/RandomAnimal";
 import ExtendedClient from "../../structures/ExtendedClient";
-import { BotEmbed } from "../../structures/ExtendedEmbeds";
+import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
 
 export default class DogCommand implements ISubcommand
 {
@@ -14,6 +14,12 @@ export default class DogCommand implements ISubcommand
 		interaction.deferReply();
 
 		const data: RandomDog = await client.apiRequest("https://random.dog/woof.json");
+
+		if (data == null)
+		{
+			interaction.followUp({ embeds: [new ErrorEmbed("Unkown error occured")]});
+			return;
+		}
 
 		interaction.followUp({ embeds: [
 			new BotEmbed(client)
