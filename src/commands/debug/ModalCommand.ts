@@ -11,7 +11,7 @@ export default class ModalCommand implements ICommand
 		.setName("modal")
 		.setDescription("modal deez nuts");
 
-	public catergory: CommandCategory = CommandCategory.Debug;
+	public category: CommandCategory = CommandCategory.Debug;
 
 	private subcommands: Collection<string, ISubcommand> = new Collection();
 

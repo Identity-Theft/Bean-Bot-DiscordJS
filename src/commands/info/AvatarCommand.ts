@@ -12,9 +12,9 @@ export default class AvatarCommand implements ICommand
 			.setName("user")
 			.setDescription("User to get avatar from.")
 			.setRequired(true)
-		) as SlashCommandBuilder;
+		);
 
-	public catergory = CommandCategory.Info;
+	public category = CommandCategory.Info;
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void>
 	{

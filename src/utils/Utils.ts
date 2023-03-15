@@ -20,3 +20,8 @@ export function formatDuration(sec: number): string
 	if (minutes > 0) return `${formatInt(minutes)}:${formatInt(seconds)}`;
 	return `00:${formatInt(seconds)}`;
 }
+
+export function captilizeFirstLetter(text: string): string
+{
+	return text[0].toUpperCase() + text.slice(1);
+}

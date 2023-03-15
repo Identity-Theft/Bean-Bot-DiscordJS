@@ -13,9 +13,9 @@ export default class UserCommand implements ICommand
 			.setName("user")
 			.setDescription("User to get info from.")
 			.setRequired(true)
-		) as SlashCommandBuilder;
+		);
 
-	public catergory: CommandCategory = CommandCategory.Info;
+	public category: CommandCategory = CommandCategory.Info;
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 		const user = args.getUser("user")!;

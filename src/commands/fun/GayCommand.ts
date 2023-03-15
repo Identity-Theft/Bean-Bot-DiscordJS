@@ -12,9 +12,9 @@ export default class GayCommand implements ICommand
 			.setName("user")
 			.setDescription("User.")
 			.setRequired(true)
-		) as SlashCommandBuilder;
+		);
 
-	public catergory: CommandCategory = CommandCategory.Fun;
+	public category: CommandCategory = CommandCategory.Fun;
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction<CacheType>, args: CommandInteractionOptionResolver<CacheType>): Promise<void> {
 		const user = args.getUser("user");

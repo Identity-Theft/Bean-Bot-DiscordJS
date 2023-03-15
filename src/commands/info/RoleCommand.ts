@@ -13,9 +13,9 @@ export default class RoleCommand implements ICommand
 			.setName("role")
 			.setDescription("Role to get info from.")
 			.setRequired(true)
-		) as SlashCommandBuilder;
+		);
 
-	public catergory: CommandCategory = CommandCategory.Info;
+	public category: CommandCategory = CommandCategory.Info;
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 		const guild = interaction.guild!;

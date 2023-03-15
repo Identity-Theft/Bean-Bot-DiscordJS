@@ -11,7 +11,7 @@ export default class MusicCommand implements ICommand
 		.setName("music")
 		.setDescription("Play music in vc");
 
-	public catergory = CommandCategory.Music;
+	public category = CommandCategory.Music;
 
 	private subcommands: Collection<string, ISubcommand> = new Collection();
 

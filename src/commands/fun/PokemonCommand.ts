@@ -3,6 +3,7 @@ import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
 import { CommandCategory, ICommand } from "../../structures/interfaces/ICommand";
 import { Pokemon } from "../../structures/interfaces/PokeAPI";
+import { captilizeFirstLetter } from "../../utils/Utils";
 
 export default class PokemonCommand implements ICommand
 {
@@ -13,9 +14,9 @@ export default class PokemonCommand implements ICommand
 			.setName("name")
 			.setDescription("Name of the Pokemon to serach for.")
 			.setRequired(true)
-		) as SlashCommandBuilder;
+		);
 
-	public catergory = CommandCategory.Fun;
+	public category = CommandCategory.Fun;
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 		const name = args.getString("name")?.toLowerCase();
@@ -34,27 +35,32 @@ export default class PokemonCommand implements ICommand
 			.addFields([
 				{
 					name: "Height",
-					value: `${pokemon.height} cm`,
+					value: `${pokemon.height * 10} cm`,
 					inline: true
 				},
 				{
 					name: "Weight",
-					value: `${pokemon.weight} kg`,
-					inline: true
-				},
-				{
-					name: "Stats",
-					value: pokemon.stats.map(s => `${s.stat.name[0].toUpperCase() + s.stat.name.slice(1)} [${s.base_stat}]`).join(", "),
-					inline: true
-				},
-				{
-					name: "Abilities",
-					value: pokemon.abilities.map(a => a.ability.name[0].toUpperCase() + a.ability.name.slice(1)).join(", "),
+					value: `${pokemon.weight / 10} kg`,
 					inline: true
 				},
 				{
 					name: "Types",
-					value: pokemon.types.map(a => a.type.name[0].toUpperCase() + a.type.name.slice(1)).join(", "),
+					value: pokemon.types.map(t => captilizeFirstLetter(t.type.name)).join(", "),
+					inline: true
+				},
+				{
+					name: `Abilities [${pokemon.abilities.length}]`,
+					value: pokemon.abilities.slice(0, 5).map(a => captilizeFirstLetter(a.ability.name)).join(", "),
+					inline: true
+				},
+				{
+					name: "Stats",
+					value: pokemon.stats.map(s => `${captilizeFirstLetter(s.stat.name)} [${s.base_stat}]`).join(", "),
+					inline: true
+				},
+				{
+					name: `Move [${pokemon.moves.length}]`,
+					value: pokemon.moves.slice(0, 5).map(m => captilizeFirstLetter(m.move.name)).join(", "),
 					inline: true
 				}
 			])

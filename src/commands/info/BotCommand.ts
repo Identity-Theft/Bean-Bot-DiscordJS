@@ -9,7 +9,7 @@ export default class BotCommand implements ICommand
 		.setName("bot")
 		.setDescription("Replies with info about Bean Bot.");
 
-	public catergory: CommandCategory = CommandCategory.Info;
+	public category: CommandCategory = CommandCategory.Info;
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		const user = client.user!;

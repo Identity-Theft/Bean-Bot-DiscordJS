@@ -28,7 +28,7 @@ export default class ImdbCommand implements ICommand
 			)
 		)
 
-	public catergory: CommandCategory = CommandCategory.Info;
+	public category: CommandCategory = CommandCategory.Info;
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 		await interaction.deferReply();

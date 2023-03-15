@@ -28,7 +28,7 @@ export default class InteractionCreateEvent implements IEvent
 				return;
 			}
 
-			if (cmd.catergory == CommandCategory.Deprecated)
+			if (cmd.category == CommandCategory.Deprecated)
 			{
 				interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${commandName}\` is depracted and will be replaced.`)], ephemeral: true });
 				return;

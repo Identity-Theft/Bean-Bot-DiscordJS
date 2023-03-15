@@ -10,7 +10,7 @@ export default class ServerCommand implements ICommand
 		.setName("server")
 		.setDescription("Replies with info about the server.");
 
-	public catergory: CommandCategory = CommandCategory.Info;
+	public category: CommandCategory = CommandCategory.Info;
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		const guild = interaction.guild!;

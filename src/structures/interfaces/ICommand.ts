@@ -12,7 +12,7 @@ export enum CommandCategory {
 
 export interface ICommand
 {
-	data: SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder;
-	catergory: CommandCategory;
+	data: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup"> | SlashCommandSubcommandsOnlyBuilder;
+	category: CommandCategory;
 	execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void>;
 }

@@ -11,7 +11,7 @@ export default class AnimalCommand implements ICommand
 		.setName("random-animal")
 		.setDescription("Gets a random image of the selected animal.");
 
-	public catergory = CommandCategory.Fun;
+	public category = CommandCategory.Fun;
 	private subcommands: Collection<string, ISubcommand> = new Collection();
 
 	public constructor()

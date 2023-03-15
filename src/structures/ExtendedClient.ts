@@ -61,7 +61,7 @@ export default class ExtendedClient extends Client
 	public async createCommands(): Promise<void>
 	{
 		this.commands.forEach(async (command) => {
-			if (command.catergory == CommandCategory.Deprecated)
+			if (command.category == CommandCategory.Deprecated)
 			{
 				const toRemove = (await this.application?.commands.fetch())?.filter(c => c.name == command.data.name).first();
 
@@ -69,7 +69,7 @@ export default class ExtendedClient extends Client
 			}
 			else if (this.token == process.env.DEV)
 				this.application?.commands.create(command.data).then((registered: ApplicationCommand) => console.log(`${registered.name} registered`));
-			else if (command.catergory != CommandCategory.Debug)
+			else if (command.category != CommandCategory.Debug)
 				this.application?.commands.create(command.data).then((registered: ApplicationCommand) => console.log(`${registered.name} registered`));
 		});
 	}
