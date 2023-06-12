@@ -1,35 +1,43 @@
-import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder } from "discord.js";
+import { CommandInteraction, CommandInteractionOptionResolver, EmbedBuilder, SlashCommandStringOption, SlashCommandSubcommandBuilder } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
-import { BotEmbed } from "../../structures/ExtendedEmbeds";
+import { BotEmbed, TrackEmbed } from "../../structures/ExtendedEmbeds";
 import ISubcommand from "../../structures/interfaces/ISubcommand";
+import { QueueLoopMode } from "../../structures/music/Queue";
 
 export default class LoopCommand implements ISubcommand
 {
-	public data = new SlashCommandSubcommandGroupBuilder()
+	public data = new SlashCommandSubcommandBuilder()
 		.setName("loop")
-		.setDescription("Loop the current song or the queue.")
-		.addSubcommand(new SlashCommandSubcommandBuilder()
-			.setName("none")
-			.setDescription("Do not loop.")
-		)
-		.addSubcommand(new SlashCommandSubcommandBuilder()
-			.setName("song")
-			.setDescription("Loop the current song.")
-		)
-		.addSubcommand(new SlashCommandSubcommandBuilder()
-			.setName("queue")
-			.setDescription("Loop the queue.")
+		.setDescription("Loop the current track or the queue.")
+		.addStringOption(new SlashCommandStringOption()
+			.setName("mode")
+			.setDescription("Loop mode.")
+			.addChoices({ name: "none", value: "none" }, { name: "track", value: "track" }, { name: "queue", value: "queue"})
+			.setRequired(true)
 		);
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void>
 	{
+		const option = args.getString("mode") as 'none' | 'track' | 'queue';
 		const queue = client.musicManager.queues.get(interaction.guildId!)!;
-		const song = queue.songs[queue.currentSong];
+		const track = queue.tracks[queue.currentTrack];
 
-		queue.loop = args.getSubcommand() as "none" | "song" | "queue";
+		let embed: EmbedBuilder;
 
-		const embed = new BotEmbed(client)
-			.setDescription(`Now Looping ${args.getSubcommand() == "song" ? `(${song.title})[${song.url}]` : queue.loop}`)
+		switch (option) {
+			case "none":
+				queue.loopMode = QueueLoopMode.None;
+				embed = new BotEmbed().setDescription(`No longed looping`);
+				break;
+			case "track":
+				queue.loopMode = QueueLoopMode.Track;
+				embed = new TrackEmbed(`Now Looping ${track.formattedTitle}`, track.platform);
+				break;
+			case "queue":
+				queue.loopMode = QueueLoopMode.Queue;
+				embed = new BotEmbed().setDescription(`Now Looping the queue`);
+				break;
+		}
 
 		interaction.reply({ embeds: [embed] });
 	}

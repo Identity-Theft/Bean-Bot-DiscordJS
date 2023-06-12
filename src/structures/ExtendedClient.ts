@@ -1,25 +1,26 @@
 import { ApplicationCommand, Client, Collection } from "discord.js";
 import { ICommand, CommandCategory } from "./interfaces/ICommand";
-// import fetch from 'node-fetch';
-import { RequestInit } from 'node-fetch';
+import { Client as GeniusClient } from "genius-lyrics";
 import IEvent from "./interfaces/IEvent";
 import fs from "fs";
 import dotenv from "dotenv";
 import MusicManager from "./music/MusicManager";
+
 dotenv.config();
 
 export default class ExtendedClient extends Client
 {
 	public commands: Collection<string, ICommand> = new Collection();
 	public events: Collection<string, IEvent> = new Collection();
-	public musicManager = new MusicManager();
+	public musicManager: MusicManager = new MusicManager();
+	public geniusClient = new GeniusClient("Wig_92hZmG76OOOWuqoOmkBYlZD3NZoIycpkhnIZMSr8PJQx3ipmwYA6YsAKPNLA");
 
 	public constructor()
 	{
 		super({ intents: 647 });
 	}
 
-	public start(): void
+	public async start(): Promise<void>
 	{
 		this.login(process.env.TOKEN).catch(err => {
 			console.log(err);
@@ -67,31 +68,8 @@ export default class ExtendedClient extends Client
 
 				if (toRemove) this.application?.commands.delete(toRemove.id).then(() => console.log(`${command.data.name} deleted`));
 			}
-			else if (this.token == process.env.DEV)
-				this.application?.commands.create(command.data).then((registered: ApplicationCommand) => console.log(`${registered.name} registered`));
-			else if (command.category != CommandCategory.Debug)
+			else if (this.token == process.env.DEV || command.category != CommandCategory.Debug)
 				this.application?.commands.create(command.data).then((registered: ApplicationCommand) => console.log(`${registered.name} registered`));
 		});
-	}
-
-	public async apiRequest(url: string, options: RequestInit = {}): Promise<any>
-	{
-
-		// eslint-disable-next-line no-new-func
-		const importDynamic = new Function('modulePath', 'return import(modulePath)');
-
-		const fetch = async (url: string, options: RequestInit) => {
-			const module = await importDynamic('node-fetch');
-			return module.default(url, options);
-		};
-
-		let data;
-
-		await fetch(url, options)
-			.then((response) => response.json())
-			.then((json) => data = json)
-			.catch((err) => console.log(err));
-
-		return data;
 	}
 }

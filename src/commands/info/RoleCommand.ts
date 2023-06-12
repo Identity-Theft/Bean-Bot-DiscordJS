@@ -25,8 +25,8 @@ export default class RoleCommand implements ICommand
 		if (!role) return;
 
 		interaction.reply({ embeds: [
-			new BotEmbed(client)
-				.setTitle(role.name)
+			new BotEmbed()
+				.setDescription(role.name)
 				.addFields([
 					{
 						name: "Mentionable",

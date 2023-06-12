@@ -2,8 +2,8 @@ import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuild
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
 import { CommandCategory, ICommand } from "../../structures/interfaces/ICommand";
-import { Pokemon } from "../../structures/interfaces/PokeAPI";
-import { captilizeFirstLetter } from "../../utils/Utils";
+import { Pokemon } from "../../structures/interfaces/PokeAPI/PokeAPI";
+import { apiRequest, captilizeFirstLetter } from "../../utils/Utils";
 
 export default class PokemonCommand implements ICommand
 {
@@ -21,7 +21,7 @@ export default class PokemonCommand implements ICommand
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 		const name = args.getString("name")?.toLowerCase();
 
-		const pokemon: Pokemon = await client.apiRequest(`https://pokeapi.co/api/v2/pokemon/${name}`);
+		const pokemon: Pokemon = await apiRequest(`https://pokeapi.co/api/v2/pokemon/${name}`);
 
 		if (pokemon == undefined)
 		{
@@ -29,7 +29,7 @@ export default class PokemonCommand implements ICommand
 			return;
 		}
 
-		const embed = new BotEmbed(client)
+		const embed = new BotEmbed()
 			.setTitle(pokemon.name[0].toUpperCase() + pokemon.name.slice(1))
 			.setThumbnail(pokemon.sprites.front_default)
 			.addFields([

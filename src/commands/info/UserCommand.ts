@@ -22,7 +22,7 @@ export default class UserCommand implements ICommand
 		const guild = interaction.guild!;
 		const guildMember = await guild.members.fetch(user.id);
 
-		const embed = new BotEmbed(client)
+		const embed = new BotEmbed()
 			.setAuthor({
 				name: user.tag,
 				iconURL: user.avatarURL() as string | undefined

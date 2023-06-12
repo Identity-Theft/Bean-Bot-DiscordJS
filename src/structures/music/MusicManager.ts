@@ -1,165 +1,199 @@
-import { AudioPlayer, VoiceConnection } from "@discordjs/voice";
-import { Attachment, ChannelType, CommandInteraction, Snowflake, User } from "discord.js";
-import ytSearch from "yt-search";
+import { Attachment, Snowflake, User } from "discord.js";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
-import { ErrorEmbed } from "../ExtendedEmbeds";
 import Queue from "./Queue";
-import Song from "./Song";
+import Track, { TrackPlatform } from "./Track";
+import NewgroundsResponse from "../interfaces/Music/NewgroundsResponse";
+import { Client } from 'spotify-api.js';
+import Playlist from "./Playlist";
+import getVideoDurationInSeconds from "get-video-duration";
+import { apiRequest, searchYoutube } from "../../utils/Utils";
 
 export default class MusicManager
 {
 	public queues: Map<Snowflake, Queue> = new Map();
-	public connections: Map<Snowflake, VoiceConnection> = new Map();
-	public audioPlayers: Map<Snowflake, AudioPlayer> = new Map();
 
-	public async canUseCommand(interaction: CommandInteraction, command: string): Promise<boolean>
+	public spotifyClient = new Client({
+		token: { clientID: "083aec0db587426484149ca455029799", clientSecret: "f255b424ddce43c4adb145f75703904b" }
+	});
+
+	private getUrlFromOption(option: string | Attachment): string | null
 	{
-		const guildId = interaction.guildId!;
-		const member = await interaction.guild?.members.fetch(interaction.user.id);
-		const channel = member!.voice.channel;
-
-		if (channel == null)
-		{
-			interaction.reply({ embeds: [new ErrorEmbed("You are not in a voice channel")], ephemeral: true });
-			return false;
-		}
-
-		if (this.queues.get(guildId)?.voiceChannel.type == ChannelType.GuildStageVoice && !member?.permissions.has("Administrator"))
-		{
-			interaction.reply({ embeds: [new ErrorEmbed("Only admins can use music commands when Bean Bot is in a Stage Channel.")] });
-			return false;
-		}
-
-		if (this.queues.get(guildId) != undefined && this.queues.get(guildId)!.voiceChannel != channel)
-		{
-			interaction.reply({ embeds: [new ErrorEmbed("You are not in a voice channel with Bean Bot.")], ephemeral: true});
-			return false;
-		}
-
-		if (command != "play")
-		{
-			if (this.queues.get(guildId) == undefined)
-			{
-				interaction.reply({ embeds: [new ErrorEmbed("Bean Bot is not in a Voice Channel.")] });
-				return false;
-			}
-		}
-		else
-		{
-			if (channel.type == ChannelType.GuildStageVoice && !interaction.memberPermissions?.has("Administrator"))
-			{
-				interaction.reply({ embeds: [new ErrorEmbed(`Only admins can add Bean Bot to Stage Channels. ${channel}`)], ephemeral: true });
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	public addSong(guildId: Snowflake, song: Song): void
-	{
-		const queue = this.queues.get(guildId);
-
-		if (!queue) throw new Error(`No Queue ${guildId}`)
-
-		const songs = queue.songs;
-		songs.push(song);
-	}
-
-	public disconnect(guildId: Snowflake): void
-	{
-		this.connections.get(guildId)?.destroy();
-		this.connections.delete(guildId);
-		this.queues.delete(guildId);
-	}
-
-	public getUrlFromOption(option: string | Attachment): string | null
-	{
-		if (typeof option == "object") {
+		if (option instanceof Attachment) {
 			if (!option.contentType?.startsWith("video") && !option.contentType?.startsWith("audio")) return null;
-			return option.proxyURL;
+			return option.url;
 		}
 
 		return option;
 	}
 
-	public async songInfo(option: string | Attachment, addedBy: User): Promise<Song[]>
+	public async trackFromUrl(option: string | Attachment, addedBy: User): Promise<Track | Playlist>
 	{
-		const url = this.getUrlFromOption(option);
-		let songsToReturn: Array<Song> = [];
+		let url = this.getUrlFromOption(option);
+		const urlRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
+		if (!url) throw new Error('Attachment has no playable audio');
 
-		if (!url) throw new Error('Invalid Type');
+		if (!urlRegex.test(url))
+			throw new Error('Input must be a URL');
+		
 
-		if (!url.startsWith("https://") && !url.startsWith("http://"))
+		if (option instanceof Attachment)
 		{
-			// Find YouTube video with matching name
-			const newUrl = await this.findVideo(url);
-
-			if (newUrl)
-			{
-				const song = await this.songFromURL(newUrl, addedBy);
-				songsToReturn = song;
-			}
-			else throw new Error('Invalid URL');
-		}
-		else
-		{
-			songsToReturn = typeof(option) == "string" ? await this.songFromURL(option, addedBy) : [
-				new Song(
-					option.name!,
-					null,
-					option.url,
-					addedBy
-				)
-			];
+			return new Track(
+				option.name!,
+				option.url,
+				await getVideoDurationInSeconds(option.url),
+				addedBy,
+				TrackPlatform.Discord
+			)
 		}
 
-		return songsToReturn;
+		const newgroundsRegex = /^https:\/\/(www\.)?newgrounds\.com\/audio\/listen\/\d+$/gm;
+		const spotifyTrackRegex = /^https:\/\/open\.spotify\.com\/track\/[A-Z|a-z|0-9]+$/gm;
+		const spotifyAlbumRegex = /^https:\/\/open\.spotify\.com\/album\/[A-Z|a-z|0-9]+$/gm;
+
+		if (ytdl.validateURL(url)) return await this.youtubeVideo(url, addedBy);
+		if (ytpl.validateID(url)) return await this.youtubePlaylist(url, addedBy);
+		if (newgroundsRegex.test(url)) return await this.newgrounds(url, addedBy);
+
+		url = url.split("?si=")[0];
+
+		if (spotifyTrackRegex.test(url)) return await this.spotifyTrack(url, addedBy);
+		if (spotifyAlbumRegex.test(url)) return await this.spotifyAlbum(url, addedBy);
+		
+		throw new Error("No track found")
 	}
 
-	private async songFromURL(url: string, addedBy: User): Promise<Song[]>
+	public async trackFromSearch(search: string, platform: string, addedBy: User): Promise<Track>
 	{
-		// Check for valid URL
-		if (ytdl.validateURL(url))
+		const urlRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
+
+		if (urlRegex.test(search))
+			throw new Error('Input must be a search term');
+
+		if (platform == "youtube")
 		{
-			// YouTube URL
-			const info = await ytdl.getInfo(url);
+			const url = await searchYoutube(search);
+
+			if (url)
+			{
+				const track = await this.youtubeVideo(url, addedBy);
+				return track;
+			}
+			else throw new Error('Could not find video');
+		}
+		
+		const result = await this.spotifyClient.search(search, { types: ['track'] });
+		if (!result.tracks) throw new Error("No tracks found")
+
+		const track = result.tracks[0];
+
+		return new Track(
+			track.name,
+			track.externalURL.spotify,
+			track.duration / 1000,
+			addedBy,
+			TrackPlatform.Spotify,
+			track.album?.images[0].url as string | null,
+			`by ${track.artists[0].name}`
+		);
+	}
+
+	private async youtubeVideo(url: string, addedBy: User): Promise<Track>
+	{
+		const info = await ytdl.getInfo(url);
 
 			if (!info.videoDetails.isLiveContent && !info.videoDetails.age_restricted)
 			{
-				return [new Song(
+				return new Track(
 					info.videoDetails.title,
-					info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url,
 					info.videoDetails.video_url,
-					addedBy
-				)];
+					parseInt(info.videoDetails.lengthSeconds),
+					addedBy,
+					TrackPlatform.YouTube,
+					info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url
+				);
 			}
 			else throw new Error('Live streams and age restricted content cannot be played');
-		}
-		else if (ytpl.validateID(url))
-		{
-			// YouTube playlist URL
-			const playlist = await ytpl(url);
-			const songsToReturn: Song[] = [];
-
-			for (let index = 0; index < playlist.items.length; index++) {
-				const item = playlist.items[index];
-				const song = await this.songFromURL(item.url, addedBy);
-				songsToReturn.push(song[0]);
-			}
-
-			return songsToReturn;
-		}
-		else throw new Error('Invalid URL');
 	}
 
-	private async findVideo(search: string): Promise<string | null>
+	private async youtubePlaylist(url: string, addedBy: User): Promise<Playlist>
 	{
-		const result = await ytSearch(search);
+		const ytPlaylist = await ytpl(url);
+		const playlist: Playlist = new Playlist(
+			ytPlaylist.title,
+			ytPlaylist.url,
+			ytPlaylist.bestThumbnail.url,
+			addedBy,
+			TrackPlatform.YouTube
+		);
 
-		if (!result) return null;
+		for (let index = 0; index < ytPlaylist.items.length; index++) {
+			const item = ytPlaylist.items[index];
+			const track = await this.youtubeVideo(item.url, addedBy);
+			playlist.addTrack(track);
+		}
 
-		return result.videos[0].url;
+		return playlist;
+	}
+
+	private async newgrounds(url: string, addedBy: User): Promise<Track>
+	{
+		const data: NewgroundsResponse = await apiRequest(url.replace("listen", "feed"));
+
+		return new Track(
+			data.title,
+			url,
+			await getVideoDurationInSeconds(data.stream_url),
+			addedBy,
+			TrackPlatform.Newgrounds,
+			data.icons.large,
+		);
+	}
+
+	private async spotifyTrack(url: string, addedBy: User): Promise<Track>
+	{
+		const track = await this.spotifyClient.tracks.get(url.replace("https://open.spotify.com/track/", "").split("?")[0]);
+		if (!track) throw new Error("No track found");
+
+		return new Track(
+			track.name,
+			url,
+			track.duration / 1000,
+			addedBy,
+			TrackPlatform.Spotify,
+			track.album?.images[0].url as string | null,
+			`by ${track.artists[0].name}`
+		);
+	}
+
+	private async spotifyAlbum(url: string, addedBy: User): Promise<Playlist>
+	{
+		const album = await this.spotifyClient.albums.get(url.replace("https://open.spotify.com/album/", "").split("?")[0]);
+		if (!album || !album.tracks || album.totalTracks == 0) throw new Error("No album found");
+
+		const playlist = new Playlist(
+			album.name,
+			url,
+			album.images[0].url,
+			addedBy,
+			TrackPlatform.Spotify
+		);
+		
+		for (let index = 0; index < album.totalTracks; index++) {
+			const track = album.tracks[index];
+
+			playlist.addTrack(new Track(
+				track.name,
+				track.externalURL.spotify,
+				track.duration / 1000,
+				addedBy,
+				TrackPlatform.Spotify,
+				album.images[0].url,
+				`by ${track.artists[0].name}`
+			));
+		}
+
+		return playlist;
 	}
 }

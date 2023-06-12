@@ -1,10 +1,10 @@
-import { GuildMember } from "discord.js";
+import { ClientEvents, GuildMember } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
 import IEvent from "../../structures/interfaces/IEvent";
 
 export default class GuildMemberUpdateEvent implements IEvent
 {
-	public name = "guildMemberUpdate";
+	public name: keyof ClientEvents = "guildMemberUpdate";
 
 	public async execute(client: ExtendedClient, oldMember: GuildMember, newMember: GuildMember): Promise<void>
 	{

@@ -3,6 +3,7 @@ import { CommandCategory, ICommand } from "../../structures/interfaces/ICommand"
 import { ImdbAutoComplete, ImdbAutoCompleteQuery, ImdbMetaData } from "../../structures/interfaces/Imdb";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
+import { apiRequest } from "../../utils/Utils";
 
 export default class ImdbCommand implements ICommand
 {
@@ -37,7 +38,7 @@ export default class ImdbCommand implements ICommand
 
 		const search = args.getString("title")!.replace(" ", "%20").toLowerCase();
 
-		const autoCompleteQuery: ImdbAutoCompleteQuery = await client.apiRequest(`https://imdb8.p.rapidapi.com/auto-complete?q=${search}`, {
+		const autoCompleteQuery: ImdbAutoCompleteQuery = await apiRequest(`https://imdb8.p.rapidapi.com/auto-complete?q=${search}`, {
 			method: 'GET',
 			headers: {
 				'X-RapidAPI-Key': '575339ad5bmsh3957d88c36dfcbep1867ccjsnaf07c2266a62',
@@ -55,7 +56,7 @@ export default class ImdbCommand implements ICommand
 
 		const autoComplete: ImdbAutoComplete = autoCompleteQuery.d[0];
 
-		const metaData: ImdbMetaData = (await client.apiRequest(`https://imdb8.p.rapidapi.com/title/get-meta-data?ids=${autoComplete.id}&region=AU`, {
+		const metaData: ImdbMetaData = (await apiRequest(`https://imdb8.p.rapidapi.com/title/get-meta-data?ids=${autoComplete.id}&region=AU`, {
 			method: 'GET',
 			headers: {
 				'X-RapidAPI-Key': '575339ad5bmsh3957d88c36dfcbep1867ccjsnaf07c2266a62',
@@ -65,8 +66,8 @@ export default class ImdbCommand implements ICommand
 
 		const year = `${metaData.title.seriesStartYear != null && metaData.title.seriesStartYear != metaData.title.seriesEndYear ? `${metaData.title.seriesStartYear}-${metaData.title.seriesEndYear != null ? metaData.title.seriesEndYear : "Present"}` : metaData.title.year}`
 
-		const embed = new BotEmbed(client)
-			.setTitle(`${metaData.title.title} (${year})`)
+		const embed = new BotEmbed()
+			.setDescription(`${metaData.title.title} (${year})`)
 			.setImage(metaData.title.image.url)
 			.addFields([
 				{

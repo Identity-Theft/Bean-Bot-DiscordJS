@@ -1,9 +1,10 @@
-import { CommandInteraction, CommandInteractionOptionResolver, Collection, SlashCommandBuilder, SlashCommandSubcommandBuilder } from "discord.js";
+import { CommandInteraction, CommandInteractionOptionResolver, Collection, SlashCommandBuilder, SlashCommandSubcommandBuilder, ChannelType } from "discord.js";
 import fs from "fs";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { ErrorEmbed } from "../../structures/ExtendedEmbeds";
 import { CommandCategory, ICommand } from "../../structures/interfaces/ICommand";
 import ISubcommand from "../../structures/interfaces/ISubcommand";
+import MusicManager from "../../structures/music/MusicManager";
 
 export default class MusicCommand implements ICommand
 {
@@ -34,9 +35,49 @@ export default class MusicCommand implements ICommand
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 		const subcommand = args.getSubcommandGroup() || args.getSubcommand();
+		const musicManager: MusicManager = client.musicManager;
 
-		if (!await client.musicManager.canUseCommand(interaction, subcommand)) return;
+		// Check if command can be used
+		const guildId = interaction.guildId!;
+		const member = await interaction.guild?.members.fetch(interaction.user.id);
+		const channel = member!.voice.channel;
 
+		if (!channel)
+		{
+			interaction.reply({ embeds: [new ErrorEmbed("You are not in a voice channel")], ephemeral: true });
+			return;
+		}
+
+		if (musicManager.queues.get(guildId)?.voiceChannel.type == ChannelType.GuildStageVoice && !member?.permissions.has("Administrator"))
+		{
+			interaction.reply({ embeds: [new ErrorEmbed("Only admins can use music commands when Bean Bot is in a Stage Channel.")] });
+			return;
+		}
+
+		if (musicManager.queues.get(guildId) != undefined && musicManager.queues.get(guildId)!.voiceChannel != channel)
+		{
+			interaction.reply({ embeds: [new ErrorEmbed("You are not in a voice channel with Bean Bot.")], ephemeral: true});
+			return;
+		}
+
+		if (subcommand != "play")
+		{
+			if (musicManager.queues.get(guildId) == undefined)
+			{
+				interaction.reply({ embeds: [new ErrorEmbed("No queue exists")] });
+				return;
+			}
+		}
+		else
+		{
+			if (channel.type == ChannelType.GuildStageVoice && !interaction.memberPermissions?.has("Administrator"))
+			{
+				interaction.reply({ embeds: [new ErrorEmbed(`Only admins can add Bean Bot to Stage Channels. ${channel}`)], ephemeral: true });
+				return;
+			}
+		}
+
+		// Find subcommand
 		const command = this.subcommands.get(subcommand);
 
 		if (!command) {

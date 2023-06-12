@@ -7,42 +7,40 @@ export default class RemoveCommand implements ISubcommand
 {
 	public data = new SlashCommandSubcommandBuilder()
 		.setName("remove")
-		.setDescription("Remove asong from the queue.")
+		.setDescription("Remove a track from the queue.")
 		.addIntegerOption(new SlashCommandIntegerOption()
-			.setName("song")
-			.setDescription("Song's position in the queue")
+			.setName("track")
+			.setDescription("Track's position in the queue")
 			.setRequired(true)
 		)
 
-	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
+	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void>
+	{
 		const guildId = interaction.guildId!;
 		const queue = client.musicManager.queues.get(guildId)!;
-		const position = args.getInteger("song")! - 1;
+		const position = args.getInteger("track")! - 1;
 
-		if (queue.songs[position] == null)
+		if (!queue.tracks[position])
 		{
-			const embed = new ErrorEmbed(`Song \`${position + 1}\` does not exist.`);
+			const embed = new ErrorEmbed(`Track \`${position + 1}\` does not exist.`);
 			interaction.reply({ embeds: [embed], ephemeral: true});
 			return;
 		}
 
-		const song = queue.songs[position];
+		queue.currentTrack -= 1;
 
-		const embed = new BotEmbed(client)
-			.setTitle("Song Removed")
-			.setDescription(`[${song.title}](${song.url})\nRemoved by ${interaction.user}`)
-			.setThumbnail(song.thumbnail);
+		if (position == queue.currentTrack) queue.audioPlayer.stop();
+
+		const removed = queue.tracks.splice(position, 1);
+
+		for (let i = 0; i < removed.length; i++) {
+			const track = removed[i];
+			track.clearLyricsEmbeds();
+		}
+
+		const track = queue.tracks[position];
+		const embed = new BotEmbed().setDescription(`Removed track ${track.formattedTitle}`)
 
 		interaction.reply({ embeds: [embed] });
-
-		if (position == queue.currentSong)
-		{
-			queue.currentSong -= 1;
-		client.musicManager.audioPlayers.get(guildId)!.stop();
-		}
-		else if (position < queue.currentSong)
-			queue.currentSong -= 1;
-
-		queue.songs.splice(position, 1);
 	}
 }

@@ -1,10 +1,10 @@
-import { ActivityType } from "discord.js";
+import { ActivityType, ClientEvents } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
 import IEvent from "../../structures/interfaces/IEvent";
 
 export default class ReadyEvent implements IEvent
 {
-	public name = "ready";
+	public name: keyof ClientEvents = "ready";
 
 	public async execute(client: ExtendedClient): Promise<void>
 	{

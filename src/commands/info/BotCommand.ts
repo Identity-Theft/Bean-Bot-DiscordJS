@@ -20,8 +20,8 @@ export default class BotCommand implements ICommand
 		const seconds = Math.floor(client.uptime! / 1000) % 60;
 
 		interaction.reply({ embeds: [
-			new BotEmbed(client)
-				.setTitle(user.username)
+			new BotEmbed()
+				.setDescription(user.username)
 				.setThumbnail(user.avatarURL())
 				.addFields([
 					{

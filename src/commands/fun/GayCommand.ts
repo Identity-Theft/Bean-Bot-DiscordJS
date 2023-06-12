@@ -19,7 +19,7 @@ export default class GayCommand implements ICommand
 	public async execute(client: ExtendedClient, interaction: CommandInteraction<CacheType>, args: CommandInteractionOptionResolver<CacheType>): Promise<void> {
 		const user = args.getUser("user");
 		const percent = (Math.random() * 100).toFixed(0);
-		const embed = new BotEmbed(client).setDescription(`${user} is ${percent}% gay.`);
+		const embed = new BotEmbed().setDescription(`${user} is ${percent}% gay.`);
 		interaction.reply({ embeds: [embed] });
 	}
 }

@@ -21,8 +21,8 @@ export default class AvatarCommand implements ICommand
 		const user = args.getUser("user")!;
 
 		interaction.reply({ embeds: [
-			new BotEmbed(client)
-				.setTitle(user.tag)
+			new BotEmbed()
+				.setDescription(user.tag)
 				.setImage(user.avatarURL())
 		]});
 	}

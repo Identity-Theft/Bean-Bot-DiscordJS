@@ -3,6 +3,7 @@ import ISubcommand from "../../structures/interfaces/ISubcommand";
 import { RandomCat } from "../../structures/interfaces/RandomAnimal";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
+import { apiRequest } from "../../utils/Utils";
 
 export default class CatCommand implements ISubcommand
 {
@@ -13,7 +14,7 @@ export default class CatCommand implements ISubcommand
 	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		interaction.deferReply();
 
-		const data: RandomCat = await client.apiRequest("https://aws.random.cat/meow");
+		const data: RandomCat = await apiRequest("https://aws.random.cat/meow");
 
 		if (data == null)
 		{
@@ -22,10 +23,11 @@ export default class CatCommand implements ISubcommand
 		}
 
 		interaction.followUp({ embeds: [
-			new BotEmbed(client)
-				.setTitle("Random Cat")
+			new BotEmbed()
+				.setAuthor({ name: "Random Cat" })
 				.setDescription(`${client.user?.username} uses the [Random Cat API](https://aws.random.cat/).`)
-				.setImage(data.file)]
+				.setImage(data.file)
+			]
 		});
 	}
 }

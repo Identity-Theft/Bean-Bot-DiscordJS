@@ -18,7 +18,7 @@ export default class ServerCommand implements ICommand
 
 		const sOwner = await guild.members.fetch(guild.ownerId);
 
-		const embed = new BotEmbed(client)
+		const embed = new BotEmbed()
 			.setAuthor({
 				name: guild.name,
 				iconURL: guild.iconURL() as string | undefined
