@@ -1,15 +1,18 @@
 ## Requirements
-- [NodeJs 18+](https://nodejs.org/en)
+- [Node.js 18+](https://nodejs.org/en)
 - [Git](https://git-scm.com/downloads)
-- Discord Token. Get it from [Discord Developers Portal](https://discord.com/developers/applications)
+- [Discord Bot Token](https://discord.com/developers/applications)
+- [Spotify Client ID](https://developer.spotify.com/dashboard/login)
+- [Spotify Client Secret](https://developer.spotify.com/dashboard/login)
+- [X-Rapid Key](https://rapidapi.com/apidojo/api/imdb8/)
 
 ## Setup Guide
 ### Clone the repo
 ```bash
 git clone https://github.com/Identity-Theft/Bean-Bot-DiscordJS.git
 ```
-### Bot Token
-Put the your Bot Token in `.env`
+### Enviornment Variables
+Rename `.env.example` to `.env` and then fill in all the required variables
 
 ### Install Dependencies
 ```bash

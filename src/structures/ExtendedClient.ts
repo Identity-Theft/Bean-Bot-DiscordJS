@@ -12,12 +12,27 @@ export default class ExtendedClient extends Client
 {
 	public commands: Collection<string, ICommand> = new Collection();
 	public events: Collection<string, IEvent> = new Collection();
-	public musicManager: MusicManager = new MusicManager();
-	public geniusClient = new GeniusClient("Wig_92hZmG76OOOWuqoOmkBYlZD3NZoIycpkhnIZMSr8PJQx3ipmwYA6YsAKPNLA");
+	public musicManager: MusicManager;
+	public geniusClient: GeniusClient;
 
 	public constructor()
 	{
 		super({ intents: 647 });
+
+		if (!process.env.BOT_TOKEN)
+			throw new Error("'BOT_TOKEN' has not been set in the '.env' file.")
+
+		if (!process.env.SPOTIFY_ID)
+			throw new Error("'SPOTIFY_ID' has not been set in the '.env' file.")
+
+		if (!process.env.SPOTIFY_SECRET)
+			throw new Error("'SPOTIFY_SECRET' has not been set in the '.env' file.")
+
+		if (!process.env.XRAPID)
+			throw new Error("'XRAPID' has not been set in the '.env' file.")
+
+		this.musicManager = new MusicManager();
+		this.geniusClient = new GeniusClient();
 	}
 
 	public async start(): Promise<void>

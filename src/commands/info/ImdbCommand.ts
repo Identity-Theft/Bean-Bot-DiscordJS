@@ -41,7 +41,7 @@ export default class ImdbCommand implements ICommand
 		const autoCompleteQuery: ImdbAutoCompleteQuery = await apiRequest(`https://imdb8.p.rapidapi.com/auto-complete?q=${search}`, {
 			method: 'GET',
 			headers: {
-				'X-RapidAPI-Key': '575339ad5bmsh3957d88c36dfcbep1867ccjsnaf07c2266a62',
+				'X-RapidAPI-Key': process.env.XRAPID!,
 				'X-RapidAPI-Host': 'imdb8.p.rapidapi.com'
 			}
 		});
@@ -59,7 +59,7 @@ export default class ImdbCommand implements ICommand
 		const metaData: ImdbMetaData = (await apiRequest(`https://imdb8.p.rapidapi.com/title/get-meta-data?ids=${autoComplete.id}&region=AU`, {
 			method: 'GET',
 			headers: {
-				'X-RapidAPI-Key': '575339ad5bmsh3957d88c36dfcbep1867ccjsnaf07c2266a62',
+				'X-RapidAPI-Key': process.env.XRAPID!,
 				'X-RapidAPI-Host': 'imdb8.p.rapidapi.com'
 			}
 		}))[autoComplete.id];

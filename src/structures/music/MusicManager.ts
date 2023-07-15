@@ -14,7 +14,7 @@ export default class MusicManager
 	public queues: Map<Snowflake, Queue> = new Map();
 
 	public spotifyClient = new Client({
-		token: { clientID: "083aec0db587426484149ca455029799", clientSecret: "f255b424ddce43c4adb145f75703904b" }
+		token: { clientID: process.env.SPOTIFY_ID!, clientSecret: process.env.SPOTIFY_SECRET! }
 	});
 
 	private getUrlFromOption(option: string | Attachment): string | null
