@@ -16,7 +16,7 @@ export default class CatCommand implements ISubcommand
 
 		const data: RandomCat = await apiRequest("https://aws.random.cat/meow");
 
-		if (data == null)
+		if (!data.file)
 		{
 			interaction.followUp({ embeds: [new ErrorEmbed("Unkown error occured")]});
 			return;
@@ -27,7 +27,6 @@ export default class CatCommand implements ISubcommand
 				.setAuthor({ name: "Random Cat" })
 				.setDescription(`${client.user?.username} uses the [Random Cat API](https://aws.random.cat/).`)
 				.setImage(data.file)
-			]
-		});
+		]});
 	}
 }

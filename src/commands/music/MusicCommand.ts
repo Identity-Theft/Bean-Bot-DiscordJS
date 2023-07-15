@@ -81,7 +81,7 @@ export default class MusicCommand implements ICommand
 		const command = this.subcommands.get(subcommand);
 
 		if (!command) {
-			interaction.reply({ embeds: [new ErrorEmbed("XD")] });
+			interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${subcommand}\` doesn't exist or couldn't be loaded.`)] });
 			return;
 		}
 

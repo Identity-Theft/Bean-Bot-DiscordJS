@@ -16,7 +16,7 @@ export default class DogCommand implements ISubcommand
 
 		const data: RandomDog = await apiRequest("https://random.dog/woof.json");
 
-		if (data == null)
+		if (!data.url)
 		{
 			interaction.followUp({ embeds: [new ErrorEmbed("Unkown error occured")]});
 			return;
@@ -27,7 +27,6 @@ export default class DogCommand implements ISubcommand
 				.setAuthor({ name: "Random Dog" })
 				.setDescription(`${client.user?.username} uses the [Random Dog API](https://random.dog/).`)
 				.setImage(data.url)
-			]
-		});
+		]});
 	}
 }

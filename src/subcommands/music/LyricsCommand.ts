@@ -9,7 +9,7 @@ export default class LyricsCommand implements ISubcommand
 		.setDescription("Find lyrics for the current song.");
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void>
-    {
+	{
 		const track = client.musicManager.queues.get(interaction.guildId!)!.getCurrentTrack();
 		track.getLyrics(client, interaction);
 	}

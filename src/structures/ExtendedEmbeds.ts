@@ -13,11 +13,11 @@ export class ErrorEmbed extends EmbedBuilder
 
 export class TrackEmbed extends EmbedBuilder
 {
-	public constructor(descrption: String, platform: TrackPlatform)
+	public constructor(descrption: string, platform: TrackPlatform)
 	{
 		super();
 
-		let emoji: string = ""
+		let emoji = ""
 
 		switch (platform)
 		{

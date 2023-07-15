@@ -1,10 +1,10 @@
-import { AudioPlayerError, AudioPlayerState, AudioPlayerStatus, createAudioPlayer, DiscordGatewayAdapterCreator, entersState, joinVoiceChannel, VoiceConnectionStatus } from "@discordjs/voice";
+import { createAudioPlayer, DiscordGatewayAdapterCreator, entersState, joinVoiceChannel, VoiceConnectionStatus } from "@discordjs/voice";
 import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandAttachmentOption, SlashCommandStringOption, SlashCommandSubcommandBuilder, SlashCommandSubcommandGroupBuilder, TextChannel } from "discord.js";
 import Queue from "../../structures/music/Queue";
 import Track from "../../structures/music/Track";
 import ExtendedClient from "../../structures/ExtendedClient";
 import ISubcommand from "../../structures/interfaces/ISubcommand";
-import { ErrorEmbed, TrackEmbed } from "../../structures/ExtendedEmbeds";
+import { ErrorEmbed } from "../../structures/ExtendedEmbeds";
 import Playlist from "../../structures/music/Playlist";
 
 export default class PlayCommand implements ISubcommand
@@ -59,7 +59,7 @@ export default class PlayCommand implements ISubcommand
 
 		try {
 			let result: Track | Playlist;
-			
+
 			if (subcommand == "search")
 				result = await client.musicManager.trackFromSearch(args.getString("name")!, args.getString("platform")!, interaction.user);
 			else

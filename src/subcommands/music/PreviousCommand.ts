@@ -1,6 +1,5 @@
 import { CommandInteraction, SlashCommandSubcommandBuilder } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
-import { ErrorEmbed } from "../../structures/ExtendedEmbeds";
 import ISubcommand from "../../structures/interfaces/ISubcommand";
 
 export default class PreviousCommand implements ISubcommand

@@ -30,12 +30,12 @@ export default class MusicManager
 	public async trackFromUrl(option: string | Attachment, addedBy: User): Promise<Track | Playlist>
 	{
 		let url = this.getUrlFromOption(option);
+		// eslint-disable-next-line no-useless-escape
 		const urlRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
 		if (!url) throw new Error('Attachment has no playable audio');
 
 		if (!urlRegex.test(url))
 			throw new Error('Input must be a URL');
-		
 
 		if (option instanceof Attachment)
 		{
@@ -60,12 +60,13 @@ export default class MusicManager
 
 		if (spotifyTrackRegex.test(url)) return await this.spotifyTrack(url, addedBy);
 		if (spotifyAlbumRegex.test(url)) return await this.spotifyAlbum(url, addedBy);
-		
+
 		throw new Error("No track found")
 	}
 
 	public async trackFromSearch(search: string, platform: string, addedBy: User): Promise<Track>
 	{
+		// eslint-disable-next-line no-useless-escape
 		const urlRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
 
 		if (urlRegex.test(search))
@@ -82,7 +83,7 @@ export default class MusicManager
 			}
 			else throw new Error('Could not find video');
 		}
-		
+
 		const result = await this.spotifyClient.search(search, { types: ['track'] });
 		if (!result.tracks) throw new Error("No tracks found")
 
@@ -103,18 +104,18 @@ export default class MusicManager
 	{
 		const info = await ytdl.getInfo(url);
 
-			if (!info.videoDetails.isLiveContent && !info.videoDetails.age_restricted)
-			{
-				return new Track(
-					info.videoDetails.title,
-					info.videoDetails.video_url,
-					parseInt(info.videoDetails.lengthSeconds),
-					addedBy,
-					TrackPlatform.YouTube,
-					info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url
-				);
-			}
-			else throw new Error('Live streams and age restricted content cannot be played');
+		if (!info.videoDetails.isLiveContent && !info.videoDetails.age_restricted)
+		{
+			return new Track(
+				info.videoDetails.title,
+				info.videoDetails.video_url,
+				parseInt(info.videoDetails.lengthSeconds),
+				addedBy,
+				TrackPlatform.YouTube,
+				info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url
+			);
+		}
+		else throw new Error('Live streams and age restricted content cannot be played');
 	}
 
 	private async youtubePlaylist(url: string, addedBy: User): Promise<Playlist>
@@ -179,7 +180,7 @@ export default class MusicManager
 			addedBy,
 			TrackPlatform.Spotify
 		);
-		
+
 		for (let index = 0; index < album.totalTracks; index++) {
 			const track = album.tracks[index];
 

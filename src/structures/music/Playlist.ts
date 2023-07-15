@@ -4,32 +4,32 @@ import Track, { TrackPlatform } from "./Track";
 
 export default class Playlist
 {
-    public title: string;
-    public url: string;
-    public thumbnail: string | null;
+	public title: string;
+	public url: string;
+	public thumbnail: string | null;
 
-    public duration: string = "";
-	public durationSeconds: number = 0;
+	public duration = "";
+	public durationSeconds = 0;
 
-    public requestedBy: User;
-    
-    public tracks: Track[] = [];
-    public platform: TrackPlatform;
+	public requestedBy: User;
 
-    public constructor(title: string, url: string, thumbnail: string | null, requestedBy: User, platform: TrackPlatform)
-    {
-        this.title = `**${title}**`;
-        this.url = url;
-        this.thumbnail = thumbnail;
-        this.requestedBy = requestedBy;
-        this.platform = platform;
-    }
+	public tracks: Track[] = [];
+	public platform: TrackPlatform;
 
-    public addTrack(track: Track)
-    {
-        this.tracks.push(track);
+	public constructor(title: string, url: string, thumbnail: string | null, requestedBy: User, platform: TrackPlatform)
+	{
+		this.title = `**${title}**`;
+		this.url = url;
+		this.thumbnail = thumbnail;
+		this.requestedBy = requestedBy;
+		this.platform = platform;
+	}
+
+	public addTrack(track: Track): void
+	{
+		this.tracks.push(track);
 
 		this.durationSeconds += track.durationSeconds;
-        this.duration = formatDuration(this.durationSeconds);
-    }
+		this.duration = formatDuration(this.durationSeconds);
+	}
 }

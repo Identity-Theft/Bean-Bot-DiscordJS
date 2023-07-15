@@ -1,10 +1,10 @@
-import { ButtonInteraction, ActionRowBuilder, ButtonBuilder, EmbedBuilder, StageChannel, User, VoiceChannel, ButtonStyle, CommandInteraction, TextChannel, Message, Embed, Interaction, InteractionCollector } from "discord.js";
+import { ButtonInteraction, EmbedBuilder, StageChannel, VoiceChannel, CommandInteraction, TextChannel, Message, InteractionCollector } from "discord.js";
 import Track, { TrackPlatform } from "./Track";
 import { BotEmbed, ErrorEmbed, TrackEmbed } from "../ExtendedEmbeds";
 import { AudioPlayer, AudioPlayerError, AudioPlayerState, AudioPlayerStatus, AudioResource, getVoiceConnection } from "@discordjs/voice";
 import MusicManager from "./MusicManager";
 import Playlist from "./Playlist";
-import { getRow, getRowDisabled } from "../../utils/Utils";
+import { getRow } from "../../utils/Utils";
 
 export default class Queue
 {
@@ -17,7 +17,7 @@ export default class Queue
 
 	public audioPlayer: AudioPlayer;
 	public audioResource: AudioResource | null = null;
-	public volume: number = 1;
+	public volume = 1;
 	public paused = false;
 	public loopMode: QueueLoopMode = QueueLoopMode.None;
 	public skipped = false;
@@ -31,7 +31,6 @@ export default class Queue
 	public queuePage = 0;
 	private queueReply: Message | null = null;
 	private queueCollector: InteractionCollector<any> | null = null;
-	
 
 	public constructor(musicManager: MusicManager, interaction: CommandInteraction, voiceChannel: VoiceChannel | StageChannel, textChannel: TextChannel, audioPlayer: AudioPlayer)
 	{
@@ -54,7 +53,7 @@ export default class Queue
 		this.audioPlayer.on("error", (err: AudioPlayerError) => console.log(err));
 	}
 
-	public async addTrack(toAdd: Track | Playlist, replyTo: CommandInteraction)
+	public async addTrack(toAdd: Track | Playlist, replyTo: CommandInteraction): Promise<void>
 	{
 		if (toAdd instanceof Track)
 		{
@@ -120,7 +119,7 @@ export default class Queue
 	}
 
 	// Playback
-	public async playTrack(track: Track)
+	public async playTrack(track: Track): Promise<void>
 	{
 		this.audioResource = await track.createResource();
 		this.audioResource.volume?.setVolume(this.volume);
@@ -134,7 +133,7 @@ export default class Queue
 			this.textChannel.send({ embeds: [embed] });
 	}
 
-	public async nextTrack()
+	public async nextTrack(): Promise<void>
 	{
 		this.tracks[this.previousTrack].clearLyricsEmbeds();
 		if(this.loopMode == QueueLoopMode.Track && !this.skipped)
@@ -159,7 +158,7 @@ export default class Queue
 		this.previousTrack = this.currentTrack;
 	}
 
-	public async jumpTrack(position: number, replyTo: CommandInteraction)
+	public async jumpTrack(position: number, replyTo: CommandInteraction): Promise<void>
 	{
 		await replyTo.deferReply();
 
@@ -185,7 +184,7 @@ export default class Queue
 		this.audioPlayer.stop();
 	}
 
-	public setVolume(volume: number)
+	public setVolume(volume: number): void
 	{
 		this.volume = volume;
 		this.audioResource?.volume?.setVolume(volume);
@@ -205,8 +204,8 @@ export default class Queue
 			let j = i
 			k += 10;
 
-			const info = current.map(track => { 
-				let emoji: string = ""
+			const info = current.map(track => {
+				let emoji = ""
 
 				switch (track.platform)
 				{
@@ -253,12 +252,12 @@ export default class Queue
 		});
 	}
 
-	public clearQueuePages()
+	public clearQueuePages(): void
 	{
 		if (!this.queueCollector) return;
 		this.queueReply?.delete();
 		this.queueCollector!.removeAllListeners();
-		
+
 		this.queueEmbeds = [];
 		this.queuePage = 0;
 		this.queueReply = null;

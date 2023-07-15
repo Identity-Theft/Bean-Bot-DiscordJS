@@ -1,6 +1,5 @@
 import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandIntegerOption, SlashCommandSubcommandBuilder } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
-import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
 import ISubcommand from "../../structures/interfaces/ISubcommand";
 
 export default class JumpCommand implements ISubcommand

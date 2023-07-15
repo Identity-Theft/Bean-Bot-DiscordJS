@@ -1,5 +1,5 @@
 import { ButtonInteraction, CommandInteraction, EmbedBuilder, InteractionCollector, Message, User } from "discord.js";
-import { apiRequest, formatDuration, getRow, getRowDisabled, searchYoutube } from "../../utils/Utils";
+import { apiRequest, formatDuration, getRow, searchYoutube } from "../../utils/Utils";
 import { AudioResource, StreamType, createAudioResource } from "@discordjs/voice";
 import NewgroundsResponse from "../interfaces/Music/NewgroundsResponse";
 import ytdl from "ytdl-core";
@@ -23,12 +23,12 @@ export default class Track
 	public readonly platform: TrackPlatform;
 
 	// Lyrics
-	private lyricsEmbeds: EmbedBuilder[] = [];
-	private lyricsPage: number = 0;
-	private lyricsReply: Message | null = null;
-	private lyricsCollector: InteractionCollector<any> | null = null;
+	private lyricsEmbeds: EmbedBuilder[];
+	private lyricsPage: number;
+	private lyricsReply: Message | null;
+	private lyricsCollector: InteractionCollector<any> | null;
 
-	public constructor(title: string, url: string, durationSeconds: number, addedBy: User, platform: TrackPlatform, thumbnail: string | null = null, titleExtras: string = "")
+	public constructor(title: string, url: string, durationSeconds: number, addedBy: User, platform: TrackPlatform, thumbnail: string | null = null, titleExtras = "")
 	{
 		this.title = title;
 		this.formattedTitle = `[**${title.replace("*", "\\*").replace("_", "\\*").replace("~", "\\~")} ${titleExtras}**](${url})`
@@ -36,12 +36,17 @@ export default class Track
 
 		this.thumbnail = thumbnail;
 		this.url = url;
-		
+
 		this.duration = formatDuration(durationSeconds);
 		this.durationSeconds = durationSeconds;
 
 		this.addedBy = addedBy;
 		this.platform = platform;
+
+		this.lyricsEmbeds = [];
+		this.lyricsPage = 0;
+		this.lyricsReply = null;
+		this.lyricsCollector = null;
 	}
 
 	public async createResource(): Promise<AudioResource>
@@ -63,7 +68,7 @@ export default class Track
 		}
 	}
 
-	public async getLyrics(client: ExtendedClient, interaction: CommandInteraction)
+	public async getLyrics(client: ExtendedClient, interaction: CommandInteraction): Promise<void>
 	{
 		await interaction.deferReply();
 
@@ -115,7 +120,7 @@ export default class Track
 		});
 	}
 
-	public clearLyricsEmbeds()
+	public clearLyricsEmbeds(): void
 	{
 		if (!this.lyricsCollector) return;
 		this.lyricsReply?.delete();

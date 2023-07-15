@@ -14,7 +14,7 @@ export default class InteractionCreateEvent implements IEvent
 		{
 			if (!interaction.inGuild())
 			{
-				interaction.reply({ embeds: [new ErrorEmbed("Bean Bot must be used in a server.")], ephemeral: true });
+				interaction.reply({ embeds: [new ErrorEmbed(`${client.user?.username} must be used in a server.`)], ephemeral: true });
 				return;
 			}
 
@@ -30,7 +30,7 @@ export default class InteractionCreateEvent implements IEvent
 
 			if (cmd.category == CommandCategory.Deprecated)
 			{
-				interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${commandName}\` is depracted and will be replaced.`)], ephemeral: true });
+				interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${commandName}\` is depracted.`)], ephemeral: true });
 				return;
 			}
 
