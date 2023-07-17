@@ -13,6 +13,6 @@ export default class SkipCommand implements ISubcommand
 		const guildId = interaction.guildId!;
 		const queue = client.musicManager.queues.get(guildId)!;
 
-		queue.jumpTrack(queue.currentTrack + 1, interaction);
+		await queue.jumpTrack(queue.currentTrack + 1, interaction);
 	}
 }

@@ -50,7 +50,7 @@ export default class ImdbCommand implements ICommand
 
 		if (autoCompleteQuery.d.length == 0)
 		{
-			interaction.followUp({ embeds: [new ErrorEmbed(`Could not find ${subcommand} \`${search.replace("%20", " ")}\`.`)]});
+			await interaction.followUp({ embeds: [new ErrorEmbed(`Could not find ${subcommand} \`${search.replace("%20", " ")}\`.`)]});
 			return;
 		}
 
@@ -81,7 +81,7 @@ export default class ImdbCommand implements ICommand
 					inline: true
 				},
 				{
-					name: "Clasification (AU)",
+					name: "Classification (AU)",
 					value: `[${metaData.certificate != null ? `${metaData.certificate}` : "CTC"}](https://www.classification.gov.au/classification-ratings/what-do-ratings-mean)`,
 					inline: true
 				},
@@ -91,7 +91,7 @@ export default class ImdbCommand implements ICommand
 					inline: true
 				},
 				{
-					name: "Generes",
+					name: "Genres",
 					value: metaData.genres.map(g => g).join(", "),
 					inline: true
 				},
@@ -102,6 +102,6 @@ export default class ImdbCommand implements ICommand
 				}
 			]);
 
-		interaction.followUp({ embeds: [embed] });
+		await interaction.followUp({ embeds: [embed] });
 	}
 }

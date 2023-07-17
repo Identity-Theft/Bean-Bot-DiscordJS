@@ -16,7 +16,7 @@ export default class PauseCommand implements ISubcommand
 		const queue = client.musicManager.queues.get(guildId)!;
 		const player = queue.audioPlayer;
 
-		if (queue.paused == false) player.pause();
+		if (!queue.paused) player.pause();
 		else player.unpause();
 
 		queue.paused = !queue.paused;
@@ -24,10 +24,10 @@ export default class PauseCommand implements ISubcommand
 		const track = queue.tracks[queue.currentTrack];
 
 		const embed = new BotEmbed()
-			.setTitle(`Track ${queue.paused == true ? "Paused" : "Unpaused"}`)
-			.setDescription(`${track.formattedTitle}\n${queue.paused == true ? "Paused" : "Unpaused"} by ${interaction.user}`)
+			.setTitle(`Track ${queue.paused ? "Paused" : "Resumed"}`)
+			.setDescription(`${track.formattedTitle}\n${queue.paused ? "Paused" : "Resumed"} by ${interaction.user}`)
 			.setThumbnail(track.thumbnail);
 
-		interaction.reply({ embeds: [embed] });
+		await interaction.reply({ embeds: [embed] });
 	}
 }

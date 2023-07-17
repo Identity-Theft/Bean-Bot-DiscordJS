@@ -10,6 +10,6 @@ export default class ReadyEvent implements IEvent
 	{
 		client.user?.setPresence({ activities: [{ name: "Beans", type: ActivityType.Competing }] });
 		console.log(`${client.user?.tag} is now online!`);
-		client.createCommands();
+		await client.createCommands();
 	}
 }

@@ -39,6 +39,6 @@ export default class LoopCommand implements ISubcommand
 				break;
 		}
 
-		interaction.reply({ embeds: [embed] });
+		await interaction.reply({ embeds: [embed] });
 	}
 }

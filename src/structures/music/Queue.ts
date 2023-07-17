@@ -128,28 +128,28 @@ export default class Queue
 		const embed = new TrackEmbed(`Now Playing ${track.formattedTitle}`, track.platform);
 
 		if ((await this.interaction.fetchReply()).embeds.length == 0)
-			this.interaction.followUp({ embeds: [embed] });
+			await this.interaction.followUp({ embeds: [embed] });
 		else
-			this.textChannel.send({ embeds: [embed] });
+			await this.textChannel.send({ embeds: [embed] });
 	}
 
 	public async nextTrack(): Promise<void>
 	{
 		this.tracks[this.previousTrack].clearLyricsEmbeds();
+
 		if(this.loopMode == QueueLoopMode.Track && !this.skipped)
 		{
-			this.playTrack(this.tracks[this.currentTrack]);
+			await this.playTrack(this.tracks[this.currentTrack]);
 			return;
 		}
 
-		if (this.tracks[this.currentTrack + 1] != undefined) {
-			this.playTrack(this.tracks[this.currentTrack + 1]!,);
-
+		if (this.tracks[this.currentTrack + 1]) {
 			this.currentTrack++;
+			await this.playTrack(this.tracks[this.currentTrack]!);
 		}
 		else if (this.loopMode == QueueLoopMode.Queue) {
-			this.playTrack(this.tracks[0]);
 			this.currentTrack = 0;
+			await this.playTrack(this.tracks[0]);
 		}
 		else this.destroy();
 
@@ -165,7 +165,7 @@ export default class Queue
 		if (!this.tracks[position])
 		{
 			const embed = new ErrorEmbed(`There is no track at position \`${position + 1}\``);
-			replyTo.followUp({ embeds: [embed], ephemeral: true});
+			await replyTo.followUp({ embeds: [embed], ephemeral: true});
 			return;
 		}
 
@@ -174,7 +174,7 @@ export default class Queue
 		if (this.currentTrack == position)
 		{
 			const embed = new TrackEmbed(`[${track.shortTitle}](${track.url}) is already playing`, track.platform);
-			replyTo.followUp({ embeds: [embed], ephemeral: true});
+			await replyTo.followUp({ embeds: [embed], ephemeral: true});
 			return;
 		}
 

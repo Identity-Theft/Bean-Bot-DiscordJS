@@ -23,7 +23,7 @@ export default class RemoveCommand implements ISubcommand
 		if (!queue.tracks[position])
 		{
 			const embed = new ErrorEmbed(`Track \`${position + 1}\` does not exist.`);
-			interaction.reply({ embeds: [embed], ephemeral: true});
+			await interaction.reply({ embeds: [embed], ephemeral: true});
 			return;
 		}
 
@@ -41,6 +41,6 @@ export default class RemoveCommand implements ISubcommand
 		const track = queue.tracks[position];
 		const embed = new BotEmbed().setDescription(`Removed track ${track.formattedTitle}`)
 
-		interaction.reply({ embeds: [embed] });
+		await interaction.reply({ embeds: [embed] });
 	}
 }

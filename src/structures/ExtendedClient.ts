@@ -37,12 +37,12 @@ export default class ExtendedClient extends Client
 
 	public async start(): Promise<void>
 	{
-		this.login(process.env.TOKEN).catch(err => {
+		this.login(process.env.BOT_TOKEN).catch(err => {
 			console.log(err);
 			return;
 		});
 
-		this.setup();
+		await this.setup();
 	}
 
 	private async setup(): Promise<void>

@@ -37,10 +37,10 @@ export default class AnimalCommand implements ICommand
 		const command = this.subcommands.get(subcommand);
 
 		if (!command) {
-			interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${subcommand}\` doesn't exist or couldn't be loaded.`)], ephemeral: true });
+			await interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${subcommand}\` doesn't exist or couldn't be loaded.`)], ephemeral: true });
 			return;
 		}
 
-		command.execute(client, interaction, args);
+		await command.execute(client, interaction, args);
 	}
 }

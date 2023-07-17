@@ -84,13 +84,13 @@ export default class PlayCommand implements ISubcommand
 				// Play tracks once the bot joins a vc
 				connection.on(VoiceConnectionStatus.Ready, async () => {
 					if (result instanceof Playlist)
-						queue!.playTrack(result.tracks[0]);
+						await queue!.playTrack(result.tracks[0]);
 					else
-						queue!.playTrack(result);
+						await queue!.playTrack(result);
 				});
 
 				// Handle disconnection
-				connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
+				connection.on(VoiceConnectionStatus.Disconnected, async () => {
 					try {
 						await Promise.race([
 							entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
@@ -115,7 +115,7 @@ export default class PlayCommand implements ISubcommand
 				});
 			}
 
-			queue.addTrack(result, interaction);
+			await queue.addTrack(result, interaction);
 		} catch(error) {
 			await interaction.followUp({ embeds: [new ErrorEmbed(error instanceof Error ? error.message : `${error}`)] });
 		}

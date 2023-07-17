@@ -14,7 +14,7 @@ export default class InteractionCreateEvent implements IEvent
 		{
 			if (!interaction.inGuild())
 			{
-				interaction.reply({ embeds: [new ErrorEmbed(`${client.user?.username} must be used in a server.`)], ephemeral: true });
+				await interaction.reply({ embeds: [new ErrorEmbed(`${client.user?.username} must be used in a server.`)], ephemeral: true });
 				return;
 			}
 
@@ -24,17 +24,17 @@ export default class InteractionCreateEvent implements IEvent
 
 			if (!cmd)
 			{
-				interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${commandName}\` doesn't exist or couldn't be loaded.`)], ephemeral: true });
+				await interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${commandName}\` doesn't exist or couldn't be loaded.`)], ephemeral: true });
 				return;
 			}
 
 			if (cmd.category == CommandCategory.Deprecated)
 			{
-				interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${commandName}\` is depracted.`)], ephemeral: true });
+				await interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${commandName}\` is depracted.`)], ephemeral: true });
 				return;
 			}
 
-			cmd.execute(client, interaction, options as CommandInteractionOptionResolver);
+			await cmd.execute(client, interaction, options as CommandInteractionOptionResolver);
 		}
 	}
 }

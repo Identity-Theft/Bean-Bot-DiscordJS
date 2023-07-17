@@ -17,7 +17,7 @@ export default class VoiceStateUpdateEvent implements IEvent
 				const embed = new BotEmbed()
 					.setDescription(`The queue has been cleared: \`The bot has been kicked from ${queue.voiceChannel}\``);
 
-				queue.textChannel.send({ embeds: [embed] });
+				await queue.textChannel.send({ embeds: [embed] });
 				queue.destroy();
 			}
 
@@ -27,7 +27,7 @@ export default class VoiceStateUpdateEvent implements IEvent
 				const embed = new BotEmbed()
 					.setDescription(`The queue has been cleared: \`There was no one in the Voice Channel\``);
 
-				queue.textChannel.send({ embeds: [embed] });
+				await queue.textChannel.send({ embeds: [embed] });
 				queue.destroy();
 			}
 			else if (queue != undefined && newState.channel != null && newState.channel.members.size > 1)
@@ -43,7 +43,7 @@ export default class VoiceStateUpdateEvent implements IEvent
 				const embed = new BotEmbed()
 					.setDescription(`The queue has been cleared: \`There was no one in the Voice Channel\``);
 
-				queue.textChannel.send({ embeds: [embed] });
+				await queue.textChannel.send({ embeds: [embed] });
 				queue.destroy();
 			}
 		}

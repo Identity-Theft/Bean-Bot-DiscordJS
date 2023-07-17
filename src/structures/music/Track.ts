@@ -23,7 +23,7 @@ export default class Track
 	public readonly platform: TrackPlatform;
 
 	// Lyrics
-	private lyricsEmbeds: EmbedBuilder[];
+	private readonly lyricsEmbeds: EmbedBuilder[];
 	private lyricsPage: number;
 	private lyricsReply: Message | null;
 	private lyricsCollector: InteractionCollector<any> | null;
@@ -57,7 +57,7 @@ export default class Track
 				return createAudioResource(ytdl(this.url, { filter: "audioonly", highWaterMark: 1048576 * 32 }), { inputType: StreamType.Arbitrary, inlineVolume: true });
 			case TrackPlatform.Spotify:
 				const streamUrl = await searchYoutube(this.title, this.durationSeconds);
-				if (!streamUrl) throw new Error('Track unavliable');
+				if (!streamUrl) throw new Error('Track unavailable');
 
 				return createAudioResource(ytdl(streamUrl, { filter: "audioonly", highWaterMark: 1048576 * 32 }), { inputType: StreamType.Arbitrary, inlineVolume: true });
 			case TrackPlatform.Newgrounds:
@@ -74,7 +74,7 @@ export default class Track
 
 		if (this.platform != TrackPlatform.Spotify)
 		{
-			interaction.followUp({ embeds: [new ErrorEmbed("Lyrics are only avalible for Spotify tracks")]});
+			await interaction.followUp({ embeds: [new ErrorEmbed("Lyrics are only available for Spotify tracks")]});
 			return;
 		}
 

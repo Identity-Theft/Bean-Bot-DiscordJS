@@ -44,19 +44,19 @@ export default class MusicCommand implements ICommand
 
 		if (!channel)
 		{
-			interaction.reply({ embeds: [new ErrorEmbed("You are not in a voice channel")], ephemeral: true });
+			await interaction.reply({ embeds: [new ErrorEmbed("You are not in a voice channel")], ephemeral: true });
 			return;
 		}
 
 		if (musicManager.queues.get(guildId)?.voiceChannel.type == ChannelType.GuildStageVoice && !member?.permissions.has("Administrator"))
 		{
-			interaction.reply({ embeds: [new ErrorEmbed("Only admins can use music commands when Bean Bot is in a Stage Channel.")] });
+			await interaction.reply({ embeds: [new ErrorEmbed("Only admins can use music commands when Bean Bot is in a Stage Channel.")] });
 			return;
 		}
 
 		if (musicManager.queues.get(guildId) != undefined && musicManager.queues.get(guildId)!.voiceChannel != channel)
 		{
-			interaction.reply({ embeds: [new ErrorEmbed("You are not in a voice channel with Bean Bot.")], ephemeral: true});
+			await interaction.reply({ embeds: [new ErrorEmbed("You are not in a voice channel with Bean Bot.")], ephemeral: true});
 			return;
 		}
 
@@ -64,7 +64,7 @@ export default class MusicCommand implements ICommand
 		{
 			if (musicManager.queues.get(guildId) == undefined)
 			{
-				interaction.reply({ embeds: [new ErrorEmbed("No queue exists")] });
+				await interaction.reply({ embeds: [new ErrorEmbed("No queue exists")] });
 				return;
 			}
 		}
@@ -72,7 +72,7 @@ export default class MusicCommand implements ICommand
 		{
 			if (channel.type == ChannelType.GuildStageVoice && !interaction.memberPermissions?.has("Administrator"))
 			{
-				interaction.reply({ embeds: [new ErrorEmbed(`Only admins can add Bean Bot to Stage Channels. ${channel}`)], ephemeral: true });
+				await interaction.reply({ embeds: [new ErrorEmbed(`Only admins can add Bean Bot to Stage Channels. ${channel}`)], ephemeral: true });
 				return;
 			}
 		}
@@ -81,10 +81,10 @@ export default class MusicCommand implements ICommand
 		const command = this.subcommands.get(subcommand);
 
 		if (!command) {
-			interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${subcommand}\` doesn't exist or couldn't be loaded.`)] });
+			await interaction.reply({ embeds: [new ErrorEmbed(`Command \`/${subcommand}\` doesn't exist or couldn't be loaded.`)] });
 			return;
 		}
 
-		command.execute(client, interaction, args);
+		await command.execute(client, interaction, args);
 	}
 }

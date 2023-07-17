@@ -18,6 +18,6 @@ export default class JumpCommand implements ISubcommand
 		const queue = client.musicManager.queues.get(interaction.guildId!)!;
 		const position = args.getInteger("track")!;
 
-		queue.jumpTrack(position - 1, interaction);
+		await queue.jumpTrack(position - 1, interaction);
 	}
 }

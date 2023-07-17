@@ -13,7 +13,7 @@ export class ErrorEmbed extends EmbedBuilder
 
 export class TrackEmbed extends EmbedBuilder
 {
-	public constructor(descrption: string, platform: TrackPlatform)
+	public constructor(description: string, platform: TrackPlatform)
 	{
 		super();
 
@@ -39,7 +39,7 @@ export class TrackEmbed extends EmbedBuilder
 				break;
 		}
 
-		this.setDescription(`${emoji} ${descrption}`)
+		this.setDescription(`${emoji} ${description}`)
 	}
 }
 

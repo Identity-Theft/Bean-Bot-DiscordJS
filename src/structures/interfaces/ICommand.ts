@@ -2,12 +2,12 @@ import ExtendedClient from "../ExtendedClient";
 import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder } from "discord.js";
 
 export enum CommandCategory {
-	Debug = 1,
-	General = 2,
-	Music = 3,
-	Info = 4,
-	Deprecated = 5,
-	Fun = 6
+	Debug,
+	General,
+	Music,
+	Info,
+	Deprecated,
+	Fun
 }
 
 export interface ICommand

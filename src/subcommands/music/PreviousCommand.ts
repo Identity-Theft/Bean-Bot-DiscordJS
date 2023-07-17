@@ -11,6 +11,6 @@ export default class PreviousCommand implements ISubcommand
 	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		const queue = client.musicManager.queues.get(interaction.guildId!)!;
 
-		queue.jumpTrack(queue.currentTrack - 1, interaction);
+		await queue.jumpTrack(queue.currentTrack - 1, interaction);
 	}
 }

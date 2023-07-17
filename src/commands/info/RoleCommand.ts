@@ -1,5 +1,4 @@
-import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder, SlashCommandUserOption, Snowflake } from "discord.js";
-import moment from "moment";
+import { CommandInteraction, CommandInteractionOptionResolver, SlashCommandBuilder, SlashCommandUserOption } from "discord.js";
 import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed } from "../../structures/ExtendedEmbeds";
 import { ICommand, CommandCategory } from "../../structures/interfaces/ICommand";
@@ -18,13 +17,11 @@ export default class RoleCommand implements ICommand
 	public category: CommandCategory = CommandCategory.Info;
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
-		const guild = interaction.guild!;
-		const roleId: Snowflake = args.getRole("role")!.id;
-		const role = await guild.roles.fetch(roleId)!;
+		const role = args.getRole("role", true);
 
 		if (!role) return;
 
-		interaction.reply({ embeds: [
+		await interaction.reply({ embeds: [
 			new BotEmbed()
 				.setDescription(role.name)
 				.addFields([
@@ -35,7 +32,7 @@ export default class RoleCommand implements ICommand
 					},
 					{
 						name: "Hex Colour",
-						value: role.hexColor.toString(),
+						value: role.color.toString(),
 						inline: true
 					},
 					// {
@@ -48,10 +45,6 @@ export default class RoleCommand implements ICommand
 						value: role.hoist ? "True" : "False",
 						inline: true
 					},
-					{
-						name: "Role Created",
-						value: moment.utc(role.createdAt).format("dddd, MMMM Do YYYY")!,
-						inline: true },
 					{
 						name: "Position",
 						value: role.position.toString(),

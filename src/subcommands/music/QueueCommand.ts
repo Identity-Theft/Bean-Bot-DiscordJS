@@ -11,6 +11,6 @@ export default class QueueCommand implements ISubcommand
 	public async execute(client: ExtendedClient, interaction: CommandInteraction): Promise<void> {
 		const queue = client.musicManager.queues.get(interaction.guildId!)!;
 
-		queue.generateQueueEmbed(interaction);
+		await queue.generateQueueEmbed(interaction);
 	}
 }

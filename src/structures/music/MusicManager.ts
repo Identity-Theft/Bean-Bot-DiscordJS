@@ -1,17 +1,17 @@
-import { Attachment, Snowflake, User } from "discord.js";
+import {Attachment, User} from "discord.js";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
 import Queue from "./Queue";
-import Track, { TrackPlatform } from "./Track";
+import Track, {TrackPlatform} from "./Track";
 import NewgroundsResponse from "../interfaces/Music/NewgroundsResponse";
-import { Client } from 'spotify-api.js';
+import {Client} from 'spotify-api.js';
 import Playlist from "./Playlist";
 import getVideoDurationInSeconds from "get-video-duration";
-import { apiRequest, searchYoutube } from "../../utils/Utils";
+import {apiRequest, searchYoutube} from "../../utils/Utils";
 
 export default class MusicManager
 {
-	public queues: Map<Snowflake, Queue> = new Map();
+	public queues: Map<string, Queue> = new Map();
 
 	public spotifyClient = new Client({
 		token: { clientID: process.env.SPOTIFY_ID!, clientSecret: process.env.SPOTIFY_SECRET! }
@@ -31,7 +31,7 @@ export default class MusicManager
 	{
 		let url = this.getUrlFromOption(option);
 		// eslint-disable-next-line no-useless-escape
-		const urlRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
+		const urlRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&\/=]*$/;
 		if (!url) throw new Error('Attachment has no playable audio');
 
 		if (!urlRegex.test(url))
@@ -49,8 +49,8 @@ export default class MusicManager
 		}
 
 		const newgroundsRegex = /^https:\/\/(www\.)?newgrounds\.com\/audio\/listen\/\d+$/gm;
-		const spotifyTrackRegex = /^https:\/\/open\.spotify\.com\/track\/[A-Z|a-z|0-9]+$/gm;
-		const spotifyAlbumRegex = /^https:\/\/open\.spotify\.com\/album\/[A-Z|a-z|0-9]+$/gm;
+		const spotifyTrackRegex = /^https:\/\/open\.spotify\.com\/track\/[A-Za-z0-9]+$/gm;
+		const spotifyAlbumRegex = /^https:\/\/open\.spotify\.com\/album\/[A-Za-z0-9]+$/gm;
 
 		if (ytdl.validateURL(url)) return await this.youtubeVideo(url, addedBy);
 		if (ytpl.validateID(url)) return await this.youtubePlaylist(url, addedBy);
@@ -67,7 +67,7 @@ export default class MusicManager
 	public async trackFromSearch(search: string, platform: string, addedBy: User): Promise<Track>
 	{
 		// eslint-disable-next-line no-useless-escape
-		const urlRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
+		const urlRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&\/=]*$/;
 
 		if (urlRegex.test(search))
 			throw new Error('Input must be a search term');
@@ -78,8 +78,7 @@ export default class MusicManager
 
 			if (url)
 			{
-				const track = await this.youtubeVideo(url, addedBy);
-				return track;
+				return await this.youtubeVideo(url, addedBy);
 			}
 			else throw new Error('Could not find video');
 		}

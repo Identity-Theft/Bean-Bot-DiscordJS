@@ -20,13 +20,13 @@ export default class VolumeCommand implements ISubcommand
 
 		if (volume < 1)
 		{
-			interaction.reply({ embeds: [new ErrorEmbed("Volume must be at least 1")]});
+			await interaction.reply({ embeds: [new ErrorEmbed("Volume must be at least 1")]});
 			return;
 		}
 
 		if (volume > 100)
 		{
-			interaction.reply({ embeds: [new ErrorEmbed("Volume cannot be higher than 100")]});
+			await interaction.reply({ embeds: [new ErrorEmbed("Volume cannot be higher than 100")]});
 			return;
 		}
 
@@ -35,6 +35,6 @@ export default class VolumeCommand implements ISubcommand
 		queue.setVolume(volume / 100);
 
 		const embed = new BotEmbed().setDescription(`Volume has been set to \`${volume}%\``);
-		interaction.reply({ embeds: [embed] });
+		await interaction.reply({ embeds: [embed] });
 	}
 }

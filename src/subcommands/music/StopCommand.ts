@@ -15,6 +15,6 @@ export default class StopCommand implements ISubcommand
 
 		const embed = new BotEmbed().setDescription(`The queue has been cleared`);
 
-		interaction.reply({ embeds: [embed] });
+		await interaction.reply({ embeds: [embed] });
 	}
 }

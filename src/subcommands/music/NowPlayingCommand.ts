@@ -33,6 +33,6 @@ export default class PlayingCommand implements ISubcommand
 			])
 			.setThumbnail(track.thumbnail);
 
-		interaction.reply({ embeds: [embed] });
+		await interaction.reply({ embeds: [embed] });
 	}
 }

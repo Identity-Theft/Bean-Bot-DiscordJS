@@ -92,7 +92,6 @@ export default class ServerCommand implements ICommand
 			])
 			.setThumbnail(guild.iconURL());
 
-
-		interaction.reply({ embeds: [embed] });
+		await interaction.reply({ embeds: [embed] });
 	}
 }

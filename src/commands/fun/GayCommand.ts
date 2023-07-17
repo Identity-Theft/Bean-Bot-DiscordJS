@@ -20,6 +20,6 @@ export default class GayCommand implements ICommand
 		const user = args.getUser("user");
 		const percent = (Math.random() * 100).toFixed(0);
 		const embed = new BotEmbed().setDescription(`${user} is ${percent}% gay.`);
-		interaction.reply({ embeds: [embed] });
+		await interaction.reply({ embeds: [embed] });
 	}
 }

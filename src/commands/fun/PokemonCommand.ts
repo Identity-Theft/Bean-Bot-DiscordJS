@@ -3,7 +3,7 @@ import ExtendedClient from "../../structures/ExtendedClient";
 import { BotEmbed, ErrorEmbed } from "../../structures/ExtendedEmbeds";
 import { CommandCategory, ICommand } from "../../structures/interfaces/ICommand";
 import { Pokemon } from "../../structures/interfaces/PokeAPI/PokeAPI";
-import { apiRequest, captilizeFirstLetter } from "../../utils/Utils";
+import { apiRequest, capitalizeFirstLetter } from "../../utils/Utils";
 
 export default class PokemonCommand implements ICommand
 {
@@ -12,20 +12,20 @@ export default class PokemonCommand implements ICommand
 		.setDescription("Replies with info a Pokemon.")
 		.addStringOption(new SlashCommandStringOption()
 			.setName("name")
-			.setDescription("Name of the Pokemon to serach for.")
+			.setDescription("Name of the Pokemon to search for.")
 			.setRequired(true)
 		);
 
 	public category = CommandCategory.Fun;
 
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
-		const name = args.getString("name")?.toLowerCase();
+		const name = args.getString("name", true).toLowerCase();
 
 		const pokemon: Pokemon = await apiRequest(`https://pokeapi.co/api/v2/pokemon/${name}`);
 
-		if (pokemon == undefined)
+		if (!pokemon)
 		{
-			interaction.reply({ embeds: [new ErrorEmbed("No pokemon found \\<3")]});
+			await interaction.reply({ embeds: [new ErrorEmbed("No pokemon found")]});
 			return;
 		}
 
@@ -45,26 +45,26 @@ export default class PokemonCommand implements ICommand
 				},
 				{
 					name: "Types",
-					value: pokemon.types.map(t => captilizeFirstLetter(t.type.name)).join(", "),
+					value: pokemon.types.map(t => capitalizeFirstLetter(t.type.name)).join(", "),
 					inline: true
 				},
 				{
 					name: `Abilities [${pokemon.abilities.length}]`,
-					value: pokemon.abilities.slice(0, 5).map(a => captilizeFirstLetter(a.ability.name)).join(", "),
+					value: pokemon.abilities.slice(0, 5).map(a => capitalizeFirstLetter(a.ability.name)).join(", "),
 					inline: true
 				},
 				{
 					name: "Stats",
-					value: pokemon.stats.map(s => `${captilizeFirstLetter(s.stat.name)} [${s.base_stat}]`).join(", "),
+					value: pokemon.stats.map(s => `${capitalizeFirstLetter(s.stat.name)} [${s.base_stat}]`).join(", "),
 					inline: true
 				},
 				{
 					name: `Move [${pokemon.moves.length}]`,
-					value: pokemon.moves.slice(0, 5).map(m => captilizeFirstLetter(m.move.name)).join(", "),
+					value: pokemon.moves.slice(0, 5).map(m => capitalizeFirstLetter(m.move.name)).join(", "),
 					inline: true
 				}
-			])
+			]);
 
-		interaction.reply({ embeds: [embed] });
+		await interaction.reply({ embeds: [embed] });
 	}
 }

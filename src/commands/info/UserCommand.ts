@@ -36,7 +36,7 @@ export default class UserCommand implements ICommand
 				},
 				{
 					name: "Bot",
-					value: user.bot !== false ? "True" : "False",
+					value: user.bot ? "True" : "False",
 					inline: true
 				},
 				{
@@ -60,6 +60,6 @@ export default class UserCommand implements ICommand
 				}
 			]);
 
-		interaction.reply({ embeds: [embed] });
+		await interaction.reply({ embeds: [embed] });
 	}
 }
