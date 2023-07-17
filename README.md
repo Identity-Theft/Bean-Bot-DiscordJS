@@ -1,5 +1,4 @@
 # Bean Bot
-Don't want to host it yourself? [Use the public bot](https://discord.com/api/oauth2/authorize?client_id=896036097514151967&permissions=412320385024&scope=applications.commands%20bot)
 ## Requirements
 - [Node.js 18+](https://nodejs.org/en)
 - [Git](https://git-scm.com/downloads)
