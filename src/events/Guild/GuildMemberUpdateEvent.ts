@@ -8,8 +8,6 @@ export default class GuildMemberUpdateEvent implements IEvent
 
 	public async execute(client: ExtendedClient, oldMember: GuildMember, newMember: GuildMember): Promise<void>
 	{
-		console.log(oldMember.user.tag);
-
 		if (!oldMember.isCommunicationDisabled() && newMember.isCommunicationDisabled())
 		{
 			await newMember.send({ content: `You received a timeout in **${newMember.guild.name}**.`, files: [`${__dirname}/../../../assets/Timeout.mp4`] });

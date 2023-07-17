@@ -1,14 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import { RequestInit } from 'node-fetch';
 import ytSearch from "yt-search";
-import ExtendedClient from "../structures/ExtendedClient";
-
-export async function getChannel(client: ExtendedClient, guildId: string, channelId: string): Promise<string | undefined>
-{
-	const guild = await client.guilds.fetch(guildId);
-	const channel = guild.channels.cache.find(c => c.id == channelId);
-	return channel?.name;
-}
 
 const formatInt = (int: number) => (int < 10 ? `0${int}` : int);
 

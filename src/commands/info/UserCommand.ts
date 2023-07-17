@@ -20,7 +20,7 @@ export default class UserCommand implements ICommand
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void> {
 		const user = args.getUser("user")!;
 		const guild = interaction.guild!;
-		const guildMember = await guild.members.fetch(user.id);
+		const guildMember = guild.members.cache.get(user.id) || await guild.members.fetch(user.id);
 
 		const embed = new BotEmbed()
 			.setAuthor({

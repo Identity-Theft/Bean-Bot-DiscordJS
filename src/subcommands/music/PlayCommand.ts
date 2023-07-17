@@ -49,8 +49,7 @@ export default class PlayCommand implements ISubcommand
 	public async execute(client: ExtendedClient, interaction: CommandInteraction, args: CommandInteractionOptionResolver): Promise<void>
 	{
 		const guildId = interaction.guildId!;
-		const member = await interaction.guild?.members.fetch(interaction.user.id);
-		const voiceChannel = member!.voice.channel!;
+		const voiceChannel = (interaction.guild?.members.cache.get(interaction.user.id) || await interaction.guild?.members.fetch(interaction.user.id))!.voice.channel!;
 
 		await interaction.deferReply();
 
@@ -70,8 +69,8 @@ export default class PlayCommand implements ISubcommand
 			// Create queue if one doesn't exist
 			if (!queue)
 			{
-				const guild = await client.guilds.fetch(guildId);
-				const textChannel = await guild.channels.fetch(interaction.channelId!);
+				const guild = client.guilds.cache.get(guildId) || await client.guilds.fetch(guildId);
+				const textChannel = guild.channels.cache.get(interaction.channelId!) || await guild.channels.fetch(interaction.channelId!);
 
 				const connection = joinVoiceChannel({ channelId: voiceChannel.id, guildId: guildId, adapterCreator: guild.voiceAdapterCreator as DiscordGatewayAdapterCreator });
 				const audioPlayer = createAudioPlayer();
