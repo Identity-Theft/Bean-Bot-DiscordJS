@@ -21,8 +21,6 @@ export function capitalizeFirstLetter(text: string): string
 
 export async function apiRequest(url: string, options: RequestInit = {}): Promise<any>
 {
-
-	// eslint-disable-next-line no-new-func
 	const importDynamic = new Function('modulePath', 'return import(modulePath)');
 
 	const fetch = async (url: string, options: RequestInit) => {
